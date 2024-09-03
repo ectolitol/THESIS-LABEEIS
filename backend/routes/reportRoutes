@@ -1,0 +1,26 @@
+const express = require('express');
+const { generateDailyReport } = require('../controllers/reportController');
+
+const router = express.Router();
+
+// Route to generate daily report
+router.get('/daily', generateDailyReport);
+
+module.exports = router;
+
+// const express = require('express');
+// const router = express.Router();
+// const {
+//     generateDailyReport,
+//     generateWeeklyReport,
+//     generateMonthlyReport,
+//     generateAnnualReport
+// } = require('../controllers/reportController');
+
+// // Define routes for report generation
+// router.get('/daily', generateDailyReport);
+// router.get('/weekly', generateWeeklyReport);
+// router.get('/monthly', generateMonthlyReport);
+// router.get('/annual', generateAnnualReport);
+
+// module.exports = router;
