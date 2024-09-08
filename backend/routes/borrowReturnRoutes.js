@@ -6,6 +6,7 @@ const borrowReturnController = require('../controllers/borrowReturnController');
 router.post('/log', borrowReturnController.logTransaction);
 router.get('/', borrowReturnController.getTransactionLogs);
 router.get('/:id', borrowReturnController.getLogById);
+router.get('/br/aggregated-transactions', borrowReturnController.getAggregatedTransactionData);
 router.put('/:id', borrowReturnController.updateLog);
 router.delete('/:id', borrowReturnController.deleteLog);
 

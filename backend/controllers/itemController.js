@@ -3,6 +3,10 @@ const Category = require('../models/CategoryModel');
 const { createNotification } = require('../utils/notificationService');
 const mongoose = require('mongoose');
 
+// Define low stock and out-of-stock thresholds
+const LOW_STOCK_THRESHOLD = 2; // Define your low stock threshold here
+const OUT_OF_STOCK_THRESHOLD = 0; // Define your out-of-stock threshold here
+
 // Create a new item
 exports.createItem = async (req, res) => {
   try {
@@ -83,33 +87,34 @@ exports.updateItem = async (req, res) => {
     const item = await Item.findById(req.params.id);
     if (!item) return res.status(404).json({ message: 'Item not found' });
 
-    // Store old category ID
     const oldCategoryId = item.category;
 
-    // Update the item
     const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-    // Update category itemCount
-    // Adjust item count in category if the category is changed
     if (oldCategoryId.toString() !== updatedItem.category.toString()) {
-      // Decrement itemCount in old category
       await Category.findByIdAndUpdate(
         oldCategoryId,
-        { $inc: { itemCount: -1 } } // Decrement itemCount by 1
+        { $inc: { itemCount: -1 } }
       );
-
-      // Increment itemCount in new category
       await Category.findByIdAndUpdate(
         updatedItem.category,
-        { $inc: { itemCount: 1 } } // Increment itemCount by 1
+        { $inc: { itemCount: 1 } }
       );
+    }
+
+    if (updatedItem.quantity <= OUT_OF_STOCK_THRESHOLD) {
+      await createNotification('Out of Stock', `Item ${updatedItem.itemName} is out of stock.`, null);
+    } else if (updatedItem.quantity <= LOW_STOCK_THRESHOLD) {
+      await createNotification('Low Stock', `Item ${updatedItem.itemName} has low stock.`, null);
     }
 
     res.status(200).json(updatedItem);
   } catch (err) {
+    console.error('Error updating item:', err.message);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Delete an item
 exports.deleteItem = async (req, res) => {
@@ -226,5 +231,29 @@ exports.getItemByBarcode = async (req, res) => {
   } catch (err) {
     console.error('Error fetching item by barcode:', err.message);
     res.status(500).json({ error: 'An error occurred while fetching the item' });
+  }
+};
+
+// Get low stock items
+exports.getLowStockItems = async (req, res) => {
+  try {
+    const lowStockItems = await Item.find({
+      quantity: { $gt: OUT_OF_STOCK_THRESHOLD, $lte: LOW_STOCK_THRESHOLD }
+    });
+    res.status(200).json(lowStockItems);
+  } catch (err) {
+    console.error('Error fetching low stock items:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get out-of-stock items
+exports.getOutOfStockItems = async (req, res) => {
+  try {
+    const outOfStockItems = await Item.find({ quantity: { $lte: OUT_OF_STOCK_THRESHOLD } });
+    res.status(200).json(outOfStockItems);
+  } catch (err) {
+    console.error('Error fetching out of stock items:', err.message);
+    res.status(500).json({ error: err.message });
   }
 };

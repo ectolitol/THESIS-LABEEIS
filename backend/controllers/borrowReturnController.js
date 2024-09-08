@@ -193,3 +193,30 @@ exports.deleteLog = async (req, res) => {
   }
 };
 
+exports.getAggregatedTransactionData = async (req, res) => {
+  try {
+    // Aggregate data to sum quantities by date
+    const data = await BorrowReturnLog.aggregate([
+      {
+        $project: {
+          dateTime: { $dateToString: { format: "%Y-%m-%d", date: "$dateTime" } },
+          items: 1
+        }
+      },
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: { date: "$dateTime" },
+          totalBorrowed: { $sum: "$items.quantityBorrowed" },
+          totalReturned: { $sum: "$items.quantityReturned" }
+        }
+      },
+      { $sort: { _id: 1 } } // Sort by date
+    ]);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching aggregated data:', error.message);
+    res.status(500).json({ message: 'Error fetching aggregated data', error: error.message });
+  }
+};

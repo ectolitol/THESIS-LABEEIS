@@ -1,0 +1,23 @@
+.chart-container {
+    display: flex;
+    width: 300px; // Set a fixed width for the container
+    height: 300px; // Set a fixed height for the container
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
+    margin: 0 auto; // Center the container horizontally
+  
+    .recharts-wrapper {
+      width: 100% !important; // Ensure the chart fills the container
+      height: 100% !important; // Ensure the chart fills the container
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .chart-container {
+      width: 250px; // Adjust width for smaller screens
+      height: 250px; // Adjust height for smaller screens
+      padding: 10px;
+    }
+  }
+  
