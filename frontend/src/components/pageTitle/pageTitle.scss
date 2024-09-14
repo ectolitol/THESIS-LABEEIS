@@ -23,6 +23,12 @@
           font-size: 1.2rem; /* Adjust the size as needed */
           color: #5b5858;
           cursor: pointer;
+          padding-top: 5px;
+        }
+
+        &:hover .icon-small {
+          transform: scale(1); /* Slightly increase icon size on hover */
+          color: #050505; /* Optional: Change icon color on hover */
         }
   
         .separator {

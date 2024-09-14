@@ -8,10 +8,10 @@ import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 
 const Widget = ({ type }) => {
-  const [userCount, setUserCount] = useState(0);
-  const [itemCount, setItemCount] = useState(0);
-  const [lowStockCount, setLowStockCount] = useState(0);
-  const [outOfStockCount, setOutOfStockCount] = useState(0);
+  const [userCount, setUserCount] = useState(null); // Set initial value to null for loading state
+  const [itemCount, setItemCount] = useState(null);
+  const [lowStockCount, setLowStockCount] = useState(null);
+  const [outOfStockCount, setOutOfStockCount] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -20,6 +20,7 @@ const Widget = ({ type }) => {
         setUserCount(response.data.length);
       } catch (error) {
         console.error("Error fetching users:", error);
+        setUserCount(0); // If there's an error, display 0
       }
     };
 
@@ -29,6 +30,7 @@ const Widget = ({ type }) => {
         setItemCount(response.data.length);
       } catch (error) {
         console.error("Error fetching items:", error);
+        setItemCount(0);
       }
     };
 
@@ -38,6 +40,7 @@ const Widget = ({ type }) => {
         setLowStockCount(response.data.length);
       } catch (error) {
         console.error("Error fetching low stock items:", error);
+        setLowStockCount(0);
       }
     };
 
@@ -47,6 +50,7 @@ const Widget = ({ type }) => {
         setOutOfStockCount(response.data.length);
       } catch (error) {
         console.error("Error fetching out-of-stock items:", error);
+        setOutOfStockCount(0);
       }
     };
 
@@ -78,7 +82,7 @@ const Widget = ({ type }) => {
     case "Total users":
       data = {
         title: "Total users",
-        counter: userCount,
+        counter: userCount !== null ? userCount : "Loading...",
         link: "See all users",
         icon: <PersonRoundedIcon
           className="icon"
@@ -93,7 +97,7 @@ const Widget = ({ type }) => {
     case "Total items":
       data = {
         title: "Total items",
-        counter: itemCount,
+        counter: itemCount !== null ? itemCount : "Loading...",
         link: "See all items",
         icon: <HomeRepairServiceRoundedIcon
           className="icon"
@@ -108,7 +112,7 @@ const Widget = ({ type }) => {
     case "Low stock":
       data = {
         title: "Low stock",
-        counter: lowStockCount,
+        counter: lowStockCount !== null ? lowStockCount : "Loading...", // Display 0 if no items, or Loading...
         link: "See details",
         icon: <TrendingDownRoundedIcon
           className="icon"
@@ -123,7 +127,7 @@ const Widget = ({ type }) => {
     case "Out of stock":
       data = {
         title: "Out of stock",
-        counter: outOfStockCount,
+        counter: outOfStockCount !== null ? outOfStockCount : "Loading...", // Display 0 if no items, or Loading...
         link: "See details",
         icon: <WarningAmberRoundedIcon
           className="icon"
@@ -143,15 +147,8 @@ const Widget = ({ type }) => {
     <div className="widget">
       <div className="left">
         <span className="title">{data.title}</span>
-        <span className="counter">{data.counter || "Loading..."}</span>
+        <span className="counter">{data.counter}</span>
         <span className="link">{data.link}</span>
-      </div>
-      <div className="right">
-        <div className="percentage positive">
-          <KeyboardArrowUpIcon />
-          20%
-        </div>
-        {data.icon}
       </div>
     </div>
   );

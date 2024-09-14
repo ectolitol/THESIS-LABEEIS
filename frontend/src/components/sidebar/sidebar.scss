@@ -1,7 +1,7 @@
 .sidebar {
-  width: 200px;
-  height: 100vh;
-  transition: width 0.1s ease;
+  width: 210px;
+  height: 100vh; // Ensure full viewport height
+  transition: width 0.2s ease;
   border-right: 0.5px solid #d7d6d6;
 
   .top {
@@ -20,6 +20,7 @@
       font-weight: bold;
       transition: opacity 0.3s ease, transform 0.3s ease;
       opacity: 1;
+      color: #050505; /* Logo color */
     }
 
     .toggle-btn {
@@ -32,7 +33,7 @@
 
   &.closed {
     width: 65px;
-    transition: width 0.3s ease;
+    transition: width 0.1s ease;
 
     .logo {
       opacity: 0;
@@ -42,7 +43,7 @@
     .icon + span {
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      transition: opacity 0.3s ease, visibility 0.1s ease;
     }
 
     .toggle-btn {
@@ -57,15 +58,35 @@
 
     li {
       position: relative;
-      display: flex;
-      align-items: center;
-      padding: 10px 10px 10px 20px;
-      transition: background-color 0.3s ease, font-weight 0.3s ease; /* Smooth transition */
-      
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: black;
+        transition: background-color 0.3s ease, font-weight 0.3s ease;
+
       .icon {
         margin-right: 10px;
         flex-shrink: 0;
         transition: transform 0.3s ease, color 0.3s ease; /* Smooth icon transition */
+        color: #050505; /* Icon color */
+      }
+
+      a {
+        color: black; /* Set link text color to black */
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+
+        span {
+          margin-left: 10px;
+        }
+
+        &:hover {
+          color: black; /* Ensure text stays black on hover */
+        }
       }
 
       &::before {
@@ -90,8 +111,9 @@
 
       &:hover .icon {
         transform: scale(1.2); /* Slightly increase icon size on hover */
-        color: #050505; /* Optional: Change icon color on hover */
+        color: #050505; /* Optional: Keep icon color black */
       }
     }
   }
+}
 }

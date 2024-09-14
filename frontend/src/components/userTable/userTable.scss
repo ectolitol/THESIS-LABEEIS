@@ -1,0 +1,90 @@
+.user-table-paper {
+  
+  }
+  
+  .user-table-grid {
+    width: 100%; /* Takes full width of the container */
+    flex: 1;
+    
+    .MuiDataGrid-columnSeparator {
+      display: none; // Hide column sepavrators if needed
+      color: aqua;
+    }
+  
+    .MuiDataGrid-columnHeader {
+      background-color: #f5f5f5; // Light background for header
+      font-weight: bold;
+  
+      
+    }
+  
+    .data-grid-header {
+      font-weight: bold;
+      
+    }
+
+    .status-cell{
+      padding: 5px;
+      border-radius: 5px;
+      
+
+        &.Pending {
+            color: goldenrod;
+            background-color: rgba(189, 189, 3, 0.103);
+          }
+      
+          &.Approved {
+            color: green;
+            background-color: rgba(0, 128, 0, 0.151);
+          }
+      
+          &.Declined {
+            color: red;
+            background-color: rgba(169, 0, 0, 0.149);
+          }
+      }
+  
+      .actions-container {
+        display: flex;
+        gap: 8px; /* Space between the buttons */
+        align-items: flex-start; /* Align buttons to the left */
+        margin-top: 10px;
+      }
+  
+    .view-button {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: rgb(52, 52, 235);
+      border: 1px line rgba(3, 3, 62, 0.951);
+      cursor: pointer;
+      
+    }
+  
+    .approve-button {
+      padding: 3px;
+      border-radius: 5px;
+      box-shadow: none;
+      
+
+    }
+  
+    .decline-button {
+      background-color: rgba(221, 38, 38, 0.884);
+      padding: 3px;
+      border-radius: 5px;
+      box-shadow: none;
+    }
+  
+    .MuiDataGrid-footerContainer {
+        position: sticky; /* Make the footer stick to the bottom of the table */
+        bottom: 0; /* Align it to the bottom */
+        background-color: #ffffff; /* Optional: Set a background color to make sure it stays visible */
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12); /* Optional: Add a shadow to separate it from the table */
+        z-index: 1; /* Ensure it stays on top of other content */
+      }
+    
+  }
+  
+  .dialog-title {
+    background-color: #f5f5f5; // Light background for dialog title
+  }

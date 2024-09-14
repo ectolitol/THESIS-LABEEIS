@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Notification = require('../models/NotificationModel');
+const notificationController = require('../controllers/notificationController'); // Import the controller
 
 // Route to get all notifications
 router.get('/', async (req, res) => {
@@ -11,6 +12,19 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: 'Error fetching notifications', error: error.message });
     }
 });
+
+// Route to get notifications for a specific user (Place this before the /:id route)
+router.get('/user/:userID', async (req, res) => {
+    try {
+        const notifications = await Notification.find({ userID: req.params.userID }).sort({ date: -1 });
+        res.json(notifications);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching notifications', error: error.message });
+    }
+});
+
+// Route to get a single notification by ID
+router.get('/:id', notificationController.getNotificationById);
 
 // Route to mark a notification as read
 router.patch('/:id/read', async (req, res) => {
@@ -29,14 +43,14 @@ router.patch('/:id/read', async (req, res) => {
     }
 });
 
-// Route to get notifications for a specific user
-router.get('/user/:userID', async (req, res) => {
+// Route to get unread notifications
+router.get('/notif/unread', async (req, res) => {
     try {
-        const notifications = await Notification.find({ userID: req.params.userID }).sort({ date: -1 });
-        res.json(notifications);
+      const unreadNotifications = await Notification.find({ isRead: false }).sort({ date: -1 });
+      res.json(unreadNotifications);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching notifications', error: error.message });
+      res.status(500).json({ message: 'Error fetching unread notifications', error: error.message });
     }
-});
+  });
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const User = require('../models/UserModel');
-const { sendAdminNotification, sendUserConfirmation } = require('../utils/emailService');
+const { sendAdminNotification, sendUserConfirmation, sendUserDeclineEmail } = require('../utils/emailService');
 const { generateQRCode, createPDFWithQRCode } = require('../utils/pdfService'); 
 const { createNotification } = require('../utils/notificationService');
 const path = require('path');
@@ -31,7 +31,8 @@ exports.approveUser = async (req, res) => {
   try {
       const { userId } = req.params;
 
-      const user = await User.findByIdAndUpdate(userId, { isApproved: true }, { new: true });
+      // Update status to 'Approved'
+      const user = await User.findByIdAndUpdate(userId, { status: 'Approved' }, { new: true });
 
       if (!user) {
           return res.status(404).json({ message: 'User not found' });
@@ -53,6 +54,41 @@ exports.approveUser = async (req, res) => {
       res.status(500).json({ message: 'Error approving user', error: error.message });
   }
 };
+
+// Decline user function
+exports.declineUser = async (req, res) => {
+  try {
+      const { userId } = req.params;
+      const { notesComments } = req.body; // Get comments from request body
+
+      // Validate the input
+      if (!notesComments) {
+          return res.status(400).json({ message: 'Rejection reason is required' });
+      }
+
+      // Update status to 'Declined' and add comments
+      const user = await User.findByIdAndUpdate(userId, { 
+          status: 'Declined',
+          notesComments
+      }, { new: true });
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Create a notification for the admin
+      await createNotification('User Registration Declined', `User ${user.fullName} was declined.`, null);
+
+      // Send decline email with the reason
+      await sendUserDeclineEmail(user, notesComments);
+
+      res.status(200).json({ message: 'User declined successfully', user });
+  } catch (error) {
+      console.error('Error declining user:', error);
+      res.status(500).json({ message: 'Error declining user', error: error.message });
+  }
+};
+
 
 // Get all users
 exports.getAllUsers = async (req, res) => {

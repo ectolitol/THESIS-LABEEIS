@@ -1,0 +1,52 @@
+.userList{
+  display: flex;
+    
+   .userListContainer{
+        flex: 6;
+        flex-grow: 1; /* The content takes up remaining space */
+        overflow-x: hidden; /* To prevent unwanted horizontal scroll */
+        
+        .userListTable{
+            flex: 1;
+            -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+            box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+            padding: 20px;
+            margin: 20px;
+            
+   
+               .userListTableTitle{
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  
+                  
+                  .title {
+                     font-weight: bold;
+                     color: gray;
+                     margin-bottom: 15px;  
+                   }
+
+                  .link{
+                     text-decoration: none;
+                     margin-bottom: 15px;  
+                  }
+
+                  .addUser{
+                     border: none;
+                     padding: 5px;
+                     background-color: gray;
+                     border-radius: 5px;
+                     cursor: pointer;
+                     color: white;
+                     font-size: 15px;
+                     transition: background-color 0.3s ease;
+
+                     &:hover {
+                        background-color: darkgray;
+                     }
+                  }
+               }
+         }
+   }
+
+}

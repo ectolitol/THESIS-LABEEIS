@@ -150,6 +150,20 @@ exports.getTransactionLogs = async (req, res) => {
   }
 };
 
+// Get transactions by user ID
+exports.getUserTransactions = async (req, res) => {
+  try {
+    const transactions = await BorrowReturnLog.find({ userID: req.params.id });
+    if (!transactions) {
+      return res.status(404).json({ message: 'No transactions found for this user' });
+    }
+    res.status(200).json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching transactions', error: error.message });
+  }
+};
+
+
 // Get all logs
 exports.getAllLogs = async (req, res) => {
   try {

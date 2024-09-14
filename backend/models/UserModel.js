@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema({
   },
   registrationCard: { type: String },
   updatedClassSchedule: { type: String },
-  isApproved: { type: Boolean, default: false }
+  status: { 
+    type: String, 
+    enum: ['Pending', 'Approved', 'Declined'], 
+    default: 'Pending' 
+  },
+  notesComments: { type: String }
 }, {
   timestamps: true,  // Add createdAt and updatedAt fields automatically
 });

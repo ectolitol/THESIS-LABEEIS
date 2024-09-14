@@ -2,11 +2,12 @@ import { useState } from 'react';
 import "./home.scss";
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
+import PageTitle from '../../components/pageTitle/PageTitle';
 import Widget from "../../components/widget/Widget";
-import Table from "../../components/table/Table";
+import BorrowReturnTable from "../../components/borrowReturnTable/BorrowReturnTable";
 import LogChart from "../../components/logChart/LogChart";
 import StockChart from "../../components/stockChart/StockChart";
-import PageTitle from '../../components/pageTitle/PageTitle';
+
 
 const Home = () => {
   return (
@@ -24,7 +25,7 @@ const Home = () => {
         </div>
         <div className="listContainer">
           <div className="listTitle">Borrow/Return Transactions</div>
-          <Table/>
+          <BorrowReturnTable/>
           </div>
         </div>
       </div>

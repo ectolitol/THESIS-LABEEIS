@@ -1,14 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './navbar.scss';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ContrastRoundedIcon from '@mui/icons-material/ContrastRounded';
-import FullscreenExitRoundedIcon from '@mui/icons-material/FullscreenExitRounded';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import Tooltip from '@mui/material/Tooltip';
+import axios from 'axios';
 
 const Navbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const notificationsRef = useRef(null);
+  const profileRef = useRef(null);
+
+  // Fetch unread notifications count and details
+  useEffect(() => {
+    const fetchUnreadNotifications = async () => {
+      try {
+        // Fetch unread notifications
+        const response = await axios.get('/api/notifications/notif/unread');
+        setNotifications(response.data);
+        setUnreadCount(response.data.length);
+      } catch (error) {
+        console.error('Error fetching unread notifications:', error);
+      }
+    };
+
+    fetchUnreadNotifications();
+  }, [showNotifications]); // Fetch notifications when dropdown is opened
+
+  const toggleNotificationsDropdown = () => {
+    setShowNotifications(prev => !prev);
+    if (showProfile) setShowProfile(false); // Close profile if open
+  };
+
+  const toggleProfileDropdown = () => {
+    setShowProfile(prev => !prev);
+    if (showNotifications) setShowNotifications(false); // Close notifications if open
+  };
+
+  // Handle clicks outside of profile and notifications dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        (profileRef.current && !profileRef.current.contains(event.target)) &&
+        (notificationsRef.current && !notificationsRef.current.contains(event.target))
+      ) {
+        setShowProfile(false);
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="navbar">
@@ -20,29 +69,76 @@ const Navbar = () => {
         </div>
 
         <div className="items">
-          <div className="item">
-            <ContrastRoundedIcon className="icon" />
-          </div>
+          <Tooltip title="Toggle Theme" disableInteractive>
+            <div className="item">
+              <ContrastRoundedIcon className="icon" />
+            </div>
+          </Tooltip>
 
-          <div className="item" onClick={() => setShowNotifications(!showNotifications)}>
-            <NotificationsActiveRoundedIcon className="icon" />
-            <div className="counter">1</div>
-            {showNotifications && (
-              <div className="dropdown">
-                <p>You have new notifications</p>
-              </div>
-            )}
-          </div>
+          <Tooltip title="Notifications" disableInteractive>
+            <div 
+              className="item" 
+              ref={notificationsRef} 
+              onClick={toggleNotificationsDropdown}
+            >
+              <NotificationsActiveRoundedIcon className="icon" />
+              {unreadCount > 0 && (
+                <div className="counter">{unreadCount}</div>
+              )}
+              {showNotifications && (
+                <div className="dropdown">
+                  {notifications.length === 0 ? (
+                    <p>No notifications</p>
+                  ) : (
+                    notifications.map(notification => (
+                      <Link
+                        to={`/notifications/${notification._id}`}
+                        key={notification._id}
+                        className="notification-item"
+                        onClick={() => {
+                          // Mark notification as read
+                          axios.patch(`/api/notifications/${notification._id}/read`);
+                          setUnreadCount(prevCount => prevCount - 1);
+                          setShowNotifications(false);
+                        }}
+                      >
+                        <p>{notification.message}</p>
+                      </Link>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          </Tooltip>
 
-          <div className="item" onClick={() => setShowProfile(!showProfile)}>
-            <AccountCircleRoundedIcon className="icon" />
-            {showProfile && (
-              <div className="dropdown">
-                <p>Admin Profile</p>
-                <p>Logout</p>
-              </div>
-            )}
-          </div>
+          <Tooltip title="Profile" disableInteractive>
+  <div 
+    className="item" 
+    ref={profileRef} 
+    onClick={toggleProfileDropdown}
+  >
+    <AccountCircleRoundedIcon className="icon" />
+    {showProfile && (
+      <div className="dropdown">
+        <Link 
+          to="/profile" 
+          className="dropdown-item" 
+          onClick={() => setShowProfile(false)}
+        >
+          Admin Profile
+        </Link>
+        <Link 
+          to="/logout" 
+          className="dropdown-item" 
+          onClick={() => setShowProfile(false)}
+        >
+          Logout
+        </Link>
+      </div>
+    )}
+  </div>
+</Tooltip>
+
         </div>
       </div>
     </div>
