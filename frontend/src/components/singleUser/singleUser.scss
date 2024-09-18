@@ -2,66 +2,22 @@
   flex: 6;
 }
 
-.userEditButton {
-  width: 80px;
-  border: none;
-  padding: 5px;
-  background-color: gray;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: darkgray;
-  }
-}
-
-.userDeleteButton {
-  width: 80px;
-  border: none;
-  padding: 5px;
-  background-color: rgb(218, 22, 22);
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  font-size: 16px;
-  margin-left: 10px; // Adjust the spacing between buttons
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: darkred;
-  }
-}
-
-.deleteConfirmation {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.deleteConfirmation button {
-  margin: 10px 40px;
-  padding: 10px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.deleteConfirmation button:hover {
-  background-color: #f0f0f0;
-}
-
-
 .singleUserContainer {
   display: flex;
   flex-direction: column;
+
+  .deleteConfirmation{
+
+    top: 31%;
+    
+    .yes, .no{
+      color: black;
+      border: #333 solid 0.1px;
+      padding: 5px;
+      margin-bottom: 10px;
+      
+    }
+  }
 }
 
 .userShow {
@@ -72,154 +28,198 @@
   display: flex;
   flex-direction: column;
 
-  .userHeader {
+  .userInfo {
+    display: flex;
+    align-items: center; // Vertically align items in the center
+    gap: 10px; // Space between the items
+    padding: 10px; // Optional padding for better spacing
+    margin-bottom: none;
+  }
+  
+  .userIcon {
+    font-size: 80px; // Adjust size as needed
+    color: gray; // Set icon color
+  }
+  
+  .userDetailsTop {
+    display: flex;
+    flex-direction: column; // Stack text vertically
+  }
+  
+  .userDetailsTop p {
+    margin: 0; // Remove default margin
+    font-size: 24px; // Adjust font size as needed
+    color: gray; // Set text color
+    font-weight: bold;
+  }
+  
+  .userDetailsTop h4 {
+    margin: 0; // Remove default margin
+    font-size: 14px; // Adjust font size as needed
+    color: gray; // Set text color
+  }
+
+.userHeader{
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+    color: gray;
 
-  .userTitle {
+  .itemTitle {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 24px;
     color: gray;
   }
 
-  .userInfo {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
+    .buttonGroup{
+      display: flex;
+
+  
+  .userEditButton,
+.userDeleteButton {
+  width: 80px;
+  border: none;
+  padding: 3px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+
+}
+
+.userEditButton {
+  background-color: gray;
+
+  &:hover {
+    background-color: darkgray;
   }
+}
 
-  .userIcon {
-    font-size: 100px;
-    color: gray;
-    margin-right: 20px;
+.userDeleteButton {
+  background-color: rgb(218, 22, 22);
+  margin-left: 10px;
+
+  &:hover {
+    background-color: darkred;
   }
+}
+} 
+}
 
-  .userDetailsTop {
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
-
-    p {
-      margin: 5px 0;
-      font-size: 30px;
-      color: #555;
-      font-weight: bold;
-
-    }
-
-    h4 {
-      font-size: 15px;
-      color: #555;
-
-    }
-  }
+}
 
 .userDetailsBottom {
-padding: 20px;
-display: flex;
-flex-direction: column; // Stack the items vertically
-gap: 10px; // Optional: Add some space between items
-
-p {
-  margin: 0; // Remove default margin
-  font-size: 16px;
-  color: #555;
-
-  .link {
-    color: #333; // Set link color to black
-    text-decoration: none; // Remove underline
-  }
-
-  .link:hover {
-    text-decoration: underline; // Optional: Add underline on hover for better UX
-  }
-}
-
-strong {
-  color: #333;
-}
-}
-
-}
-
-.userUpdate {
-  flex: 0.5;
   padding: 20px;
-  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-  margin: 10px 20px;
-  display: none;
-  flex-direction: column;
-}
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 
-.singleUserContainer.editing {
-  flex-direction: row;
-}
+  p {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    margin: 0;
 
-.userUpdate.show {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 4px;
-
-  h2 {
-    font-size: 1.25rem;
-    color: gray;
+    strong {
+      font-weight: bold;
+      margin-right: 10px;
+    }
   }
+}
 
-  form {
+/* Drawer Styles */
+.drawerContent {
+  padding: 20px;
+
+  .drawerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+    }
+
+    .closeButton {
+      background: transparent;
+      border: 2px solid black; // Initial border color
+      width: 30px; // Set width and height for the circle
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px; // Adjust font size as needed
+      cursor: pointer;
+      color: black;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+      &:hover {
+        background-color: gray; // Background color on hover
+        color: white; // Text color on hover
+        border-color: gray; // Border color on hover
+      }
+
+      &:focus {
+        outline: none; // Remove default focus outline
+      }
+    }
+  }
+  .editForm {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    gap: 15px;
 
     label {
-      margin-bottom: 10px;
-      font-size: 0.9rem;
-      color: #555;
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+      color: #333;
 
       input {
-        width: 365px;
-        padding: 10px;
+        padding: 8px;
         border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        
-        &:focus {
-          border-color: #007bff;
-          outline: none;
-        }
+        border-radius: 5px;
+        margin-top: 5px;
+        width: 330px; // Ensure the input takes full width
       }
     }
 
     button {
-      padding: 10px;
+      padding: 5px;
       border: none;
-      border-radius: 4px;
-      background-color: #007bff;
-      color: #fff;
-      font-size: 0.9rem;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      width: 350px;
 
       &:hover {
-        background-color: #0056b3;
+        background-color: #218838;
       }
     }
   }
 }
 
+/* For small screens (like mobile) */
+@media only screen and (max-width: 768px) {
+  .drawerContent {
+    padding: 10px;
+  }
 
-.bottom {
-  -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-  padding: 20px;
-  margin: 10px 20px;
+  .editForm label {
+    font-size: 14px;
+  }
 
-  .title {
-    font-size: 16px;
-    color: gray;
-    margin-bottom: 20px;
+  .editForm input {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
   }
 }

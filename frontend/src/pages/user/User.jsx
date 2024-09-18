@@ -4,7 +4,7 @@ import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
 import SingleUser from '../../components/singleUser/SingleUser';
 import SingleTransaction from '../../components/singleTransaction/SingleTransaction';
-
+ 
 const User = () => {
   return (
     <div className="user">
@@ -15,9 +15,9 @@ const User = () => {
             <PageTitle page="User"/>
             <SingleUser/>
           <div className="bottom">
-            <h1 className="title">User Transactions</h1>
+            <div className="userTitle">User Transactions</div>
             <SingleTransaction/>
-          </div>
+          </div> 
         </div>
       </div>
     </div>

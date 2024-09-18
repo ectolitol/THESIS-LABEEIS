@@ -1,18 +1,19 @@
-import "./singleUser.scss"
+import "./singleUser.scss";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 const SingleUser = () => {
   const { userId } = useParams(); // Use 'userId' to match route parameter
   const [user, setUser] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // Drawer state
   const [updatedUser, setUpdatedUser] = useState({});
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // New state for delete confirmation
-  const navigate = useNavigate(); // Use navigate for redirecting after delete
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userId) {
@@ -22,7 +23,7 @@ const SingleUser = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`/api/users/${userId}`); // Use 'userId' in URL
+      const response = await axios.get(`/api/users/${userId}`);
       setUser(response.data);
       setUpdatedUser(response.data);
     } catch (error) {
@@ -31,7 +32,7 @@ const SingleUser = () => {
   };
 
   const handleEditClick = () => {
-    setIsEditing((prev) => !prev);
+    setIsEditing((prev) => !prev); // Toggle drawer visibility
   };
 
   const handleInputChange = (e) => {
@@ -40,12 +41,10 @@ const SingleUser = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(`/api/users/${userId}`, updatedUser); // Use 'userId' in URL
+      const response = await axios.put(`/api/users/${userId}`, updatedUser);
       if (response.status === 200) {
         setIsEditing(false);
-        fetchUser(); // Refresh user details after saving
-      } else {
-        console.error('Error updating user:', response);
+        fetchUser();
       }
     } catch (error) {
       console.error('Error saving user:', error.response ? error.response.data : error.message);
@@ -53,13 +52,13 @@ const SingleUser = () => {
   };
 
   const handleDeleteClick = () => {
-    setShowDeleteConfirmation(true); // Show confirmation dialog
+    setShowDeleteConfirmation(true);
   };
 
   const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`/api/users/${userId}`); // Send delete request
-      navigate('/users'); // Redirect to user list or another page after deletion
+      await axios.delete(`/api/users/${userId}`);
+      navigate('/users');
     } catch (error) {
       console.error('Error deleting user:', error.response ? error.response.data : error.message);
     }
@@ -67,18 +66,20 @@ const SingleUser = () => {
 
   if (!user) return <div>Loading...</div>;
 
+  const formatDate = (date) => new Date(date).toLocaleDateString();
+
   return (
     <div className="singleUser">
-      <div className={`singleUserContainer ${isEditing ? "editing" : ""}`}>
+      <div className="singleUserContainer">
         <div className="userShow">
           <div className="userHeader">
-            <h1 className="userTitle">User Profile</h1>
-            <div>
-              <button className="userEditButton" onClick={handleEditClick}>
-                {isEditing ? "Close" : "Edit"}
-              </button>
-              <button className="userDeleteButton" onClick={handleDeleteClick}>Delete</button>
-            </div>
+              <h1 className="userTitle">User Profile</h1>
+              <div className="buttonGroup">
+                <Button className="userEditButton" onClick={handleEditClick}>
+                  {isEditing ? "Close" : "Edit"}
+                </Button>
+                <Button className="userDeleteButton" onClick={handleDeleteClick}>Delete</Button>
+              </div>
           </div>
 
           <div className="userInfo">
@@ -92,82 +93,133 @@ const SingleUser = () => {
           <div className="userDetailsBottom">
             <p><strong>Gender:</strong> {user.gender}</p>
             <p><strong>Address:</strong> {user.address}</p>
-            <p><strong>Program:</strong> {user.program}</p>
+            <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Year & Section:</strong> {user.yearAndSection}</p>
             <p><strong>Student No:</strong> {user.studentNo}</p>
-            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Program:</strong> {user.program}</p>
             <p><strong>Contact Number:</strong> {user.contactNumber}</p>
             <p>
               <strong>
                 <a href={user.registrationCard} target="_blank" rel="noopener noreferrer" className="link">
-                  Registration Card Link
+                  Registration Card
                 </a>
               </strong>
             </p>
             <p>
               <strong>
                 <a href={user.updatedClassSchedule} target="_blank" rel="noopener noreferrer" className="link">
-                  Updated Class Schedule Link
+                  Updated Class Schedule
                 </a>
               </strong>
             </p>
+            <p><strong>Date Registered:</strong> {formatDate(user.createdAt)}</p>
+            <p><strong>Date Updated:</strong> {formatDate(user.updatedAt)}</p>
           </div>
         </div>
 
-        {isEditing && (
-          <div className="userUpdate show">
-            {/* Form for editing */}
-            <h2>Edit User Information</h2>
-            <form>
-              <label>
-                Gender:
-                <input type="text" name="gender" value={updatedUser.gender} onChange={handleInputChange} />
-              </label>
-              <label>
-                Address:
-                <input type="text" name="address" value={updatedUser.address} onChange={handleInputChange} />
-              </label>
-              <label>
-                Program:
-                <input type="text" name="program" value={updatedUser.program} onChange={handleInputChange} />
-              </label>
-              <label>
-                Year & Section:
-                <input type="text" name="yearAndSection" value={updatedUser.yearAndSection} onChange={handleInputChange} />
-              </label>
-              <label>
-                Student No:
-                <input type="text" name="studentNo" value={updatedUser.studentNo} onChange={handleInputChange} />
-              </label>
-              <label> 
-                Email:
-                <input type="email" name="email" value={updatedUser.email} onChange={handleInputChange} />
-              </label>
-              <label>
-                Contact Number:
-                <input type="text" name="contactNumber" value={updatedUser.contactNumber} onChange={handleInputChange} />
-              </label>
-              <label>
-                Registration Card Link:
-                <input type="text" name="registrationCard" value={updatedUser.registrationCard} onChange={handleInputChange} />
-              </label>
-              <label>
-                Updated Class Schedule Link:
-                <input type="text" name="updatedClassSchedule" value={updatedUser.updatedClassSchedule} onChange={handleInputChange} />
-              </label>
-              <button type="button" onClick={handleSave}>Save</button>
+        {/* Drawer component */}
+        <Drawer
+          anchor="right"
+          open={isEditing}
+          onClose={handleEditClick}
+          PaperProps={{
+            sx: { width: { xs: '100%', sm: '400px' } },  // Full width on small screens, 400px on larger
+          }}>
+          <div className="drawerContent">
+            <div className="drawerHeader">
+              <h2>Edit User</h2>
+              <Button className="closeButton" onClick={handleEditClick}>✖</Button>
+            </div>
+            <form className="editForm">
+              <TextField
+                label="Gender"
+                name="gender"
+                value={updatedUser.gender || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Address"
+                name="address"
+                value={updatedUser.address || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Program"
+                name="program"
+                value={updatedUser.program || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Year & Section"
+                name="yearAndSection"
+                value={updatedUser.yearAndSection || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Student No"
+                name="studentNo"
+                value={updatedUser.studentNo || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                value={updatedUser.email || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Contact Number"
+                name="contactNumber"
+                value={updatedUser.contactNumber || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Registration Card"
+                name="registrationCard"
+                value={updatedUser.registrationCard || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Class Schedule"
+                name="updatedClassSchedule"
+                value={updatedUser.updatedClassSchedule || ''}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <Button type="button" variant="contained" color="primary" onClick={handleSave}>
+                Save
+              </Button>
             </form>
+          </div>
+        </Drawer>
+
+        {/* Delete confirmation modal */}
+        {showDeleteConfirmation && (
+          <div className="deleteConfirmation">
+            <p>Are you sure you want to delete this user?</p>
+            <Button className="yes" variant="contained" color="primary" onClick={handleDeleteConfirm}>Yes</Button>
+            <Button className="no" variant="outlined" color="secondary" onClick={() => setShowDeleteConfirmation(false)}>No</Button>
           </div>
         )}
       </div>
-
-      {showDeleteConfirmation && (
-        <div className="deleteConfirmation">
-          <p>Are you sure you want to delete this user?</p>
-          <button onClick={handleDeleteConfirm}>Yes, Delete</button>
-          <button onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
-        </div>
-      )}
     </div>
   );
 };

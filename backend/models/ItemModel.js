@@ -17,10 +17,17 @@ const ItemSchema = new mongoose.Schema({
     unique: true, 
     required: true 
   },
+  image: {
+    type: String, // Store image URL or path
+    default: '' // Optional: set a default value or leave it blank
+  },
   category: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Category', 
     required: true 
+  },
+  brand: {
+    type: String,
   },
   model: { 
     type: String 
@@ -33,9 +40,39 @@ const ItemSchema = new mongoose.Schema({
     type: Number, 
     required: true 
   },
+  condition: {
+    type: String,
+    enum: ['New', 'Excellent', 'Good', 'Fair', 'Poor', 'Defective', 'Missing'],
+    default: '',
+    required: true 
+  },
   location: { 
-    type: String 
+    type: String,
+    required: true  
+  },
+  calibrationNeeded: {
+    type: String,
+    enum: ['Yes', 'No'], 
+    default: '',
+    required: true
+  },
+  calibrationDueDate: {
+    type: Date,
+  },
+  calibrationStatus: {
+    type: String,
+    enum: ['Pending', 'In Progress', 'Completed', 'Overdue'],
+
+  },
+  calibrationFrequency: {
+    type: String,
+    enum: ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Annually', 'Other'],
+  },
+  notesComments: {
+    type: String,
   }
+}, { 
+  timestamps: true, // Add timestamps option here
 });
 
 module.exports = mongoose.model('Item', ItemSchema);

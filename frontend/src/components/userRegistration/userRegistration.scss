@@ -1,4 +1,4 @@
-.UserRegistration {
+.userRegistration {
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
     box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
     padding: 20px;
@@ -14,7 +14,6 @@
       color: gray;
       margin-bottom: 15px;
       font-size: 1.5rem;
-      margin-right: 130px;
     }
   
     .newUserForm {
@@ -46,6 +45,7 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        width: 400px;
   
         &:hover {
           background-color: #218838;

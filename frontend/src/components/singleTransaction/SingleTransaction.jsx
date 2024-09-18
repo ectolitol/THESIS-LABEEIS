@@ -25,7 +25,7 @@ const SingleTransaction = () => {
   const [orderBy, setOrderBy] = useState("dateTime");
 
   useEffect(() => {
-    if (userId) {
+    if (userId) { 
       fetchUserTransactions();
     }
   }, [userId]);
@@ -37,7 +37,7 @@ const SingleTransaction = () => {
     } catch (error) {
       console.error('Error fetching user transactions:', error.response ? error.response.data : error.message);
     }
-  };
+  }; 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

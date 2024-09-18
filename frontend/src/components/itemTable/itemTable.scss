@@ -1,0 +1,29 @@
+.itemTable {
+  
+    .MuiDataGrid-root {
+      background-color: white;
+    }
+  
+    .MuiDataGrid-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    button {
+      margin: 5px;
+    }
+  
+    img {
+      border-radius: 8px;
+    }
+
+    .view-button{
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: rgb(52, 52, 235);
+      border: 1px line rgba(3, 3, 62, 0.951);
+      cursor: pointer;
+    }
+  }
+  

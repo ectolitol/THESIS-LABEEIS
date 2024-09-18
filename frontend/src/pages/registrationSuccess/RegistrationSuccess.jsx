@@ -18,5 +18,5 @@ const RegistrationSuccess = () => {
     </div>
   )
 }
-
+ 
 export default RegistrationSuccess

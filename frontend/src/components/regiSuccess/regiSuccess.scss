@@ -9,5 +9,28 @@
         font-size: 1.5rem;
         font-weight: bold;
         color: gray;
-    
-}
+
+        .successTitle, .itemList{
+                margin-top: 20px;
+        
+                .link{
+                   text-decoration: none;
+                   margin-bottom: 15px;  
+                }
+        
+                .addItem{
+                   border: none;
+                   padding: 5px;
+                   background-color: gray;
+                   border-radius: 5px;
+                   cursor: pointer;
+                   color: white;
+                   font-size: 15px;
+                   transition: background-color 0.3s ease;
+        
+                   &:hover {
+                      background-color: darkgray;
+                   }
+                }            
+        }
+} 

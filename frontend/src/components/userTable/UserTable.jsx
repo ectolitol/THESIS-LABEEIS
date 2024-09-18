@@ -203,6 +203,6 @@ const UserTable = () => {
       </Dialog>
     </>
   );
-};
+}; 
 
 export default UserTable;

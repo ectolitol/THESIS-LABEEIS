@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 import "./UserRegistration.scss";
 
 const UserRegistration = () => {
@@ -60,7 +60,7 @@ const UserRegistration = () => {
   };
 
   return (
-    <div className="UserRegistration">
+    <div className="userRegistration">
       <div className="newUserTitle">New User Registration</div>
 
       <form className="newUserForm" onSubmit={handleSubmit}>

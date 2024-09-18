@@ -163,6 +163,30 @@ exports.getUserTransactions = async (req, res) => {
   }
 };
 
+// Get transactions by item barcode
+exports.getItemTransactions = async (req, res) => {
+  try {
+    const itemBarcode = req.params.itemBarcode;
+    
+    // Ensure itemBarcode is properly sanitized/validated as needed
+    if (!itemBarcode) {
+      return res.status(400).json({ message: 'Item barcode is required' });
+    }
+
+    // Find logs where any item's barcode matches the provided itemBarcode
+    const logs = await BorrowReturnLog.find({ 'items.itemBarcode': itemBarcode });
+
+    if (logs.length === 0) {
+      return res.status(404).json({ message: 'No transactions found for this item barcode' });
+    }
+
+    res.json(logs);
+  } catch (error) {
+    console.error('Error fetching item transactions:', error.message);
+    res.status(500).json({ message: 'Error fetching item transactions', error: error.message });
+  }
+};
+
 
 // Get all logs
 exports.getAllLogs = async (req, res) => {

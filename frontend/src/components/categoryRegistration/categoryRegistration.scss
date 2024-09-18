@@ -1,0 +1,59 @@
+.categoryRegistration {
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 20px;
+    margin: 20px;
+    background-color: #fff;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  
+    .newCategoryTitle {
+      font-weight: bold;
+      color: gray;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+  
+    .newCategoryForm {
+      width: 100%;
+      max-width: 400px;
+    }
+  
+    .newCategoryField {
+      margin-bottom: 15px;
+    }
+  
+    .newCategoryField label {
+      display: block;
+      margin-bottom: 5px;
+    }
+  
+    .newCategoryField input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  
+    .submitButton {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      width: 418px;
+    }
+  
+    .errorMessages {
+      margin-top: 10px;
+      color: red;
+    }
+  }

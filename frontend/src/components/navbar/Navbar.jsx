@@ -21,7 +21,6 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
-        // Fetch unread notifications
         const response = await axios.get('/api/notifications/notif/unread');
         setNotifications(response.data);
         setUnreadCount(response.data.length);
@@ -59,6 +58,25 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Dynamic link generator based on notification type
+  const generateNotificationLink = (notification) => {
+    const type = notification.type.toLowerCase();
+  
+    if (type.includes('item')) {
+      return `/items`; // Redirect to low stock items page
+    } else if (type.includes('user')) {
+      return `/users`; // Redirect to new users page
+    } else if (type.includes('overdue')) {
+      return `/borrow-return`; // Redirect to overdue transactions page
+    }else if (type.includes('stock')) {
+      return `/items`; // Redirect to new users page
+    } else {
+      return `/notifications/${notification._id}`; // Fallback link for generic notification page
+    }
+    
+  };
+  
+
   return (
     <div className="navbar">
       <div className="logo">LABEEIS</div>
@@ -92,7 +110,7 @@ const Navbar = () => {
                   ) : (
                     notifications.map(notification => (
                       <Link
-                        to={`/notifications/${notification._id}`}
+                        to={generateNotificationLink(notification)}
                         key={notification._id}
                         className="notification-item"
                         onClick={() => {
@@ -112,33 +130,32 @@ const Navbar = () => {
           </Tooltip>
 
           <Tooltip title="Profile" disableInteractive>
-  <div 
-    className="item" 
-    ref={profileRef} 
-    onClick={toggleProfileDropdown}
-  >
-    <AccountCircleRoundedIcon className="icon" />
-    {showProfile && (
-      <div className="dropdown">
-        <Link 
-          to="/profile" 
-          className="dropdown-item" 
-          onClick={() => setShowProfile(false)}
-        >
-          Admin Profile
-        </Link>
-        <Link 
-          to="/logout" 
-          className="dropdown-item" 
-          onClick={() => setShowProfile(false)}
-        >
-          Logout
-        </Link>
-      </div>
-    )}
-  </div>
-</Tooltip>
-
+            <div 
+              className="item" 
+              ref={profileRef} 
+              onClick={toggleProfileDropdown}
+            >
+              <AccountCircleRoundedIcon className="icon" />
+              {showProfile && (
+                <div className="dropdown">
+                  <Link 
+                    to="/profile" 
+                    className="dropdown-item" 
+                    onClick={() => setShowProfile(false)}
+                  >
+                    Admin Profile
+                  </Link>
+                  <Link 
+                    to="/logout" 
+                    className="dropdown-item" 
+                    onClick={() => setShowProfile(false)}
+                  >
+                    Logout
+                  </Link>
+                </div>
+              )}
+            </div>
+          </Tooltip>
         </div>
       </div>
     </div>

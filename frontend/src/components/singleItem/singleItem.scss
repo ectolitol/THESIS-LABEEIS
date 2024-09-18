@@ -1,0 +1,208 @@
+.singleItem {
+  flex: 6; // Same as .singleUser
+  cursor: auto;
+}
+
+.deleteConfirmation {
+  position: fixed;
+  top: 34.5%;
+  left: 85.3%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 350px;
+  border-radius: 10px;
+
+  p {
+    padding: 10px;
+  }
+
+  button {
+    margin-inline-start: 70px;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.singleItemContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.itemShow {
+  flex: 1;
+  padding: 20px;
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  margin: 10px 20px;
+  display: flex;
+  flex-direction: column;
+
+  .itemInfo {
+    display: flex;
+    align-items: center;
+  }
+
+  .itemImage {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .itemDetailsTop {
+    display: flex;
+    flex-direction: column;
+
+    h4 {
+      font-size: 15px;
+      color: #555;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 30px;
+      color: #555;
+      font-weight: bold;
+    }
+  }
+
+  .itemDetailsBottom {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // Create three equal-width columns
+    gap: 15px; // Space between grid items
+
+    p {
+      margin: 0; // Remove default margin
+      font-size: 16px;
+      display: flex; // Align content within each cell
+      align-items: center;
+
+      strong {
+        color: rgb(67, 67, 67);
+        font-weight: bold;
+        margin-right: 10px; // Add space between label and value
+      }
+    }
+  }
+}
+
+.bottom2 {
+  padding: 20px;
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  margin: 10px 20px;
+  display: flex;
+
+  .descrip {
+    padding: 20px;
+
+    p {
+      margin: 0; // Remove default margin
+      font-size: 16px;
+      display: flex; // Align content within each cell
+      align-items: start;
+      margin-bottom: 15px;
+
+      strong {
+        color: rgb(67, 67, 67);
+        font-weight: bold;
+        margin-right: 10px; // Add space between label and value
+      }
+    }
+  }
+}
+
+/* Drawer Styles */
+.drawerContent {
+  padding: 20px;
+
+  .drawerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+    }
+
+    .closeButton {
+      background: transparent;
+      border: 2px solid black; // Initial border color
+      width: 30px; // Set width and height for the circle
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px; // Adjust font size as needed
+      cursor: pointer;
+      color: black;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+      &:hover {
+        background-color: gray; // Background color on hover
+        color: white; // Text color on hover
+        border-color: gray; // Border color on hover
+      }
+
+      &:focus {
+        outline: none; // Remove default focus outline
+      }
+    }
+  }
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .buttonGroup {
+    display: flex;
+  
+    .itemEditButton, .itemDeleteButton {
+      width: 80px;
+      border: none;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+  
+    .itemEditButton {
+      background-color: gray;
+  
+      &:hover {
+        background-color: darkgray;
+      }
+    }
+  
+    .itemDeleteButton {
+      background-color: rgb(218, 22, 22);
+      margin-left: 10px;
+  
+      &:hover {
+        background-color: darkred;
+      }
+    }
+  }
+
+  .itemTitle {
+    font-weight: bold;
+    font-size: 24px;
+    color: gray;
+  }
+}

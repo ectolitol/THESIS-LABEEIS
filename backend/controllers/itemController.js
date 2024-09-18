@@ -3,29 +3,132 @@ const Category = require('../models/CategoryModel');
 const { createNotification } = require('../utils/notificationService');
 const mongoose = require('mongoose');
 
-// Define low stock and out-of-stock thresholds
-const LOW_STOCK_THRESHOLD = 2; // Define your low stock threshold here
-const OUT_OF_STOCK_THRESHOLD = 0; // Define your out-of-stock threshold here
+const LOW_STOCK_THRESHOLD = 2;
+const OUT_OF_STOCK_THRESHOLD = 0;
 
-// Create a new item
+// Create new item
 exports.createItem = async (req, res) => {
   try {
-    const newItem = new Item(req.body);
+    const file = req.file || null;
+    const imagePath = file ? `/uploads/${file.filename}` : '';
+
+    const { itemName, quantity, category, categoryName, newCategory } = req.body;
+
+    if (!itemName || !quantity) {
+      return res.status(400).json({ error: 'Item name and quantity are required.' });
+    }
+
+    let categoryDoc;
+
+    // Check for category provided by ID
+    if (category && mongoose.isValidObjectId(category.trim())) {
+      categoryDoc = await Category.findById(category.trim());
+      if (!categoryDoc) {
+        return res.status(400).json({ error: 'Invalid category ID.' });
+      }
+    } else if (newCategory && newCategory.trim() !== '') {
+      // Create new category if provided
+      categoryDoc = await Category.findOne({ categoryName: newCategory.trim() });
+      if (!categoryDoc) {
+        categoryDoc = new Category({ categoryName: newCategory.trim() });
+        await categoryDoc.save();
+      }
+    } else if (categoryName && categoryName.trim() !== '') {
+      // Check for existing category by name
+      categoryDoc = await Category.findOne({ categoryName: categoryName.trim() });
+      if (!categoryDoc) {
+        return res.status(400).json({ error: 'Invalid category name provided.' });
+      }
+    } else {
+      return res.status(400).json({ error: 'Category is required.' });
+    }
+
+    // Create new item
+    const newItem = new Item({
+      ...req.body,
+      category: categoryDoc ? categoryDoc._id : null,
+      image: imagePath,
+    });
+
     await newItem.save();
 
-    // Update category itemCount
-    await Category.findByIdAndUpdate(
-      newItem.category,
-      { $inc: { itemCount: 1 } } // Increment itemCount by 1
-    );
+    // Increment category item count
+    await Category.findByIdAndUpdate(categoryDoc._id, { $inc: { itemCount: 1 } });
 
-    // Check for low stock and notify admin
-      if (newItem.quantity === 1) {
-        await createNotification('Low Stock', `Item ${newItem.itemName} has low stock.`, null);
-      }
+    // Notifications for stock levels
+    if (newItem.quantity <= LOW_STOCK_THRESHOLD && newItem.quantity > OUT_OF_STOCK_THRESHOLD) {
+      await createNotification('Low Stock', `Item ${newItem.itemName} has low stock.`);
+    } else if (newItem.quantity <= OUT_OF_STOCK_THRESHOLD) {
+      await createNotification('Out of Stock', `Item ${newItem.itemName} is out of stock.`);
+    }
 
-    res.status(201).json(newItem);
+    // Notify admin of new item
+    await createNotification('New Item Added', `A new item has been added: ${newItem.itemName}.`);
+
+    res.status(201).json({ message: "Item created successfully", newItem });
   } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update item details
+exports.updateItem = async (req, res) => {
+  try {
+    const file = req.file || null;
+    const imagePath = file ? `/uploads/${file.filename}` : '';
+
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Item not found' });
+
+    const oldCategoryId = item.category;
+    const { category, newCategory, categoryName } = req.body;
+
+    let categoryDoc;
+
+    // Category update logic
+    if (category && mongoose.isValidObjectId(category.trim())) {
+      categoryDoc = await Category.findById(category.trim());
+      if (!categoryDoc) {
+        return res.status(400).json({ error: 'Invalid category ID.' });
+      }
+    } else if (newCategory && newCategory.trim() !== '') {
+      categoryDoc = await Category.findOne({ categoryName: newCategory.trim() });
+      if (!categoryDoc) {
+        categoryDoc = new Category({ categoryName: newCategory.trim() });
+        await categoryDoc.save();
+      }
+    } else if (categoryName && categoryName.trim() !== '') {
+      categoryDoc = await Category.findOne({ categoryName: categoryName.trim() });
+      if (!categoryDoc) {
+        return res.status(400).json({ error: 'Invalid category name provided.' });
+      }
+    }
+
+    // Update item
+    const updatedItem = await Item.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, category: categoryDoc ? categoryDoc._id : oldCategoryId, image: imagePath || item.image },
+      { new: true }
+    )
+    .populate('category'); // Populate the category field;
+
+    // Adjust category counts if category changed
+    if (oldCategoryId.toString() !== updatedItem.category.toString()) {
+      await Category.findByIdAndUpdate(oldCategoryId, { $inc: { itemCount: -1 } });
+      await Category.findByIdAndUpdate(updatedItem.category, { $inc: { itemCount: 1 } });
+    }
+
+    // Notifications for stock levels
+    if (updatedItem.quantity <= OUT_OF_STOCK_THRESHOLD) {
+      await createNotification('Out of Stock', `Item ${updatedItem.itemName} is out of stock.`);
+    } else if (updatedItem.quantity <= LOW_STOCK_THRESHOLD) {
+      await createNotification('Low Stock', `Item ${updatedItem.itemName} has low stock.`);
+    }
+
+    res.status(200).json({ message: "Item updated successfully", updatedItem });
+  } catch (err) {
+    console.error('Error updating item:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -56,149 +159,16 @@ exports.getItemsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
 
-    // Check if the categoryId is a valid ObjectId
     if (!mongoose.isValidObjectId(categoryId)) {
       return res.status(400).json({ message: 'Invalid category ID format' });
     }
 
-    // Check if the category exists
     const categoryExists = await Category.findById(categoryId);
-
     if (!categoryExists) {
       return res.status(404).json({ message: 'Category not found' });
     }
 
-    // Find items that belong to the specified category
     const itemsByCategory = await Item.find({ category: categoryId }).populate('category');
-
-    if (!itemsByCategory.length) {
-      return res.status(404).json({ message: 'No items found for this category' });
-    }
-
-    res.status(200).json(itemsByCategory);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Update item details
-exports.updateItem = async (req, res) => {
-  try {
-    const item = await Item.findById(req.params.id);
-    if (!item) return res.status(404).json({ message: 'Item not found' });
-
-    const oldCategoryId = item.category;
-
-    const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-    if (oldCategoryId.toString() !== updatedItem.category.toString()) {
-      await Category.findByIdAndUpdate(
-        oldCategoryId,
-        { $inc: { itemCount: -1 } }
-      );
-      await Category.findByIdAndUpdate(
-        updatedItem.category,
-        { $inc: { itemCount: 1 } }
-      );
-    }
-
-    if (updatedItem.quantity <= OUT_OF_STOCK_THRESHOLD) {
-      await createNotification('Out of Stock', `Item ${updatedItem.itemName} is out of stock.`, null);
-    } else if (updatedItem.quantity <= LOW_STOCK_THRESHOLD) {
-      await createNotification('Low Stock', `Item ${updatedItem.itemName} has low stock.`, null);
-    }
-
-    res.status(200).json(updatedItem);
-  } catch (err) {
-    console.error('Error updating item:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-};
-
-
-// Delete an item
-exports.deleteItem = async (req, res) => {
-  try {
-    const item = await Item.findById(req.params.id);
-    if (!item) return res.status(404).json({ message: 'Item not found' });
-
-    // Store the category ID before deletion
-    const categoryId = item.category;
-
-    // Delete the item
-    await Item.findByIdAndDelete(req.params.id);
-
-    // Update category itemCount
-    await Category.findByIdAndUpdate(
-      categoryId,
-      { $inc: { itemCount: -1 } } // Decrement itemCount by 1
-    );
-
-    res.status(200).json({ message: 'Item deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Get items by category
-exports.getItemsByCategory = async (req, res) => {
-  try {
-    const itemsByCategory = await Item.aggregate([
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'category',
-          foreignField: '_id',
-          as: 'categoryDetails'
-        }
-      },
-      {
-        $unwind: '$categoryDetails'
-      },
-      {
-        $group: {
-          _id: '$categoryDetails.categoryName',
-          items: {
-            $push: {
-              itemID: '$_id',
-              itemName: '$itemName',
-              model: '$model',
-              description: '$description',
-              quantity: '$quantity',
-              barcode: '$itemBarcode',
-              location: '$location'
-            }
-          }
-        }
-      }
-    ]);
-
-    res.status(200).json(itemsByCategory);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Get items by category
-exports.getItemsByCategory = async (req, res) => {
-  try {
-    const categoryId = req.params.categoryId;
-
-    // Check if the categoryId is a valid ObjectId
-    if (!mongoose.isValidObjectId(categoryId)) {
-      return res.status(400).json({ message: 'Invalid category ID format' });
-    }
-
-    // Check if the category exists
-    const categoryExists = await Category.findById(categoryId);
-
-    if (!categoryExists) {
-      return res.status(404).json({ message: 'Category not found' });
-    }
-
-    // Find items that belong to the specified category
-    const itemsByCategory = await Item.find({ category: categoryId }).populate('category');
-
     if (!itemsByCategory || itemsByCategory.length === 0) {
       return res.status(404).json({ message: 'No items found for this category' });
     }
@@ -210,39 +180,47 @@ exports.getItemsByCategory = async (req, res) => {
   }
 };
 
+// Delete an item
+exports.deleteItem = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Item not found' });
+
+    const categoryId = item.category;
+    await Item.findByIdAndDelete(req.params.id);
+
+    await Category.findByIdAndUpdate(categoryId, { $inc: { itemCount: -1 } });
+    res.status(200).json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Get item by barcode
 exports.getItemByBarcode = async (req, res) => {
   try {
     const { itemBarcode } = req.params;
-
-    // Validate the itemBarcode
     if (!itemBarcode) {
       return res.status(400).json({ message: 'Item barcode is required' });
     }
 
-    // Find item by barcode
     const item = await Item.findOne({ itemBarcode });
-
-    if (!item) {
-      return res.status(404).json({ message: 'Item not found' });
-    }
+    if (!item) return res.status(404).json({ message: 'Item not found' });
 
     res.status(200).json(item);
   } catch (err) {
-    console.error('Error fetching item by barcode:', err.message);
-    res.status(500).json({ error: 'An error occurred while fetching the item' });
+    res.status(500).json({ error: err.message });
   }
 };
 
 // Get low stock items
 exports.getLowStockItems = async (req, res) => {
   try {
-    const lowStockItems = await Item.find({
-      quantity: { $gt: OUT_OF_STOCK_THRESHOLD, $lte: LOW_STOCK_THRESHOLD }
+    const lowStockItems = await Item.find({ 
+      quantity: { $gt: OUT_OF_STOCK_THRESHOLD, $lte: LOW_STOCK_THRESHOLD } 
     });
     res.status(200).json(lowStockItems);
   } catch (err) {
-    console.error('Error fetching low stock items:', err.message);
     res.status(500).json({ error: err.message });
   }
 };
@@ -253,7 +231,6 @@ exports.getOutOfStockItems = async (req, res) => {
     const outOfStockItems = await Item.find({ quantity: { $lte: OUT_OF_STOCK_THRESHOLD } });
     res.status(200).json(outOfStockItems);
   } catch (err) {
-    console.error('Error fetching out of stock items:', err.message);
     res.status(500).json({ error: err.message });
   }
 };

@@ -4,10 +4,10 @@ const Category = require('../models/CategoryModel');
 exports.createCategory = async (req, res) => {
   try {
     const { categoryName, description } = req.body;
-    const newCategory = new Category({ categoryName, description });
+    const newCategory = new Category({ categoryName });
     await newCategory.save();
     res.status(201).json(newCategory);
-  } catch (err) {
+  } catch (err) { 
     res.status(500).json({ error: err.message });
   }
 };
@@ -18,6 +18,7 @@ exports.getAllCategories = async (req, res) => {
     const categories = await Category.find();
     res.status(200).json(categories);
   } catch (err) {
+    console.error('Error fetching categories:', error);
     res.status(500).json({ error: err.message });
   }
 };
