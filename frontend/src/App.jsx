@@ -12,6 +12,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import CreationSuccess from "./pages/creationSuccess/CreationSuccess";
 import Category from "./pages/category/Category";
 import NewCategory from "./pages/newCategory/NewCategory";
+import Notification from "./pages/notification/Notification";
+import Feedback from "./pages/feedback/Feedback";
 
 function App() {
   return (
@@ -40,7 +42,14 @@ function App() {
             <Route index element={<CategoryList/>}/>
             <Route path=":categoryId" element={<Category/>}/>
             <Route path="newCategory" element={<NewCategory/>}/>
-            {/* <Route path="CreationSuccessful" element={<CreationSuccess/>} /> */}
+          </Route>
+
+          <Route path="notifications">
+            <Route index element={<Notification/>}/>
+          </Route>
+
+          <Route path="feedback">
+            <Route index element={<Feedback/>}/>
           </Route>
 
         </Route>

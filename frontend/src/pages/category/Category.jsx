@@ -13,7 +13,7 @@ const Category = () => {
             <div className="pageTitle"> 
                 <PageTitle page="Category"/>
                 <div className="categoryItemContainer">
-                  <div className="itemTitle">Item Transaction History</div>
+                  <div className="categoryTitle">List of Items found in this Category</div>
                     <CategoryItems/>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
 import UserTable from '../../components/userTable/UserTable';
 import {Link} from "react-router-dom"
-
+ 
 const UserList = () => {
   return (
     <div className="userList">

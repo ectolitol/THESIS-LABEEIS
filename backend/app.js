@@ -25,6 +25,7 @@ app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/survey-questions', require('./routes/surveyQuestionRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api', require('./routes/feedbackRoutes'));
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

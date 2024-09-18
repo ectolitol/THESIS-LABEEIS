@@ -1,0 +1,129 @@
+.notification-list {
+    width: 96%;
+    background-color: #fff;
+    margin: 0 auto; // Center the notification list horizontally
+  
+    // Responsive adjustments
+    @media (max-width: 1200px) {
+      max-width: 90%; // Adjust the max-width for medium screens
+    }
+  
+    @media (max-width: 768px) {
+      max-width: 100%; // Full width for smaller screens
+      padding: 0.5rem; // Adjust padding for smaller screens
+    }
+  
+    // Ensure the container takes full viewport height
+    height: 70vh;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+  
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 5px;
+      margin-bottom: 15px;
+  
+      button {
+        background: none;
+        border: none;
+        font-size: 0.9rem;
+        color: rgb(213, 181, 2);
+        cursor: pointer;
+        transition: color 0.3s;
+        font-weight: bold;
+  
+        &:hover {
+          color: rgb(141, 120, 3);
+        }
+      }
+  
+      input {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        width: 250px;
+      }
+  
+      select {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background-color: #fff;
+        cursor: pointer;
+      }
+    }
+  
+    &__body {
+      flex: 1; // Take up the remaining space
+      overflow-y: auto; // Enable vertical scrolling
+      padding: 0 10px; // Add some padding
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    &__group {
+      .notification-list__date {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+  
+      .notification-list__item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f3f1f1e6;
+        text-decoration: none;
+        color: #333;
+        cursor: pointer;
+  
+        position: relative;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        margin-bottom: 10px; // Add space between notifications
+  
+        &:last-child {
+          margin-bottom: 0; // Remove margin from the last item if needed
+        }
+  
+        &:hover {
+          background-color: #dbdcde;
+        }
+  
+        &.unread {
+          border-left: 5px solid #007bff;
+          background-color: #eaf4ff;
+        }
+  
+        .notification-list__message {
+          font-size: 0.9rem;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          color: #333;
+  
+          .notification-list__indicator {
+            margin-left: 0.5rem;
+            color: #d9534f; /* Red for unread indicator */
+            font-weight: bold;
+          }
+        }
+  
+        .notification-list__time {
+          font-size: 0.8rem;
+          color: #999;
+          position: absolute;
+          right: 1rem;
+          bottom: 1rem;
+        }
+      }
+    }
+  }
+  
