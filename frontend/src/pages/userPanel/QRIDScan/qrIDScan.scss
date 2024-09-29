@@ -1,0 +1,68 @@
+.qr-id-scan-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #333;
+  }
+
+  h3 {
+    font-size: 2rem;
+    color: #4caf50;
+    margin-bottom: 2rem;
+  }
+
+  .error {
+    font-size: 1.5rem;
+    color: #e74c3c;
+    margin-top: 1rem;
+  }
+
+  input {
+    opacity: 0;
+    position: absolute;
+    top: -9999px;
+  }
+
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 1.5rem 3rem;
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 2rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    h2 {
+      font-size: 2rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    button {
+      font-size: 1.5rem;
+      padding: 1rem 2rem;
+    }
+  }
+}

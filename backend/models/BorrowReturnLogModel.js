@@ -7,21 +7,30 @@ const ItemLogSchema = new mongoose.Schema({
   quantityBorrowed: { type: Number, default: 0 },
   quantityReturned: { type: Number, default: 0 },
   _id: false
-});
+}); 
 
 // Define the schema for borrow/return logs
 const BorrowReturnLogSchema = new mongoose.Schema({
   dateTime: { type: Date, default: Date.now },
-  userID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  userName: { type: String, required: true },
+  userID: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName: { type: String },
+  contactNumber: { type: String, required: true },
   items: [ItemLogSchema], // Array of items being logged
   courseSubject: { type: String },
   professor: { type: String },
   roomNo: { type: String },
   borrowedDuration: { type: String },
-  transactionType: { type: String, enum: ['Borrowed','Returned'], required: true },
-  returnStatus: { type: String, enum: ['Pending', 'Completed', 'Overdue', 'Partially Returned'], default: 'Pending' },
-  notesComments: { type: String }
+  extendedDuration: { type: String, default: '0 minute' },
+  dueDate: { type: Date },
+  transactionType: { type: String, enum: ['Borrowed','Returned'] },
+  returnStatus: { type: String, enum: ['Pending', 'Completed', 'Overdue', 'Partially Returned', 'Extended'], default: 'Pending' },
+  notesComments: { type: String },
+
+  reminderSent: {
+    type: Boolean,
+    default: false, // By default, no reminder has been sent
+  }
+
 });
 
 // Create and export the model

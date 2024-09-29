@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
   contactNumber: { 
     type: String, 
     required: true, 
-    match: [/^\d{11}$/, 'Contact number must be exactly 11 digits'] // Contact number validation
+    match: [/^639\d{9}$/, 'Contact number must start with 639 and have exactly 12 digits'] 
   },
   registrationCard: { type: String },
   updatedClassSchedule: { type: String },

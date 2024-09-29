@@ -7,7 +7,7 @@
     border-radius: 10px;
     padding: 10px;
     height: 100px;
-    background-color: #faf6b7;
+    background-color: rgba(128, 128, 128, 0.619);
 
     .left, 
     .right{
@@ -19,12 +19,13 @@
         .title {
             font-weight: bold;
             font-size: 14px;
-            color: rgb(160, 160, 160);
+            color: white;
           }
       
           .counter {
             font-size: 28px;
-            font-weight: 300;
+            font-weight: bolder;
+            color: rgba(109, 4, 4, 0.9);
           }
       
           .link {
@@ -32,6 +33,7 @@
             font-size: 12px;
             border-bottom: 1px solid gray;
             cursor: pointer;
+            text-decoration: none;
           }
 
         .icon {
@@ -41,6 +43,10 @@
             align-self: flex-end;
             
         }
+
+      .link-style{
+        text-decoration: none;
+      }
 
         
     }

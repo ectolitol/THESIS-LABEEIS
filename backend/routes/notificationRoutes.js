@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Notification = require('../models/NotificationModel');
-const notificationController = require('../controllers/notificationController'); // Import the controller
+const notificationController = require('../controllers/notificationController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Route to get all notifications
-router.get('/', async (req, res) => {
+// Apply authMiddleware to protected routes
+router.get('/', authMiddleware, async (req, res) => {
     try {
         const notifications = await Notification.find().sort({ date: -1 });
         res.json(notifications);
@@ -13,8 +14,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Route to get notifications for a specific user (Place this before the /:id route)
-router.get('/user/:userID', async (req, res) => {
+router.get('/user/:userID', authMiddleware, async (req, res) => {
     try {
         const notifications = await Notification.find({ userID: req.params.userID }).sort({ date: -1 });
         res.json(notifications);
@@ -23,11 +23,9 @@ router.get('/user/:userID', async (req, res) => {
     }
 });
 
-// Route to get a single notification by ID
-router.get('/:id', notificationController.getNotificationById);
+router.get('/:id', authMiddleware, notificationController.getNotificationById);
 
-// Route to mark a notification as read
-router.patch('/:id/read', async (req, res) => {
+router.patch('/:id/read', authMiddleware, async (req, res) => {
     try {
         const notification = await Notification.findById(req.params.id);
         if (!notification) {
@@ -43,14 +41,15 @@ router.patch('/:id/read', async (req, res) => {
     }
 });
 
-// Route to get unread notifications
-router.get('/notif/unread', async (req, res) => {
+router.get('/notif/unread', authMiddleware, async (req, res) => {
     try {
       const unreadNotifications = await Notification.find({ isRead: false }).sort({ date: -1 });
       res.json(unreadNotifications);
     } catch (error) {
       res.status(500).json({ message: 'Error fetching unread notifications', error: error.message });
     }
-  });
+});
+
+router.delete('/:id', authMiddleware, notificationController.deleteNotification);
 
 module.exports = router;

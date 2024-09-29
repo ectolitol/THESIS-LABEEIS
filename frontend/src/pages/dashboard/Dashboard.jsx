@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import "./home.scss";
+import "./dashboard.scss";
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
@@ -9,11 +9,12 @@ import LogChart from "../../components/logChart/LogChart";
 import StockChart from "../../components/stockChart/StockChart";
 
 
-const Home = () => {
+
+const Dashboard = () => {
   return (
-    <div className="home">
+    <div className="dashboard">
       <Sidebar/>
-      <div className="homeContainer">
+      <div className="dashboardContainer">
         <Navbar/>
           <div className="pageTitle"> 
             <PageTitle page="Dashboard"/>
@@ -33,5 +34,5 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
 

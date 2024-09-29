@@ -18,7 +18,7 @@ export const ItemTable = () => {
   React.useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/items`);
+        const response = await axios.get(`/api/items`); 
         setRows(response.data);
         setLoading(false);
       } catch (err) {
@@ -46,19 +46,23 @@ export const ItemTable = () => {
         />
       ),
     },
-    { field: 'brand', headerName: 'Brand', minWidth: 150 },
+    {
+      field: 'category',
+      headerName: 'Category',
+      minWidth: 150,
+      renderCell: (params) => {
+        // Safely access the categoryName inside category object
+        return params.row?.category?.categoryName || 'N/A';
+      },
+    },
+    
     { field: 'quantity', headerName: 'Quantity Left', minWidth: 110 },
     { field: 'location', headerName: 'Location', minWidth: 150 },
     { field: 'condition', headerName: 'Condition', minWidth: 130 },
     {
-      field: 'calibrationNeeded',
-      headerName: 'Calibration Needed',
-      minWidth: 150,
-    },
-    {
       field: 'action',
       headerName: 'Action',
-      width: 150,
+      width: 149,
       renderCell: (params) => (
         <Button 
           className="view-button"

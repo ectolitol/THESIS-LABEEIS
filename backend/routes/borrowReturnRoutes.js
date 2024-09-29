@@ -10,4 +10,9 @@ router.get('/br/aggregated-transactions', borrowReturnController.getAggregatedTr
 router.put('/:id', borrowReturnController.updateLog);
 router.delete('/:id', borrowReturnController.deleteLog);
 
+router.put('/:id/extend', borrowReturnController.extendBorrowingDuration);
+
+router.post('/complete-return', borrowReturnController.completeReturn);
+
+
 module.exports = router;

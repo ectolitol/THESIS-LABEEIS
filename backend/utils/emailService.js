@@ -39,7 +39,7 @@ exports.sendUserConfirmation = async (user, pdfFilePath) => {
             from: process.env.EMAIL_USER,
             to: user.email,
             subject: 'Registration Approved',
-            text: `Your registration has been approved. Please find your QR code attached.`,
+            text: `Your registration has been approved. Please download the QR code attached.`,
             attachments: [
                 {
                     filename: 'user-info.pdf',

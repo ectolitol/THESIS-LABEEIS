@@ -1,20 +1,9 @@
-const jwt = require('jsonwebtoken');
-
-// Middleware to verify the token
-const authenticateToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1];
-
-    if (!token) {
-        return res.status(403).json({ message: 'Access denied' });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: 'Invalid or expired token' });
-        }
-        req.user = user; // Attach user info to the request
-        next();
-    });
+const authMiddleware = (req, res, next) => {
+  // Check if the session has the adminId
+  if (!req.session.adminId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  next();
 };
 
-module.exports = authenticateToken;
+module.exports = authMiddleware;

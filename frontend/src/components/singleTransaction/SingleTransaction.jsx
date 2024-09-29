@@ -21,7 +21,7 @@ const SingleTransaction = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openRow, setOpenRow] = useState({});
-  const [order, setOrder] = useState("asc");
+  const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("dateTime");
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const SingleTransaction = () => {
 
   const handleSortRequest = (property) => {
     const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    setOrder(isAsc ? "asc" : "desc");
     setOrderBy(property);
   };
 

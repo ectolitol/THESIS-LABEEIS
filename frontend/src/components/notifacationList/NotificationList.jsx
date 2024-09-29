@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import './notificationList.scss';
 import axios from 'axios';
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns'; // Import necessary functions
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+
 
 const NotificationList = () => {
   const [notifications, setNotifications] = useState([]);
@@ -112,16 +114,31 @@ const NotificationList = () => {
 
   const generateNotificationLink = (notification) => {
     const type = notification.type.toLowerCase();
-    if (type.includes('item')) {
+    if (type.includes('new item')) {
       return `/items`;
     } else if (type.includes('user')) {
       return `/users`;
-    } else if (type.includes('overdue')) {
-      return `/borrow-return`;
+    } else if (type.includes('overdue') || type.includes('extended')) {
+      return `/`;
     } else if (type.includes('stock')) {
       return `/items`;
     } else {
       return `/notifications/${notification._id}`;
+    }
+  };
+
+  // Delete a notification
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/notifications/${id}`);
+      setNotifications(prevNotifications =>
+        prevNotifications.filter(notification => notification._id !== id)
+      );
+      setFilteredNotifications(prevFilteredNotifications =>
+        prevFilteredNotifications.filter(notification => notification._id !== id)
+      );
+    } catch (error) {
+      console.error('Error deleting notification:', error);
     }
   };
 
@@ -149,31 +166,36 @@ const NotificationList = () => {
               {getGroupDateLabel(date)} {/* Display relative grouping date */}
             </div>
             {notifications.map(notification => (
-              <Link
-                to={generateNotificationLink(notification)}
-                key={notification._id}
-                className={`notification-list__item ${notification.isRead ? '' : 'unread'}`}
-                onClick={async () => {
-                  if (!notification.isRead) {
-                    try {
-                      await axios.patch(`/api/notifications/${notification._id}/read`);
-                      setUnreadCount(prevCount => prevCount - 1);
-                      setNotifications(prevNotifications =>
-                        prevNotifications.map(n =>
-                          n._id === notification._id ? { ...n, isRead: true } : n
-                        )
-                      );
-                    } catch (error) {
-                      console.error('Error marking notification as read:', error);
+              <div key={notification._id} className={`notification-list__item ${notification.isRead ? '' : 'unread'}`}>
+                <Link
+                  to={generateNotificationLink(notification)}
+                  className="notification-list__message"
+                  onClick={async () => {
+                    if (!notification.isRead) {
+                      try {
+                        await axios.patch(`/api/notifications/${notification._id}/read`);
+                        setUnreadCount(prevCount => prevCount - 1);
+                        setNotifications(prevNotifications =>
+                          prevNotifications.map(n =>
+                            n._id === notification._id ? { ...n, isRead: true } : n
+                          )
+                        );
+                      } catch (error) {
+                        console.error('Error marking notification as read:', error);
+                      }
                     }
-                  }
-                }}
-              >
-                <div className="notification-list__message">
+                  }}
+                >
                   {notification.message}
                   {!notification.isRead && <span className="notification-list__indicator">•</span>}
-                </div>
-              </Link>
+                </Link>
+                <button 
+                  onClick={() => handleDelete(notification._id)} 
+                  className="notification-list__delete-button"
+                >
+                  <DeleteOutlineRoundedIcon fontSize="small" className='deleteButton'/>
+                </button>
+              </div>
             ))}
           </div>
         ))}

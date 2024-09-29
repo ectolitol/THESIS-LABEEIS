@@ -20,7 +20,7 @@ exports.createItem = async (req, res) => {
 
     let categoryDoc;
 
-    // Check for category provided by ID
+    // Priority: Check for category ID, new category, then category name
     if (category && mongoose.isValidObjectId(category.trim())) {
       categoryDoc = await Category.findById(category.trim());
       if (!categoryDoc) {
@@ -53,7 +53,9 @@ exports.createItem = async (req, res) => {
     await newItem.save();
 
     // Increment category item count
-    await Category.findByIdAndUpdate(categoryDoc._id, { $inc: { itemCount: 1 } });
+    if (categoryDoc) {
+      await Category.findByIdAndUpdate(categoryDoc._id, { $inc: { itemCount: 1 } });
+    }
 
     // Notifications for stock levels
     if (newItem.quantity <= LOW_STOCK_THRESHOLD && newItem.quantity > OUT_OF_STOCK_THRESHOLD) {
@@ -71,72 +73,83 @@ exports.createItem = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
+//----------------------------------------------------------------
 // Update item details
 exports.updateItem = async (req, res) => {
   try {
     const file = req.file || null;
     const imagePath = file ? `/uploads/${file.filename}` : '';
 
+    // Find the item by ID
     const item = await Item.findById(req.params.id);
     if (!item) return res.status(404).json({ message: 'Item not found' });
 
     const oldCategoryId = item.category;
-    const { category, newCategory, categoryName } = req.body;
+    const { category, newCategory, categoryName, quantity } = req.body;
 
     let categoryDoc;
 
     // Category update logic
-    if (category && mongoose.isValidObjectId(category.trim())) {
-      categoryDoc = await Category.findById(category.trim());
+    if (mongoose.isValidObjectId(category)) {
+      // If `category` is a valid ObjectId, find the category document
+      categoryDoc = await Category.findById(category);
       if (!categoryDoc) {
         return res.status(400).json({ error: 'Invalid category ID.' });
       }
     } else if (newCategory && newCategory.trim() !== '') {
+      // Create a new category if `newCategory` is provided
       categoryDoc = await Category.findOne({ categoryName: newCategory.trim() });
       if (!categoryDoc) {
         categoryDoc = new Category({ categoryName: newCategory.trim() });
         await categoryDoc.save();
       }
     } else if (categoryName && categoryName.trim() !== '') {
+      // Check for existing category by name if `categoryName` is provided
       categoryDoc = await Category.findOne({ categoryName: categoryName.trim() });
       if (!categoryDoc) {
         return res.status(400).json({ error: 'Invalid category name provided.' });
       }
     }
 
-    // Update item
+    // Update item details
     const updatedItem = await Item.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, category: categoryDoc ? categoryDoc._id : oldCategoryId, image: imagePath || item.image },
+      {
+        ...req.body,
+        category: categoryDoc ? categoryDoc._id : oldCategoryId,
+        image: imagePath || item.image,
+      },
       { new: true }
-    )
-    .populate('category'); // Populate the category field;
+    ).populate('category'); // Populate the category field
 
-    // Adjust category counts if category changed
-    if (oldCategoryId.toString() !== updatedItem.category.toString()) {
+    // Adjust category counts if the category has changed
+    if (oldCategoryId && oldCategoryId.toString() !== updatedItem.category.toString()) {
       await Category.findByIdAndUpdate(oldCategoryId, { $inc: { itemCount: -1 } });
       await Category.findByIdAndUpdate(updatedItem.category, { $inc: { itemCount: 1 } });
     }
 
-    // Notifications for stock levels
-    if (updatedItem.quantity <= OUT_OF_STOCK_THRESHOLD) {
-      await createNotification('Out of Stock', `Item ${updatedItem.itemName} is out of stock.`);
-    } else if (updatedItem.quantity <= LOW_STOCK_THRESHOLD) {
-      await createNotification('Low Stock', `Item ${updatedItem.itemName} has low stock.`);
+    // Update quantity and trigger notifications
+    const newQuantity = updatedItem.quantity;
+    if (newQuantity !== undefined) {
+      if (newQuantity <= OUT_OF_STOCK_THRESHOLD) {
+        await createNotification('Out of Stock', `Item ${updatedItem.itemName} is out of stock.`);
+      } else if (newQuantity <= LOW_STOCK_THRESHOLD) {
+        await createNotification('Low Stock', `Item ${updatedItem.itemName} has low stock.`);
+      }
     }
 
-    res.status(200).json({ message: "Item updated successfully", updatedItem });
-  } catch (err) {
-    console.error('Error updating item:', err);
-    res.status(500).json({ error: err.message });
+    res.status(200).json({ message: 'Item updated successfully', updatedItem });
+  } catch (error) {
+    console.error('Error updating item:', error);
+    res.status(500).json({ error: error.message });
   }
 };
 
+//----------------------------------------------------------
 // Get all items
 exports.getAllItems = async (req, res) => {
   try {
-    const items = await Item.find().populate('category');
+    const items = await Item.find().populate('category', 'categoryName');
     res.status(200).json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });

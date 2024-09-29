@@ -19,7 +19,7 @@ const ItemTransaction = () => {
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = useState("asc");
+  const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("dateTime");
   const [error, setError] = useState(null);
 

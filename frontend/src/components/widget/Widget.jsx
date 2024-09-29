@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import "./widget.scss"
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
@@ -83,7 +84,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Total users",
         counter: userCount !== null ? userCount : "Loading...",
-        link: "See all users",
+        link: <Link to="/users" className="link-style">See all users</Link>,
         icon: <PersonRoundedIcon
           className="icon"
           style={{
@@ -98,7 +99,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Total items",
         counter: itemCount !== null ? itemCount : "Loading...",
-        link: "See all items",
+        link: <Link to="/items" className="link-style">See all items</Link>,
         icon: <HomeRepairServiceRoundedIcon
           className="icon"
           style={{
@@ -113,7 +114,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Low stock",
         counter: lowStockCount !== null ? lowStockCount : "Loading...", // Display 0 if no items, or Loading...
-        link: "See details",
+        link: <Link to="/low-stock" className="link-style">See details</Link>,
         icon: <TrendingDownRoundedIcon
           className="icon"
           style={{
@@ -128,7 +129,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Out of stock",
         counter: outOfStockCount !== null ? outOfStockCount : "Loading...", // Display 0 if no items, or Loading...
-        link: "See details",
+        link: <Link to="/out-of-stock" className="link-style">See details</Link>,
         icon: <WarningAmberRoundedIcon
           className="icon"
           style={{

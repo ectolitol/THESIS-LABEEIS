@@ -1,21 +1,35 @@
 const BorrowReturnLog = require('../models/BorrowReturnLogModel');
 const { createNotification } = require('../utils/notificationService');
+const { sendSMS } = require('../utils/smsService'); // Ensure you import your SMS utility
 
 exports.checkOverdueItems = async () => {
     try {
-        // Get all pending transactions that are overdue
-        const overdueLogs = await BorrowReturnLog.find({ returnStatus: 'Pending' });
+        // console.log("Starting overdue items check...");
+
+        // Get all pending or extended transactions that may be overdue
+        const overdueLogs = await BorrowReturnLog.find({
+            returnStatus: { $in: ['Pending', 'Extended', 'Partially Returned'] }
+        });
+
+        // console.log(`Found ${overdueLogs.length} logs to check for overdue status.`);
 
         const currentTime = new Date().getTime();
+        // console.log(`Current time: ${new Date(currentTime).toLocaleString()}`);
 
         for (const log of overdueLogs) {
-            const durationInMillis = convertDurationToMillis(log.borrowedDuration);
-            const borrowTime = new Date(log.dateTime).getTime();
+            const dueDate = new Date(log.dueDate).getTime();
+            // console.log(`Checking log ID: ${log._id}`);
+            console.log(`Borrower: ${log.userName}, Due Date: ${new Date(dueDate).toLocaleString()}`);
 
-            if (currentTime > borrowTime + durationInMillis) {
+            // Check if the current time is beyond the due date
+            if (currentTime > dueDate) {
+                console.log(`Log ID: ${log._id} is overdue. Marking as overdue...`);
+
                 // Update the return status to overdue
                 log.returnStatus = 'Overdue';
                 await log.save();
+
+                console.log(`Log ID: ${log._id} has been updated to Overdue.`);
 
                 // Notify admin
                 await createNotification(
@@ -23,30 +37,21 @@ exports.checkOverdueItems = async () => {
                     `The item(s) borrowed by ${log.userName} are overdue.`,
                     log.userID
                 );
+
+                console.log(`Notification sent for log ID: ${log._id}`);
+
+                // Send SMS to user informing them of the overdue status
+                const smsMessage = `Hi ${log.userName}, your borrowed item(s) are overdue. Please return them as soon as possible. Thank you!`;
+                await sendSMS(log.contactNumber, smsMessage);
+
+                console.log(`SMS sent to ${log.userName} (Contact: ${log.contactNumber}) regarding overdue items.`);
+            } else {
+                console.log(`Log ID: ${log._id} is not overdue. Skipping...`);
             }
         }
 
-        console.log('Overdue items check completed.');
+        // console.log('Overdue items check completed.');
     } catch (error) {
         console.error('Error checking overdue items:', error.message);
-    }
-};
-
-// Helper function to convert duration to milliseconds
-const convertDurationToMillis = (duration) => {
-    const [value, unit] = duration.split(' ');
-
-    switch (unit) {
-        case 'hour':
-        case 'hours':
-            return parseInt(value) * 60 * 60 * 1000;
-        case 'minute':
-        case 'minutes':
-            return parseInt(value) * 60 * 1000;
-        case 'day':
-        case 'days':
-            return parseInt(value) * 24 * 60 * 60 * 1000;
-        default:
-            return 0;
     }
 };

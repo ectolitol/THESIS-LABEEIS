@@ -13,8 +13,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
 
-const BASE_URL = 'http://localhost:4000'; // Update with your actual backend URL
-
 export const CategoryTable = () => {
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -28,7 +26,7 @@ export const CategoryTable = () => {
   React.useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/categories`);
+        const response = await axios.get(`/api/categories`);
         setRows(response.data);
         setLoading(false);
       } catch (err) {
@@ -57,7 +55,7 @@ export const CategoryTable = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`${BASE_URL}/api/categories/${selectedCategory}`, updatedCategory);
+      await axios.put(`/api/categories/${selectedCategory}`, updatedCategory);
       setRows(rows.map(row => (row._id === selectedCategory ? updatedCategory : row)));
       handleCloseDrawer();
     } catch (error) {
@@ -72,7 +70,7 @@ export const CategoryTable = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`${BASE_URL}/api/categories/${selectedCategory}`);
+      await axios.delete(`/api/categories/${selectedCategory}`);
       setRows(rows.filter(row => row._id !== selectedCategory));
       setOpenDeleteDialog(false);
     } catch (error) {
@@ -163,15 +161,7 @@ export const CategoryTable = () => {
               fullWidth
               margin="normal"
             />
-            <TextField
-              label="Item Count"
-              name="itemCount"
-              type="number"
-              value={updatedCategory.itemCount || ''}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
+            
             <Button type="button" onClick={handleSave} color="primary">Save</Button>
           </form>
         </div>

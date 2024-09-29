@@ -1,17 +1,23 @@
 const express = require('express');
-const { loginAdmin } = require('../controllers/authController');
-const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
+const adminController = require('../controllers/adminController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Admin login route (this route should not be protected by middleware)
-router.post('/login', loginAdmin);
+// Login route
+router.post('/login', adminController.login);
 
-// Apply the authentication middleware to all routes below this line
-router.use(authenticateToken);
+// Logout route (protected by auth middleware)
+router.post('/logout', authMiddleware, adminController.logout);
 
-// Example of a protected route
-router.get('/dashboard', (req, res) => {
-    res.send('Welcome to the Admin Dashboard');
+// Authentication check route to verify if the admin is logged in
+router.get('/check', (req, res) => {
+  if (req.session.adminId) {
+    // If admin is authenticated, return a positive response
+    return res.status(200).json({ isAuthenticated: true });
+  } else {
+    // If not authenticated, return false
+    return res.status(401).json({ isAuthenticated: false });
+  }
 });
 
 module.exports = router;

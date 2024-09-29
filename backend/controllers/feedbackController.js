@@ -23,7 +23,8 @@ Email: ${feedback.email}
 
 Subject: ${feedback.subject}
 
-Message: ${feedback.message}
+Message: 
+${feedback.message}
             `,
             attachments: feedback.attachment ? [{
                 filename: feedback.attachment.originalname,

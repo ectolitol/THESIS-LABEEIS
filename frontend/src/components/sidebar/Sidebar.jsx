@@ -9,13 +9,16 @@ import LeaderboardRoundedIcon from '@mui/icons-material/LeaderboardRounded';
 import RateReviewRoundedIcon from '@mui/icons-material/RateReviewRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
+import ArchiveRoundedIcon from '@mui/icons-material/ArchiveRounded';
 import MenuIcon from '@mui/icons-material/Menu'; // For the toggle icon
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(
     localStorage.getItem("sidebarState") === "closed" ? false : true
   );
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     const newIsOpen = !isOpen;
@@ -29,6 +32,16 @@ const Sidebar = () => {
       setIsOpen(false);
     }
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/admin/logout', {}, { withCredentials: true });
+      // Clear any local state or storage if needed
+      navigate('/LABEEIS'); // Redirect to login page
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
@@ -79,6 +92,12 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
+            <Link to="/archives" className="menu-link">
+              <ArchiveRoundedIcon className="icon" />
+              <span>Archives</span>
+            </Link>
+          </li>
+          <li>
             <Link to="/feedback" className="menu-link">
               <RateReviewRoundedIcon className="icon" />
               <span>Feedback/Support</span>
@@ -90,14 +109,21 @@ const Sidebar = () => {
               <span>About</span>
             </Link>
           </li>
-          <li>
-            <Link to="/logout" className="menu-link">
-              <ExitToAppRoundedIcon className="icon" />
-              <span>Logout</span>
-            </Link>
-          </li>
         </ul>
       </div>
+
+      <div className="bottom">
+        <ul>
+        <li>
+            <span onClick={handleLogout} className="menu-link">
+              <ExitToAppRoundedIcon className="icon" />
+              <span>Logout</span>
+            </span>
+          </li>
+        </ul>
+
+      </div>
+
     </div>
   );
 };

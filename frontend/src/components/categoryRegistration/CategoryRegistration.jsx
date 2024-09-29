@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './categoryRegistration.scss';
+import Modal from '../modal/Modal'; 
 
 const CategoryRegistration = () => {
   const navigate = useNavigate();
@@ -8,9 +9,10 @@ const CategoryRegistration = () => {
   // State to store form data
   const [formData, setFormData] = useState({
     categoryName: "",
-  });
+  }); 
 
   const [errors, setErrors] = useState([]);
+  const [showModal, setShowModal] = useState(false); // Modal state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +42,7 @@ const CategoryRegistration = () => {
       });
 
       if (response.ok) {
-        navigate('/categories');
+        setShowModal(true); // Show the modal on success
       } else {
         const data = await response.json();
         setErrors(data.errors || [data.error || 'Error creating category. Please try again later.']);
@@ -74,6 +76,15 @@ const CategoryRegistration = () => {
           </div>
         )}
       </form>
+      {showModal && (
+        <Modal 
+          message="New category created successfully!" 
+          onClose={() => {
+            setShowModal(false);
+            navigate('/categories'); // Navigate when modal is closed
+          }} 
+        />
+      )}
     </div>
   );
 };

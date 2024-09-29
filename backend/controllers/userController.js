@@ -1,29 +1,57 @@
 const User = require('../models/UserModel');
+const mongoose = require('mongoose');
 const { sendAdminNotification, sendUserConfirmation, sendUserDeclineEmail } = require('../utils/emailService');
 const { generateQRCode, createPDFWithQRCode } = require('../utils/pdfService'); 
 const { createNotification } = require('../utils/notificationService');
 const path = require('path');
 const fs = require('fs');
+const { sendSMS } = require('../utils/smsService');
 
 // Create a new user
 exports.createUser = async (req, res) => {
-    try {
-        console.log('Received request body:', req.body); // Log the incoming request data
+  try {
+      console.log('Received request body:', req.body); // Log the incoming request data
 
-        const newUser = new User(req.body);
-        const savedUser = await newUser.save();
-        console.log('User saved successfully:', savedUser); // Log the saved user
+      const newUser = new User(req.body);
+      const savedUser = await newUser.save();
+      console.log('User saved successfully:', savedUser); // Log the saved user
 
-        // Notify admin for approval
-        await sendAdminNotification(newUser);
+      // Notify admin for approval
+      await sendAdminNotification(newUser);
 
-        // Create a notification for the admin
-        await createNotification('User Registration', `New user ${newUser.fullName} registered and awaiting approval.`, null);
+      // Create a notification for the admin
+      await createNotification('User Registration', `New user ${newUser.fullName} registered and awaiting approval.`, null);
 
-        res.status(201).json({ message: 'Registration successful! Await admin approval.' });
-    } catch (error) {
-        res.status(400).json({ message: 'Error registering user', error: error.message });
-    }
+      // Send SMS notification to the user
+      const smsMessage = `Hello ${savedUser.fullName}, your registration has been received! Please await admin approval.`;
+      await sendSMS(savedUser.contactNumber, smsMessage);
+      console.log(`SMS sent to ${savedUser.contactNumber}: ${smsMessage}`); // Log SMS status
+
+      res.status(201).json({ message: 'Registration successful! Await admin approval.' });
+  } catch (error) {
+      console.error('Error during user registration:', error); // Log the error details
+
+      // Handle specific error types
+      if (error.name === 'ValidationError') {
+          return res.status(400).json({ 
+              message: 'Validation Error', 
+              error: error.message, 
+              details: error.errors 
+          });
+      }
+
+      if (error.code === 11000) {
+          return res.status(400).json({ 
+              message: 'Duplicate Entry Error', 
+              error: 'The email or student number already exists. Please use a different one.' 
+          });
+      }
+
+      return res.status(500).json({ 
+          message: 'Server Error', 
+          error: error.message || 'An unknown error occurred while registering the user.' 
+      });
+  }
 };
 
 // Approve user function
@@ -42,8 +70,11 @@ exports.approveUser = async (req, res) => {
       const pdfFilePath = path.join(__dirname, '..', 'uploads', 'user-info.pdf');
 
       await createPDFWithQRCode(qrCodeFilePath, user.fullName, pdfFilePath);
-
       await sendUserConfirmation(user, pdfFilePath);
+
+      // Send SMS notification
+      const smsMessage = `Hello ${user.fullName}, your registration has been approved! Your QR code will be sent via email.`;
+      await sendSMS(user.contactNumber, smsMessage);
 
       // Create a notification for the admin
       await createNotification('User Registration Approved', `New user ${user.fullName} was approved.`, null);
@@ -59,14 +90,12 @@ exports.approveUser = async (req, res) => {
 exports.declineUser = async (req, res) => {
   try {
       const { userId } = req.params;
-      const { notesComments } = req.body; // Get comments from request body
+      const { notesComments } = req.body;
 
-      // Validate the input
       if (!notesComments) {
           return res.status(400).json({ message: 'Rejection reason is required' });
       }
 
-      // Update status to 'Declined' and add comments
       const user = await User.findByIdAndUpdate(userId, { 
           status: 'Declined',
           notesComments
@@ -76,11 +105,14 @@ exports.declineUser = async (req, res) => {
           return res.status(404).json({ message: 'User not found' });
       }
 
+      await sendUserDeclineEmail(user, notesComments);
+
+      // Send SMS notification
+      const smsMessage = `Hello ${user.fullName}, your registration was declined. Reason: ${notesComments}`;
+      await sendSMS(user.contactNumber, smsMessage);
+
       // Create a notification for the admin
       await createNotification('User Registration Declined', `User ${user.fullName} was declined.`, null);
-
-      // Send decline email with the reason
-      await sendUserDeclineEmail(user, notesComments);
 
       res.status(200).json({ message: 'User declined successfully', user });
   } catch (error) {
@@ -103,13 +135,34 @@ exports.getAllUsers = async (req, res) => {
 // Get a user by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const userId = req.params.id;
+
+    // Check if the userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      console.log(`Invalid User ID: ${userId}`);
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    
     if (!user) {
+      console.log(`User not found for ID: ${userId}`);
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // If user is found
+    console.log(`User found: ${user.fullName}`);
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve user', error: error.message });
+    // Log the error for debugging purposes
+    console.error(`Error retrieving user with ID ${req.params.id}: `, error.message);
+
+    // Send error response with more detail
+    res.status(500).json({ 
+      message: 'Failed to retrieve user', 
+      error: error.message 
+    });
   }
 };
 

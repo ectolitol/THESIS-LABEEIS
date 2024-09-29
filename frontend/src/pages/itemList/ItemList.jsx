@@ -2,6 +2,7 @@ import "./itemList.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
+import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import { ItemTable } from "../../components/itemTable/ItemTable";
 import {Link} from "react-router-dom"
 
@@ -20,7 +21,9 @@ const ItemList = () => {
                             <button className="addItem">Add New Item</button>
                         </Link>
                     </div>
-                    <ItemTable/>
+                    <ErrorBoundary>
+                        <ItemTable />
+                    </ErrorBoundary>
                 </div>   
             </div>
         </div>

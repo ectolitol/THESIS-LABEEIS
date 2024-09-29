@@ -1,21 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../utils/upload');
 const itemController = require('../controllers/itemController');
 const borrowReturnController = require('../controllers/borrowReturnController');
-const upload = require('../utils/upload'); // Import multer configuration
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Item routes with file upload support
-router.post('/create', upload.single('image'), itemController.createItem);
-router.put('/:id', upload.single('image'), itemController.updateItem);
-
-// Other item routes
-router.get('/', itemController.getAllItems);
-router.get('/:id', itemController.getItemById);
-router.get('/category/:categoryId', itemController.getItemsByCategory);
+// Apply authMiddleware to protected routes
+router.post('/create', authMiddleware, upload.single('image'), itemController.createItem);
+router.put('/:id', authMiddleware, upload.single('image'), itemController.updateItem);
+router.get('/', authMiddleware, itemController.getAllItems);
+router.get('/:id', authMiddleware, itemController.getItemById);
+router.get('/category/:categoryId', authMiddleware, itemController.getItemsByCategory);
 router.get('/barcode/:itemBarcode', itemController.getItemByBarcode);
-router.get('/items/low-stock', itemController.getLowStockItems);
-router.get('/items/out-of-stock', itemController.getOutOfStockItems);
-router.get('/barcode/:itemBarcode/transactions', borrowReturnController.getItemTransactions);
-router.delete('/:id', itemController.deleteItem);
+router.get('/items/low-stock', authMiddleware, itemController.getLowStockItems);
+router.get('/items/out-of-stock', authMiddleware, itemController.getOutOfStockItems);
+router.get('/barcode/:itemBarcode/transactions', authMiddleware, borrowReturnController.getItemTransactions);
+router.delete('/:id', authMiddleware, itemController.deleteItem);
 
 module.exports = router;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./UserRegistration.scss";
 
-const UserRegistration = () => {
+const UserRegistration = () => { 
   // State to store form data
   const [formData, setFormData] = useState({
     fullName: "",
@@ -159,7 +159,7 @@ const UserRegistration = () => {
           <input
             type="text"
             name="contactNumber"
-            placeholder="11-digit number"
+            placeholder="639XXXXXXXXX"
             value={formData.contactNumber}
             onChange={handleChange}
             required

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import './FeedbackForm.scss'; // Import the SCSS file
+import './FeedbackForm.scss'; 
+import Modal from '../modal/Modal'; 
 
 const FeedbackForm = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const FeedbackForm = () => {
     attachment: null
   });
 
+  const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef(null); // Create a ref for the file input
 
   const handleChange = (e) => {
@@ -36,7 +38,9 @@ const FeedbackForm = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       console.log('Response from server:', response); // Log server response
-      alert('Feedback submitted successfully!');
+
+      // Show modal for successful submission
+      setShowModal(true);
 
       // Clear form data after successful submission
       setFormData({
@@ -118,6 +122,10 @@ const FeedbackForm = () => {
         </label>
         <button className="form-button" type="submit">Submit</button>
       </form>
+
+      {showModal && (
+        <Modal message="Feedback submitted successfully!" onClose={() => setShowModal(false)} />
+      )}
     </div>
   );
 };
