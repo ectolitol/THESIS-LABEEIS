@@ -1,66 +1,165 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import './SelectAdmin.scss'; // Import the SCSS file
+import { imageBaseURL } from '../../config/axiosConfig';
 
 const SelectAdmin = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Initialize the navigate function
+  const [selectedProfile, setSelectedProfile] = useState(null); // State to track the selected profile
+  const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
+  const [email, setEmail] = useState(""); // State for email input
+  const [password, setPassword] = useState(""); // State for password input
+  const [passwordVisible, setPasswordVisible] = useState(false); // State to control password visibility
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        console.log('Fetching admin profiles...');
-        const response = await axios.get('/api/admin/profiles'); // Adjust the endpoint as necessary
-        console.log('Fetched profiles:', response.data);
-        setProfiles(response.data);
+        const response = await axios.get('/api/adminProfile/profiles');
+        const profilesWithImage = response.data.map((admin) => ({
+          ...admin,
+          profileImage: admin?.profileImage
+            ? `${imageBaseURL}uploads/${admin.profileImage}`
+            : '',
+        }));
+        setProfiles(profilesWithImage);
       } catch (err) {
         setError('Error fetching admin profiles');
-        console.error('Error fetching admin profiles:', err);
       } finally {
         setLoading(false);
-        console.log('Loading completed');
       }
     };
     fetchProfiles();
   }, []);
 
-  const handleSelectProfile = async (profileId) => {
-    try {
-      console.log('Selecting profile with ID:', profileId);
-      const response = await axios.post('/api/admin/select-profile', { profileId });
-      console.log('Profile selected:', response.data.profile);
-      // Optionally store the profile info in context or global state
-      // Use navigate to redirect to the admin dashboard
-      navigate('/'); // Adjust as necessary
-    } catch (err) {
-      console.error('Error selecting admin profile:', err);
-      alert('Error selecting profile. Please try again.');
+  const handleSelectProfile = (profile) => {
+    setSelectedProfile(profile); // Set the selected profile
+    setShowModal(true); // Show the login modal
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Close the modal
+  };
+
+  const handleLogin = async () => {
+    console.log('Selected Profile:', selectedProfile);  // Check selected profile details
+    console.log('Entered Email:', email);
+    console.log('Entered Password:', password);
+
+    if (
+      email === selectedProfile.contactInfo.email && 
+      password === selectedProfile.contactInfo.password
+    ) {
+      try {
+        // Send the selected profile to the backend to store in the session
+        const response = await axios.post('/api/adminProfile/select-profile', { profileId: selectedProfile._id });
+        if (response.status === 200) {
+          console.log('Profile selected successfully:', response.data.profile);
+          // Navigate to the dashboard or homepage
+          navigate('/');
+        } else {
+          alert("Failed to select profile");
+        }
+      } catch (error) {
+        console.error('Error selecting profile:', error);
+        alert("Error selecting profile");
+      }
+    } else {
+      alert("Incorrect email or password.");
     }
   };
 
-  if (loading) {
-    console.log('Loading profiles...');
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    console.error('Error state:', error);
-    return <div>{error}</div>;
-  }
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible); // Toggle password visibility
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div className="select-admin-container">
       <h1>Select Admin Profile</h1>
-      <ul>
+      <div className="profile-cards">
         {profiles.map((profile) => (
-          <li key={profile._id}>
-            <button onClick={() => handleSelectProfile(profile._id)}>
-              {profile.name} - {profile.role}
-            </button>
-          </li>
+          <div
+            className="profile-card"
+            key={profile._id}
+            onClick={() => handleSelectProfile(profile)}
+          >
+            <div className="profile-picture">
+              {profile.profileImage ? (
+                <img
+                  src={profile.profileImage}
+                  alt={`${profile.name}'s profile`}
+                  className="profile-image"
+                />
+              ) : (
+                <div className="profile-placeholder">No Image</div>
+              )}
+            </div>
+            <p className="profile-name">{profile.name}</p>
+            <p className="profile-name">{profile.role}</p>
+          </div>
         ))}
-      </ul>
+      </div> 
+
+      {showModal && selectedProfile && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close-button" onClick={handleCloseModal}>
+              &times;
+            </span>
+            <div className="profile-modal">
+              <div className="profile-modal-picture">
+                {selectedProfile.profileImage ? (
+                  <img
+                    src={selectedProfile.profileImage}
+                    alt={`${selectedProfile.name}'s profile`}
+                    className="profile-modal-image"
+                  />
+                ) : (
+                  <div className="profile-modal-placeholder">No Image</div>
+                )}
+              </div>
+              {/* Profile name and role display */}
+              <h2 className="profile-name-display">{selectedProfile.name}</h2>
+              <h3 className="profile-role-display">{selectedProfile.role}</h3>
+              <div className="login-form">
+                <input
+                  type="text"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <div className="input-password-wrapper">
+                  <input
+                    type={passwordVisible ? 'text' : 'password'} // Toggle input type
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {passwordVisible ? (
+                    <FaEyeSlash className="toggle-password-icon" onClick={togglePasswordVisibility} />
+                  ) : (
+                    <FaEye className="toggle-password-icon" onClick={togglePasswordVisibility} />
+                  )}
+                </div>
+                <div className="remember-me-container">
+                    <input type="checkbox" id="remember" />
+                    <label htmlFor="remember">Remember Password</label>
+                </div>
+                <button className="login-button" onClick={handleLogin}>
+                  Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

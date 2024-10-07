@@ -6,6 +6,11 @@
         flex-grow: 1; /* The content takes up remaining space */
         overflow-x: hidden; /* To prevent unwanted horizontal scroll */
 
+        .Content {
+            overflow-y: auto;
+            height: calc(100vh - 60px); // Full height minus navbar height
+        }
+
         .categoryListTable{
             flex: 1;
             -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);

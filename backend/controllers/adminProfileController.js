@@ -3,49 +3,42 @@ const fs = require('fs'); // Required for file system operations if needed
 const path = require('path'); // Required for file path operations
 
 
-// Controller to update admin profile
 exports.updateAdminProfile = async (req, res) => {
-  const { adminId } = req.params; // Get the admin profile ID from the URL parameters
-  const { name, role, email, phone } = req.body; // Extract form fields from the request body
+  console.log("Request received to update admin profile:", req.params.adminId);
+  console.log("Request body:", req.body);
+
+  const { adminId } = req.params; 
+  const { name, role, email, phone, password } = req.body; 
 
   try {
-    // Find the admin profile by ID
     const adminProfile = await AdminProfile.findById(adminId);
-
     if (!adminProfile) {
       return res.status(404).json({ message: 'Admin profile not found' });
     }
+
+    console.log("Admin profile found:", adminProfile);
 
     // Update admin profile details
     adminProfile.name = name || adminProfile.name;
     adminProfile.role = role || adminProfile.role;
     adminProfile.contactInfo.email = email || adminProfile.contactInfo.email;
+    adminProfile.contactInfo.password = password || adminProfile.contactInfo.password;
     adminProfile.contactInfo.phone = phone || adminProfile.contactInfo.phone;
 
-    // Check if a new profile image is uploaded
+    // If a new profile image is uploaded
     if (req.file) {
-      // If there's an existing profile image, delete it from the file system (optional)
-      if (adminProfile.profileImage) {
-        const oldImagePath = path.join(__dirname, '../uploads/', adminProfile.profileImage); // Assuming the image is stored in 'uploads/' folder
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath); // Delete the old image
-        }
-      }
-
-      // Save the new profile image path
-      adminProfile.profileImage = req.file.filename; // Assuming you're using something like multer for file uploads
+      console.log("New profile image uploaded:", req.file.filename);
+      adminProfile.profileImage = req.file.filename;
     }
 
-    // Save the updated profile
     await adminProfile.save();
-
     res.status(200).json({ message: 'Admin profile updated successfully', adminProfile });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Failed to update admin profile', error: error.message });
   }
 };
-;
+
 
 // Get all admin profiles
 exports.getAdminProfiles = async (req, res) => {
@@ -58,9 +51,9 @@ exports.getAdminProfiles = async (req, res) => {
   }
 };
 
-// Select an admin profile after login
 exports.selectAdminProfile = async (req, res) => {
   const { profileId } = req.body;
+
   try {
     const selectedProfile = await AdminProfile.findById(profileId);
 
@@ -72,15 +65,23 @@ exports.selectAdminProfile = async (req, res) => {
     selectedProfile.lastLoggedIn = Date.now();
     await selectedProfile.save();
 
-    // Store the selected profile in session
+    // Store the selected profile in the session
     req.session.adminProfile = {
       id: selectedProfile._id,
       name: selectedProfile.name,
       role: selectedProfile.role,
-      accessLevel: selectedProfile.accessLevel, // Store access level
+      profileImage: selectedProfile.profileImage || null, // Include the profile image if available
     };
 
-    res.status(200).json({ message: 'Profile selected successfully', profile: req.session.adminProfile });
+    console.log('Session after setting profile:', req.session.adminProfile);
+
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error saving session:', err);
+        return res.status(500).json({ message: 'Failed to save session' });
+      }
+      res.status(200).json({ message: 'Profile selected successfully', profile: req.session.adminProfile });
+    });
   } catch (error) {
     console.error('Error selecting admin profile:', error);
     res.status(500).json({ message: 'Server error' });
@@ -107,17 +108,32 @@ exports.getSingleAdminProfile = async (req, res) => {
 
 // Fetch the logged-in admin's profile
 exports.getLoggedInAdminProfile = async (req, res) => {
-    try {
-        const adminId = req.session.adminProfile.id; // Ensure this correctly points to the admin ID
-        const profile = await AdminProfile.findById(adminId);
+  try {
+    console.log('Session on getLoggedInAdminProfile:', req.session);
 
-        if (!profile) {
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-
-        res.status(200).json(profile);
-    } catch (error) {
-        console.error('Error fetching admin profile:', error);
-        res.status(500).json({ message: 'Error fetching admin profile' });
+    // Check if the session and adminProfile exist
+    if (!req.session || !req.session.adminProfile || !req.session.adminProfile.id) {
+      console.log('Session or admin profile missing, unauthorized access');
+      return res.status(401).json({ message: 'Not authenticated or session has expired' });
     }
+
+    const adminId = req.session.adminProfile.id;
+    console.log(`Fetching profile for admin ID: ${adminId}`);
+
+    // Find the admin profile by ID
+    const profile = await AdminProfile.findById(adminId);
+
+    if (!profile) {
+      console.log(`Admin profile not found for ID: ${adminId}`);
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    console.log('Admin profile successfully retrieved:', profile);
+
+    // Return the profile data
+    return res.status(200).json(profile);
+  } catch (error) {
+    console.error('Error fetching admin profile:', error);
+    return res.status(500).json({ message: 'Error fetching admin profile' });
+  }
 };

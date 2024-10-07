@@ -3,6 +3,7 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
 import ItemRegistration from "../../components/itemRegistration/ItemRegistration";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const NewItem = () => {
   return (
@@ -10,10 +11,11 @@ const NewItem = () => {
       <Sidebar/>
       <div className="newItemContainer">
         <Navbar/>
-        <div className="pageTitle">
-          <PageTitle page="New Item"/>
+        <div className="Content">
+        <CustomBreadcrumbs/>
             <ItemRegistration/>
         </div>
+      
       </div>
     </div>
   )

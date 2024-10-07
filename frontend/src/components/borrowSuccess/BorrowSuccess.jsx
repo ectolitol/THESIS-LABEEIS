@@ -8,7 +8,8 @@ const BorrowSuccess = () => {
     userID,
     userName,
     courseSubject,
-    professor,
+    professor, 
+    profAttendance,
     roomNo,
     borrowedDuration,
     dateTime,
@@ -23,7 +24,9 @@ const BorrowSuccess = () => {
 
   return (
     <div className="borrow-success">
-      <h2>Transaction Successful!</h2>
+      {/* Background image */}
+      <img src="/ceafinal.png" alt="Background" className="bg-only" />
+      <h2>Borrow Transaction Successful!</h2>
       <p>Your borrowing transaction has been completed successfully.</p>
       
       <h3>Transaction Details:</h3>

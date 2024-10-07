@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        pass: process.env.EMAIL_PASS 
     }
 });
 
@@ -75,6 +75,43 @@ exports.sendUserDeclineEmail = async (user, notesComments) => {
         console.log('Decline email sent successfully');
     } catch (error) {
         console.error('Error sending decline email:', error);
+        throw error;
+    }
+};
+
+// NEW FUNCTION: Send email with transaction details (for logTransaction)
+exports.sendTransactionEmail = async (user, transactionDetails, dueDate) => {
+    try {
+        // Format the borrowed items into a readable list
+        const itemsList = transactionDetails.map(item => `${item.itemName} - ${item.quantityBorrowed} pcs`).join("\n");
+
+        // Construct the email content with a clearer format
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Borrowing Transaction Details',
+            text: `
+                Hello ${user.fullName || "Valued User"},
+
+                Thank you for borrowing items from us. Here are the details of your transaction:
+
+                Borrowed Items:
+                ${itemsList}
+
+                Due Date: ${dueDate.toLocaleString()}
+
+                Please ensure that the items are returned by the due date to avoid any penalties.
+
+                Thank you,
+                Your Borrowing Team
+            `
+        };
+
+        // Send the email using nodemailer transporter
+        await transporter.sendMail(mailOptions);
+        console.log('Transaction email sent successfully');
+    } catch (error) {
+        console.error('Error sending transaction email:', error);
         throw error;
     }
 };

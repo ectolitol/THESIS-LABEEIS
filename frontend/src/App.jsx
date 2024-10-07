@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './layouts/Layout';
 import Dashboard from './pages/dashboard/Dashboard';
 import Login from './pages/login/Login';
 import UserList from './pages/userList/UserList';
@@ -31,152 +32,188 @@ import ItemReturnScan from './components/itemReturnScan/ItemReturnScan';
 import ReturnSuccess from './components/returnSuccess/ReturnSuccess';
 import ReturnPartial from './components/returnPartial/ReturnPartial';
 import NewUserRegistrationForm from './pages/userPanel/newUserRegistrationForm/NewUserRegistrationForm';
+import CategorySuccess from './components/categorySuccess/CategorySuccess';
+import Report from './pages/reports/Report';
+import Archives from './pages/archives/Archives';
+import About from './pages/about/About';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/LABEEIS" element={<Welcome />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/select-profile" element={<SelectAdmin />} />
-          
-          {/* User Routes */}
-          <Route path="/user-selection" element={<UserSelection />} />
-          <Route path="/registration" element={<NewUserInstruction />} />
-          <Route path="/new-user-registration" element={<NewUserRegistrationForm />} />
-          <Route path="/scan-qr-id" element={<QRIDScan />} />
-          <Route path="/borrow-return-selection" element={<BorrowReturnSelection />} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/LABEEIS" element={<Welcome />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/select-profile" element={<SelectAdmin />} />
 
-          <Route path="/borrowing" element={<BorrowingProcess />} />
-          <Route path="/item-scan" element={<ItemScan />} />
-          <Route path="/borrow-success" element={<BorrowSuccess />} />
+            {/* User Routes */}
+            <Route path="/user-selection" element={<UserSelection />} />
+            <Route path="/registration" element={<NewUserInstruction />} />
+            <Route path="/new-user-registration" element={<NewUserRegistrationForm />} />
+            <Route path="/scan-qr-id" element={<QRIDScan />} />
+            <Route path="/borrow-return-selection" element={<BorrowReturnSelection />} />
 
-          <Route path="/returning" element={<ReturningProcess />} />
-          <Route path="/item-return-scan/:transactionId" element={<ItemReturnScan />} />
-          <Route path="/return-success" element={<ReturnSuccess />} />
-          <Route path="/return-partial" element={<ReturnPartial />} />
+            <Route path="/borrowing" element={<BorrowingProcess />} />
+            <Route path="/item-scan" element={<ItemScan />} />
+            <Route path="/borrow-success" element={<BorrowSuccess />} />
 
-          {/* Protected Admin Routes */}
-          <Route 
-            path="/" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/users" 
-            element={
-              <ProtectedRoute>
-                <UserList />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/users/:userId" 
-            element={
-              <ProtectedRoute>
-                <User />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/users/newUser" 
-            element={
-              <ProtectedRoute>
-                <NewUser />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/users/registrationSuccessful" 
-            element={
-              <ProtectedRoute>
-                <RegistrationSuccess />
-              </ProtectedRoute>
-            } 
-          />
+            <Route path="/returning" element={<ReturningProcess />} />
+            <Route path="/item-return-scan/:transactionId" element={<ItemReturnScan />} />
+            <Route path="/return-success" element={<ReturnSuccess />} />
+            <Route path="/return-partial" element={<ReturnPartial />} />
 
-          <Route 
-            path="/items" 
-            element={
-              <ProtectedRoute>
-                <ItemList />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/items/:itemId" 
-            element={
-              <ProtectedRoute>
-                <Item />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/items/newItem" 
-            element={
-              <ProtectedRoute>
-                <NewItem />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/items/CreationSuccessful" 
-            element={
-              <ProtectedRoute>
-                <CreationSuccess />
-              </ProtectedRoute>
-            } 
-          />
+            {/* Protected Admin Routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <UserList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/:userId"
+              element={
+                <ProtectedRoute>
+                  <User />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/newUser"
+              element={
+                <ProtectedRoute>
+                  <NewUser />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/registrationSuccessful"
+              element={
+                <ProtectedRoute>
+                  <RegistrationSuccess />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route 
-            path="/categories" 
-            element={
-              <ProtectedRoute>
-                <CategoryList />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/categories/:categoryId" 
-            element={
-              <ProtectedRoute>
-                <Category />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/categories/newCategory" 
-            element={
-              <ProtectedRoute>
-                <NewCategory />
-              </ProtectedRoute>
-            } 
-          />
+            <Route
+              path="/items"
+              element={
+                <ProtectedRoute>
+                  <ItemList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/items/:itemId"
+              element={
+                <ProtectedRoute>
+                  <Item />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/items/newItem"
+              element={
+                <ProtectedRoute>
+                  <NewItem />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/items/CreationSuccessful"
+              element={
+                <ProtectedRoute>
+                  <CreationSuccess />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route 
-            path="/notifications" 
-            element={
-              <ProtectedRoute>
-                <Notification />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/feedback" 
-            element={
-              <ProtectedRoute>
-                <Feedback />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
+            <Route
+              path="/categories"
+              element={
+                <ProtectedRoute>
+                  <CategoryList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/:categoryId"
+              element={
+                <ProtectedRoute>
+                  <Category />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/newCategory"
+              element={
+                <ProtectedRoute>
+                  <NewCategory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/CategorySuccess"
+              element={
+                <ProtectedRoute>
+                  <CategorySuccess />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notification />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <Report />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/archives"
+              element={
+                <ProtectedRoute>
+                  <Archives />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback"
+              element={
+                <ProtectedRoute>
+                  <Feedback />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <ProtectedRoute>
+                  <About />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
       </BrowserRouter>
-    </div>
+    </div> 
   );
 }
 

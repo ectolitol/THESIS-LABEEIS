@@ -4,6 +4,11 @@
      .notificationContainer{
         flex: 6;
 
+        .Content {
+            overflow-y: auto;
+            height: calc(100vh - 60px); // Full height minus navbar height
+        }
+
         .notifList{
             flex: 1;
             -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);

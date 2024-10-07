@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./UserRegistration.scss";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 const UserRegistration = () => { 
   // State to store form data
@@ -16,9 +17,12 @@ const UserRegistration = () => {
     registrationCard: "",
     updatedClassSchedule: ""
   });
-
+ 
   // State for error messages
   const [errors, setErrors] = useState([]);
+
+  // State to control success dialog visibility
+  const [openDialog, setOpenDialog] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,7 +48,15 @@ const UserRegistration = () => {
       });
 
       if (response.ok) {
-        navigate('/users/registrationSuccessful');
+        const data = await response.json();
+
+        // Assuming the response contains information about the user's authentication status
+        if (data.isAuthenticated) {
+          navigate('/users/registrationSuccessful');
+        } else {
+          // Show the dialog for successful registration
+          setOpenDialog(true);
+        }
       } else {
         const data = await response.json();
         if (data.errors) {
@@ -59,9 +71,20 @@ const UserRegistration = () => {
     }
   };
 
+  // Handle closing the dialog and navigating
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate('/LABEEIS');
+  };
+
+  // Handle going back to the previous page
+  const handleGoBack = () => {
+    navigate(-1); // This will navigate to the previous page
+  };
+
   return (
     <div className="userRegistration">
-      <div className="newUserTitle">New User Registration</div>
+      <div className="newUserTitle">NEW USER REGISTRATION</div>
 
       <form className="newUserForm" onSubmit={handleSubmit}>
         {/* Full Name */}
@@ -195,6 +218,9 @@ const UserRegistration = () => {
         {/* Submit Button */}
         <button type="submit" className="submitButton">Register</button>
 
+        {/* Back Button */}
+        <button type="button" className="backButton" onClick={handleGoBack}>Back</button>
+
         {/* Error Messages */}
         {errors.length > 0 && (
           <div className="message">
@@ -204,7 +230,20 @@ const UserRegistration = () => {
           </div>
         )}
       </form>
-    </div>
+
+      {/* Success Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogContent>
+          <p>Your registration was successful. You will be redirected.</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div> 
   );
 };
 

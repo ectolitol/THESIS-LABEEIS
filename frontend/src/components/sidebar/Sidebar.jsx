@@ -1,3 +1,4 @@
+//----------------------------
 import React, { useState, useEffect } from "react";
 import "./sidebar.scss";
 import DashboardCustomizeRoundedIcon from '@mui/icons-material/DashboardCustomizeRounded';
@@ -11,14 +12,24 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import ArchiveRoundedIcon from '@mui/icons-material/ArchiveRounded';
 import MenuIcon from '@mui/icons-material/Menu'; // For the toggle icon
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(
     localStorage.getItem("sidebarState") === "closed" ? false : true
   );
   const navigate = useNavigate();
+  const location = useLocation();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [awaitingApprovalCount, setAwaitingApprovalCount] = useState(0);
 
   const toggleSidebar = () => {
     const newIsOpen = !isOpen;
@@ -33,6 +44,19 @@ const Sidebar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchUnreadNotifications = async () => {
+      try {
+        const response = await axios.get('/api/notifications/notif/unread');
+        setUnreadCount(response.data.length);
+      } catch (error) {
+        console.error('Error fetching unread notifications:', error);
+      }
+    };
+
+    fetchUnreadNotifications();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await axios.post('/api/admin/logout', {}, { withCredentials: true });
@@ -41,6 +65,34 @@ const Sidebar = () => {
     } catch (error) {
       console.error('Error logging out:', error);
     }
+  };
+
+   useEffect(() => {
+    const fetchAwaitingApprovalCount = async () => {
+      try {
+        const response = await axios.get('/api/users/pending/awaiting-approval-count');
+        setAwaitingApprovalCount(response.data.awaitingApprovalCount);
+      } catch (error) {
+        console.error('Error fetching awaiting approval count:', error);
+      }
+    };
+
+    fetchAwaitingApprovalCount();
+  }, []);
+
+
+
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmLogout = () => {
+    handleLogout();
+    setOpenDialog(false);
   };
 
   return (
@@ -56,55 +108,61 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <li>
-            <Link to="/" className="menu-link">
+            <Link to="/" className={`menu-link ${location.pathname === "/" ? "active" : ""}`}>
               <DashboardCustomizeRoundedIcon className="icon" />
               <span>Dashboard</span>
             </Link>
           </li>
           <li>
-            <Link to="/users" className="menu-link">
+            <Link to="/users" className={`menu-link ${location.pathname === "/users" ? "active" : ""}`}>
               <PersonRoundedIcon className="icon" />
               <span>Users</span>
+              {awaitingApprovalCount > 0 && (
+                <span className="counter">{awaitingApprovalCount}</span>
+              )}
             </Link>
           </li>
           <li>
-            <Link to="/items" className="menu-link">
+            <Link to="/items" className={`menu-link ${location.pathname === "/items" ? "active" : ""}`}>
               <HomeRepairServiceRoundedIcon className="icon" />
               <span>Items</span>
             </Link>
           </li>
           <li>
-            <Link to="/categories" className="menu-link">
+            <Link to="/categories" className={`menu-link ${location.pathname === "/categories" ? "active" : ""}`}>
               <CategoryRoundedIcon className="icon" />
               <span>Categories</span>
             </Link>
           </li>
           <li>
-            <Link to="/notifications" className="menu-link">
+            <Link to="/notifications" className={`menu-link ${location.pathname === "/notifications" ? "active" : ""}`}>
               <NotificationsActiveRoundedIcon className="icon" />
               <span>Notifications</span>
+              {unreadCount > 0 && (
+                <span className="counter">{unreadCount}</span>
+              )}
             </Link>
           </li>
           <li>
-            <Link to="/reports" className="menu-link">
+            <Link to="/reports" className={`menu-link ${location.pathname === "/reports" ? "active" : ""}`}>
               <LeaderboardRoundedIcon className="icon" />
               <span>Reports</span>
             </Link>
           </li>
           <li>
-            <Link to="/archives" className="menu-link">
+            <Link to="/archives" className={`menu-link ${location.pathname === "/archives" ? "active" : ""}`}>
               <ArchiveRoundedIcon className="icon" />
               <span>Archives</span>
             </Link>
           </li>
           <li>
-            <Link to="/feedback" className="menu-link">
+            <Link to="/feedback" className={`menu-link ${location.pathname === "/feedback" ? "active" : ""}`}>
               <RateReviewRoundedIcon className="icon" />
               <span>Feedback/Support</span>
             </Link>
           </li>
           <li>
-            <Link to="/about" className="menu-link">
+            <Link to="/about" className={`menu-link ${location.pathname === "/about" ? "active" : ""}`}>
               <InfoRoundedIcon className="icon" />
               <span>About</span>
             </Link>
@@ -114,15 +172,36 @@ const Sidebar = () => {
 
       <div className="bottom">
         <ul>
-        <li>
-            <span onClick={handleLogout} className="menu-link">
+          <li>
+            <span onClick={handleDialogOpen} className="menu-link">
               <ExitToAppRoundedIcon className="icon" />
               <span>Logout</span>
             </span>
           </li>
         </ul>
-
       </div>
+
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm Logout"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleConfirmLogout} autoFocus>
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </div>
   );

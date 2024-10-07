@@ -2,23 +2,23 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './itemScan.scss';
+import { imageBaseURL } from '../../config/axiosConfig';
 
 const ItemScan = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Destructure navigation state with default values
+ 
   const {
-    userID = '',
+    userID = '', 
     userName = '',
     transactionType = '',
     courseSubject = '',
     professor = '',
+    profAttendance = '',
     roomNo = '',
     borrowedDuration = '',
   } = location.state || {};
 
-  // State management
   const [scannedItems, setScannedItems] = useState([]);
   const [currentBarcode, setCurrentBarcode] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -31,18 +31,15 @@ const ItemScan = () => {
   const barcodeInputRef = useRef(null);
 
   useEffect(() => {
-    // Focus on the barcode input
     if (barcodeInputRef.current) {
-      barcodeInputRef.current.focus();
+      barcodeInputRef.current.focus(); 
     }
 
-    // Fetch user details
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(`/api/users/${userID}`);
         if (response.status === 200) {
           setContactNumber(response.data.contactNumber);
-          console.log('Fetched user contact number:', response.data.contactNumber);
         } else {
           console.error('Error fetching user details.');
         }
@@ -58,22 +55,17 @@ const ItemScan = () => {
     e.preventDefault();
     resetItemDetails();
 
-    console.log('Scanning barcode:', currentBarcode);
-
     if (currentBarcode) {
       try {
         const response = await axios.get(`/api/items/barcode/${currentBarcode}`);
         if (response.status === 200) {
           setItemDetails(response.data);
           setAvailableQuantity(response.data.quantity);
-          console.log('Item details fetched:', response.data);
         } else {
           setErrorMessage('Item not found. Please scan a valid barcode.');
-          console.error('Item not found for barcode:', currentBarcode);
         }
       } catch (error) {
         setErrorMessage('Error checking barcode. Please try again.');
-        console.error('Error during barcode scan:', error);
       }
     }
   };
@@ -88,44 +80,34 @@ const ItemScan = () => {
   const handleAddItem = () => {
     if (!currentBarcode || !quantity || !itemDetails) {
       setErrorMessage('Please scan an item and enter quantity.');
-      console.warn('Attempted to add item without scanning or quantity:', { currentBarcode, quantity });
       return;
     }
 
     const requestedQuantity = Number(quantity);
-
     if (requestedQuantity > availableQuantity) {
       setQuantityExceededMessage(`Cannot add item. Total quantity exceeds available stock. Available quantity: ${availableQuantity}`);
-      console.warn('Requested quantity exceeds available stock:', { requestedQuantity, availableQuantity });
       return;
     }
 
     const existingItemIndex = scannedItems.findIndex(item => item.itemBarcode === currentBarcode);
-
     if (existingItemIndex >= 0) {
       const totalQuantity = scannedItems[existingItemIndex].quantity + requestedQuantity;
-
       if (totalQuantity > availableQuantity) {
         setQuantityExceededMessage(`Cannot add item. Total quantity exceeds available stock. Available quantity: ${availableQuantity}`);
-        console.warn('Total quantity exceeds available stock during update:', { totalQuantity, availableQuantity });
         return;
       }
 
-      // Update the existing item
       const updatedItems = [...scannedItems];
       updatedItems[existingItemIndex].quantity = totalQuantity;
       setScannedItems(updatedItems);
-      console.log('Updated existing item quantity:', { itemBarcode: currentBarcode, totalQuantity });
     } else {
-      // Add new item to the scannedItems
       const newItem = {
         itemBarcode: currentBarcode,
         itemName: itemDetails.itemName,
         quantity: requestedQuantity,
-        image: itemDetails.image ? `/uploads/${itemDetails.image}` : '',
+        image: itemDetails.image ? `${imageBaseURL}uploads/${itemDetails.image}` : '',
       };
       setScannedItems(prevItems => [...prevItems, newItem]);
-      console.log('Added new item:', newItem);
     }
 
     resetFields();
@@ -147,52 +129,57 @@ const ItemScan = () => {
   const handleDeleteItem = (itemBarcode) => {
     const updatedScannedItems = scannedItems.filter(item => item.itemBarcode !== itemBarcode);
     setScannedItems(updatedScannedItems);
-    console.log('Deleted item:', itemBarcode);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate itemsToSubmit
+    if (scannedItems.length === 0) {
+        setErrorMessage('No items to submit. Please add items before submitting.');
+        return;
+    }
+
     const itemsToSubmit = scannedItems.map(item => ({
-      itemBarcode: item.itemBarcode,
-      itemName: item.itemName,
-      quantity: item.quantity,
+        itemBarcode: item.itemBarcode,
+        itemName: item.itemName,
+        quantity: item.quantity,
     }));
 
     const transactionDetails = {
-      userID,
-      userName,
-      contactNumber,
-      items: itemsToSubmit,
-      courseSubject,
-      professor,
-      roomNo,
-      borrowedDuration,
-      transactionType,
-      dateTime: new Date().toISOString(),
+        userID,
+        userName,
+        contactNumber,
+        items: itemsToSubmit,
+        courseSubject,
+        professor,
+        profAttendance,
+        roomNo,
+        borrowedDuration,
+        transactionType,
+        dateTime: new Date().toISOString(),
     };
 
-    // Log the transaction details
-    console.log('Contact Number:', contactNumber);
-    console.log('Transaction Details:', JSON.stringify(transactionDetails, null, 2));
-
     try {
-      const response = await axios.post('/api/borrow-return/log', transactionDetails);
-      if (response.status === 201) {
-        console.log('Transaction logged successfully:', response.data);
-        navigate('/borrow-success', { state: transactionDetails });
-      } else {
-        setErrorMessage('Error processing the transaction.');
-        console.error('Transaction logging error:', response);
-      }
+        const response = await axios.post('/api/borrow-return/log', transactionDetails);
+        if (response.status === 201) {
+            navigate('/borrow-success', { state: transactionDetails });
+        } else {
+            // Log the response status and data for debugging
+            console.error('Error response:', response.data);
+            setErrorMessage('Error processing the transaction. Please try again.');
+        }
     } catch (error) {
-      setErrorMessage('Failed to log the transaction.');
-      console.error('Error during transaction logging:', error);
+        // Log detailed error information
+        console.error('Failed to log the transaction:', error.response ? error.response.data : error.message);
+        setErrorMessage('Failed to log the transaction. Please check the console for details.');
     }
-  };
+};
+
 
   return (
     <div className="item-scan">
+      <img src="/ceaa.png" alt="Background" className="bg-only" />
       <h2>Scan Items to Borrow</h2>
 
       <form onSubmit={handleBarcodeScan}>
@@ -206,9 +193,7 @@ const ItemScan = () => {
             placeholder="Scan or enter barcode"
             required
           />
-          <button type="submit" disabled={!currentBarcode}>
-            Scan
-          </button>
+          <button className='barcode-scann' type="submit" disabled={!currentBarcode}>Scan</button>
         </div>
 
         {itemDetails && (
@@ -243,9 +228,7 @@ const ItemScan = () => {
             </div>
 
             <div className="actions">
-              <button type="button" onClick={handleAddItem} disabled={!itemDetails || !quantity}>
-                Add Item
-              </button>
+              <button type="button" onClick={handleAddItem} disabled={!itemDetails || !quantity}>Add Item</button>
               <button type="button" onClick={resetFields}>Cancel</button>
             </div>
           </>
@@ -255,6 +238,7 @@ const ItemScan = () => {
         {quantityExceededMessage && <p className="error-message">{quantityExceededMessage}</p>}
       </form>
 
+      <div className='scanned'>
       <h3>Scanned Items</h3>
       <ul className="scanned-items-list">
         {scannedItems.map((item, index) => (
@@ -271,6 +255,7 @@ const ItemScan = () => {
           <button onClick={handleSubmit}>Submit Transaction</button>
         </div>
       )}
+      </div>
     </div>
   );
 };

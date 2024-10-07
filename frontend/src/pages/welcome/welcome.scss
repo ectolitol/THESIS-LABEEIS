@@ -1,0 +1,85 @@
+.welcome-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+  
+    .bg-only {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+  
+    .welcome-content-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        height: 89%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.426); /* Slightly transparent background */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+  
+    .welcome2-container h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #000;
+      text-align: center;
+      
+    }
+  
+    .welcome2-container h3 {
+      font-size: 14px;
+      margin-bottom: 20px; // Adjusted for better spacing
+      color: #000;
+      
+    }
+  
+    .welcome-form-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      
+    }
+  
+    .welcome-button {
+      background-color: #59000F;
+      color: white;
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #a32a2a;
+      }
+    }
+  
+    .welcome-guide-container {
+      margin-top: 20px;
+      color: #59000F;
+    }
+  
+    .welcome-guide-link {
+      font-size: 16px;
+      font-weight: bold;
+      color: #59000F;
+      text-decoration: none;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  

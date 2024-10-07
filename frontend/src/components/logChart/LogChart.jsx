@@ -47,7 +47,7 @@ const LogChart = () => {
           layout="horizontal"
           align="center"
           verticalAlign="bottom"
-          wrapperStyle={{ paddingTop: 20 }} // Adjust padding to fit the legend
+          wrapperStyle={{ paddingTop: 10 }} // Adjust padding to fit the legend
         />
         <Line
           type="monotone"

@@ -6,13 +6,12 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Define the base URL of your backend server
-const BASE_URL = 'http://localhost:4000'; // Update with your actual backend URL
+import { imageBaseURL } from '../../config/axiosConfig';
 
 export const ItemTable = () => {
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   // Fetch items from the backend
   React.useEffect(() => {
@@ -32,19 +31,44 @@ export const ItemTable = () => {
 
   // Define columns for the DataGrid
   const columns = [
-    { field: 'itemBarcode', headerName: 'Barcode', minWidth: 150 },
-    { field: 'itemName', headerName: 'Item Name', minWidth: 200 },
+    { field: 'itemName', headerName: 'Name', minWidth: 200 },
     {
       field: 'image',
       headerName: 'Image',
       minWidth: 150,
-      renderCell: (params) => (
-        <img
-          src={params.value ? `${BASE_URL}${params.value}` : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"}
-          alt="item"
-          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
-        />
-      ),
+      renderCell: (params) => {
+        // Ensure there's no double slash when concatenating
+        const imageUrl = params.value 
+          ? `${imageBaseURL.replace(/\/$/, '')}/${params.value.replace(/^\//, '')}`
+          : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg";
+    
+        return (
+          <img
+            src={imageUrl}
+            alt="item"
+            style={{ width: '70px', height: '70px', objectFit: 'cover' }}
+          />
+        );
+      },
+    },
+    {
+      field: 'barcodeImage',
+      headerName: 'Barcode',
+      minWidth: 170,
+      renderCell: (params) => {
+        // Check if barcodeImage exists and render it as an image
+        if (params.value) {
+          return (
+            <img
+              src={`data:image/png;base64,${params.value}`} // Render base64 barcode image
+              alt="Barcode"
+              style={{ width: '145px', height: '50px', objectFit: 'cover' }}
+            />
+          );
+        } else {
+          return <p>No Barcode</p>;
+        }
+      },
     },
     {
       field: 'category',
@@ -55,10 +79,9 @@ export const ItemTable = () => {
         return params.row?.category?.categoryName || 'N/A';
       },
     },
-    
     { field: 'quantity', headerName: 'Quantity Left', minWidth: 110 },
     { field: 'location', headerName: 'Location', minWidth: 150 },
-    { field: 'condition', headerName: 'Condition', minWidth: 130 },
+    { field: 'condition', headerName: 'Status', minWidth: 130 },
     {
       field: 'action',
       headerName: 'Action',

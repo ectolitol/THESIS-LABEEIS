@@ -1,8 +1,8 @@
 import "./registrationSuccess.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import RegiSuccess from "../../components/regiSuccess/RegiSuccess";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const RegistrationSuccess = () => {
   return (
@@ -10,8 +10,8 @@ const RegistrationSuccess = () => {
       <Sidebar/>
       <div className="successContainer">
         <Navbar/>
-        <div className="pageTitle">
-          <PageTitle page="New User"/>
+        <div className="Content">
+        <CustomBreadcrumbs/>
             <RegiSuccess/>
         </div>
       </div>

@@ -3,6 +3,7 @@ const User = require('../models/UserModel');
 const Item = require('../models/ItemModel');
 const { createNotification } = require('../utils/notificationService');
 const smsService = require('../utils/smsService');
+const { sendTransactionEmail } = require('../utils/emailService');
 
 exports.logTransaction = async (req, res) => {
   try {
@@ -13,6 +14,7 @@ exports.logTransaction = async (req, res) => {
       items = [], // Expect an array of items {itemBarcode, quantity}
       courseSubject,
       professor,
+      profAttendance,
       roomNo,
       borrowedDuration,
       transactionType,
@@ -35,6 +37,7 @@ exports.logTransaction = async (req, res) => {
         items: [],
         courseSubject,
         professor,
+        profAttendance,
         roomNo,
         borrowedDuration,
         transactionType: 'Borrowed',
@@ -84,6 +87,16 @@ exports.logTransaction = async (req, res) => {
 
       // Save the transaction log
       await borrowReturnLog.save();
+
+      // Send email of transaction details
+      await sendTransactionEmail(user, borrowReturnLog.items, borrowReturnLog.dueDate);
+
+      // Send admin notification about borrowing
+      await createNotification(
+        'New Borrowing',
+        `User ${user.fullName} has borrowed items: ${items.map(item => item.itemName).join(", ")}. Please ensure they are returned by ${borrowReturnLog.dueDate.toLocaleString()}.`,
+        null // You can specify a user/admin if necessary
+      );
                                                                                                                                                                                         
       // Send SMS notification for borrowing
         const smsMessage = `Hello ${user.fullName}, you borrowed ${items.map(item => item.itemName).join(", ")}. Please return by ${borrowReturnLog.dueDate.toLocaleString()}.`;
@@ -111,12 +124,15 @@ const convertDurationToMillis = (duration) => {
   switch (unit) {
     case 'hour':
     case 'hours':
+    case 'hour/s':
       return numValue * 60 * 60 * 1000; // Convert to milliseconds
     case 'minute':
     case 'minutes':
+    case 'minute/s':
       return numValue * 60 * 1000; // Convert to milliseconds
     case 'day':
     case 'days':
+      case 'day/s':
       return numValue * 24 * 60 * 60 * 1000; // Convert to milliseconds
     default:
       throw new Error(`Unsupported time unit: ${unit}`);
@@ -126,7 +142,9 @@ const convertDurationToMillis = (duration) => {
 
 exports.completeReturn = async (req, res) => {
   try {
-    const { pastTransactionID, userID, itemsReturned } = req.body;
+    const { pastTransactionID, userID, itemsReturned, feedbackEmoji } = req.body;
+
+    console.log('Incoming return request:', req.body);
 
     // Find the borrow transaction that matches pastTransactionID and userID
     const borrowReturnLog = await BorrowReturnLog.findOne({
@@ -166,6 +184,10 @@ exports.completeReturn = async (req, res) => {
         // Log to verify correct quantity update
         console.log(`Item ${logItem.itemBarcode} updated quantityReturned: ${logItem.quantityReturned} / ${logItem.quantityBorrowed}`);
 
+        // Log the item condition
+        logItem.condition = returnedItem.condition || 'Unknown'; // Store the condition
+
+
         // If quantityReturned equals quantityBorrowed, mark the item as fully returned
         if (logItem.quantityReturned === logItem.quantityBorrowed) {
           logItem.returnStatus = 'Completed';
@@ -184,21 +206,28 @@ exports.completeReturn = async (req, res) => {
           return res.status(400).json({ message: `Not enough stock for item: ${logItem.itemBarcode}` });
         }
 
-        // Update the item quantity in the database
-        await Item.findOneAndUpdate(
-          { itemBarcode: logItem.itemBarcode },
-          { quantity: updatedQuantity },
-          { new: true }
-        );
+        try {
+          // Update the item quantity in the database
+          await Item.findOneAndUpdate(
+            { itemBarcode: logItem.itemBarcode },
+            { quantity: updatedQuantity },
+            { new: true }
+          );
+        } catch (err) {
+          console.error("Error updating item quantity:", err);
+          return res.status(500).json({ message: "Error updating item quantity", error: err.message });
+        }
       }
     }
+
+     // Set return date and time to the current date
+     borrowReturnLog.returnDate = new Date();
 
     // Check if all items in the transaction have been returned
     const allItemsReturned = borrowReturnLog.items.every(
       item => item.quantityBorrowed === item.quantityReturned
     );
 
-    // Log to check if all items have been returned
     console.log(`All items returned? ${allItemsReturned}`);
 
     // Update the return status based on whether all items are returned
@@ -209,8 +238,31 @@ exports.completeReturn = async (req, res) => {
       borrowReturnLog.returnStatus = "Partially Returned";
     }
 
-    // Save the updated transaction log
-    await borrowReturnLog.save();
+    // Save the feedback emoji if provided
+    if (feedbackEmoji) {
+      borrowReturnLog.feedbackEmoji = feedbackEmoji;
+    }
+
+    try {
+      // Save the updated transaction log
+      await borrowReturnLog.save();
+    } catch (err) {
+      console.error("Error saving borrowReturnLog:", err);
+      return res.status(500).json({ message: "Error saving transaction log", error: err.message });
+    }
+
+    // Send notification about the return process
+    await createNotification(
+      allItemsReturned ? 'Items Fully Returned' : 'Items Partially Returned',
+      allItemsReturned
+        ? `User ${borrowReturnLog.userName} has successfully returned all items: ${borrowReturnLog.items
+            .map((item) => item.itemName)
+            .join(", ")}.`
+        : `User ${borrowReturnLog.userName} has partially returned items: ${itemsToProcess
+            .map((item) => item.itemName)
+            .join(", ")}. Please ensure the remaining items are returned.`,
+      null // Specify recipient if needed (e.g., admin ID)
+    );
 
     // Send SMS notification based on return status
     const smsMessage = allItemsReturned
@@ -221,7 +273,11 @@ exports.completeReturn = async (req, res) => {
           .map((item) => item.itemName)
           .join(", ")}. Please return the remaining items.`;
 
-    await smsService.sendSMS(borrowReturnLog.contactNumber, smsMessage);
+    try {
+      await smsService.sendSMS(borrowReturnLog.contactNumber, smsMessage);
+    } catch (err) {
+      console.error("Error sending SMS:", err);
+    }
 
     res.status(200).json({
       success: true,
@@ -236,8 +292,6 @@ exports.completeReturn = async (req, res) => {
     });
   }
 };
-
-
 
 
 // Get transaction logs
@@ -442,3 +496,28 @@ const formatDuration = (millis) => {
       return `${Math.round(days)} days`;
   }
 };
+
+exports.updateFeedbackEmoji = async (req, res) => {
+  const { transactionID } = req.params;  // transactionID corresponds to the _id field in MongoDB
+  const { feedbackEmoji } = req.body;
+
+  try {
+    const transaction = await BorrowReturnLog.findById(transactionID);  // Use the _id to find the transaction
+
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    // Update the feedback emoji
+    transaction.feedbackEmoji = feedbackEmoji;
+
+    // Save the updated transaction
+    await transaction.save();
+
+    res.status(200).json({ success: true, message: 'Feedback updated successfully' });
+  } catch (error) {
+    console.error('Error updating feedback:', error);
+    res.status(500).json({ success: false, message: 'Error updating feedback' });
+  }
+};
+

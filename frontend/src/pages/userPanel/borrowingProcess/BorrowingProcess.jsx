@@ -24,7 +24,6 @@ const BorrowingProcess = () => {
 
   return (
     <div>
-      <h2>Borrowing Process</h2>
       {!courseDetails ? (
         <UserDetails 
           onUserDetailsSubmit={handleCourseDetailsSubmit}

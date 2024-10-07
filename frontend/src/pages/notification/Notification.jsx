@@ -1,8 +1,8 @@
 import "./notification.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import NotificationList from "../../components/notifacationList/NotificationList";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const Notification = () => {
   return (
@@ -10,8 +10,8 @@ const Notification = () => {
       <Sidebar/>
       <div className="notificationContainer">
             <Navbar/>
-            <div className="pageTitle"> 
-                <PageTitle page="Notifications"/>
+            <div className="Content">
+            <CustomBreadcrumbs/>
                 <div className="notifList">
                   <div className="notifTitle">
                     Notifications

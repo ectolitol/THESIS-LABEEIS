@@ -11,7 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { TableSortLabel, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { TableSortLabel, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
 import axios from "axios";
 
@@ -38,6 +38,12 @@ const BorrowReturnTable = () => {
     fetchData();
   }, []);
 
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // Only the date part in YYYY-MM-DD format
+  };
+
   const handleExtendClick = (log) => {
     setSelectedLog(log);
     setNewDuration(log.borrowedDuration);
@@ -46,22 +52,12 @@ const BorrowReturnTable = () => {
 
   const handleSaveDuration = async () => {
     try {
-      // Create updated log object and trim the borrowedDuration
       const updatedLog = {
         borrowedDuration: newDuration
       };
   
-      // Log the updated log data to be sent
-      console.log("Updating log with ID:", selectedLog._id);
-      console.log("Updated log data:", updatedLog);
-  
-      // Send the PUT request to the server
       const response = await axios.put(`/api/borrow-return/${selectedLog._id}/extend`, updatedLog);
   
-      // Log the server response
-      console.log("Response from server:", response.data);
-  
-      // Update the state with the new row data
       const updatedRows = rows.map(row => row._id === selectedLog._id ? { ...row, borrowedDuration: newDuration } : row);
       setRows(updatedRows);
       setIsModalOpen(false);
@@ -70,7 +66,6 @@ const BorrowReturnTable = () => {
       console.error("Error updating duration:", error);
     }
   };
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -91,7 +86,13 @@ const BorrowReturnTable = () => {
     setOrderBy(property);
   };
 
-  const sortedRows = rows.slice().sort((a, b) => {
+  // Filter to get only today's transactions
+  const todayRows = rows.filter(row => {
+    const rowDate = new Date(row.dateTime).toISOString().split('T')[0];
+    return rowDate === getTodayDate(); // Compare with today's date
+  });
+
+  const sortedRows = todayRows.slice().sort((a, b) => {
     const aValue = a[orderBy];
     const bValue = b[orderBy];
     return order === "asc" ? (aValue < bValue ? -1 : 1) : (aValue > bValue ? -1 : 1);
@@ -157,94 +158,107 @@ const BorrowReturnTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <React.Fragment key={row._id}>
-                  <TableRow hover>
-                    <TableCell className="tableCell">
-                      {new Date(row.dateTime).toLocaleString()}
-                    </TableCell>
-                    <TableCell className="tableCell">{row.userName}</TableCell>
-                    
-                    <TableCell className="tableCell">
-                      {row.borrowedDuration}
-                      {row.dueDate && !isNaN(new Date(row.dueDate).getTime()) && (
-                        ` | Due: ${new Date(row.dueDate).toLocaleTimeString()}`
-                      )}
-                    </TableCell>
-
-                    <TableCell className="tableCell">
-                      <span className={`type ${row.transactionType}`}>
-                        {row.transactionType}
-                      </span>
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <span
-                        className={`status ${row.returnStatus}`}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {row.returnStatus}
-                        {row.returnStatus === 'Overdue' && (
-                          <IconButton
-                          className="button"
-                          size="small"
-                          onClick={() => handleExtendClick(row)}
-                        >
-                          <ExtensionOutlinedIcon />
-                        </IconButton>
+            {sortedRows.length > 0 ? (
+              sortedRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <React.Fragment key={row._id}>
+                    <TableRow hover>
+                      <TableCell className="tableCell">
+                        {new Date(row.dateTime).toLocaleString()}
+                      </TableCell>
+                      <TableCell className="tableCell">{row.userName}</TableCell>
+                      
+                      <TableCell className="tableCell">
+                        {row.borrowedDuration}
+                        {row.dueDate && !isNaN(new Date(row.dueDate).getTime()) && (
+                          ` | Due: ${new Date(row.dueDate).toLocaleTimeString()}`
                         )}
-                      </span>
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      {calculateUniqueItemCount(row.items || [])} Item/s
-                      <IconButton
-                        size="small"
-                        onClick={() => handleToggleRow(row._id)}
-                      >
-                        {openRow[row._id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
 
-                  <TableRow>
-                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                      <Collapse in={openRow[row._id]} timeout="auto" unmountOnExit>
-                        <Table size="small" aria-label="items">
-                          <TableBody>
-                            <TableRow>
-                              <TableCell colSpan={7}><strong>Items:</strong></TableCell>
-                            </TableRow>
-                            {row.items && row.items.map((item, index) => (
-                              <TableRow key={index}>
-                                <TableCell>Item Name: {item.itemName}</TableCell>
-                                <TableCell>Barcode: {item.itemBarcode}</TableCell>
-                                <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
-                                <TableCell>Returned: {item.quantityReturned}</TableCell>
+                      <TableCell className="tableCell">
+                        <span className={`type ${row.transactionType}`}>
+                          {row.transactionType}
+                        </span>
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        <span
+                          className={`status ${row.returnStatus}`}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {row.returnStatus}
+                          {row.returnStatus === 'Overdue' && (
+                            <IconButton
+                            className="button"
+                            size="small"
+                            onClick={() => handleExtendClick(row)}
+                          >
+                            <ExtensionOutlinedIcon />
+                          </IconButton>
+                          )}
+                        </span>
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {calculateUniqueItemCount(row.items || [])} Item/s
+                        <IconButton
+                          size="small"
+                          onClick={() => handleToggleRow(row._id)}
+                        >
+                          {openRow[row._id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                        <Collapse in={openRow[row._id]} timeout="auto" unmountOnExit>
+                          <Table size="small" aria-label="items">
+                            <TableBody>
+                              <TableRow>
+                                <TableCell colSpan={7}><strong>Items:</strong></TableCell>
                               </TableRow>
-                            ))}
-                            <TableRow>
-                              <TableCell colSpan={7}><strong>Other Details:</strong></TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell>Course: {row.courseSubject}</TableCell>
-                              <TableCell>Professor: {row.professor}</TableCell>
-                              <TableCell>Room: {row.roomNo}</TableCell>
-                            </TableRow>
-                          </TableBody>
-                        </Table>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </React.Fragment>
-              ))}
+                              {row.items && row.items.map((item, index) => (
+                                <TableRow key={index}>
+                                  <TableCell>Item Name: {item.itemName}</TableCell>
+                                  <TableCell>Barcode: {item.itemBarcode}</TableCell>
+                                  <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
+                                  <TableCell>Returned: {item.quantityReturned}</TableCell>
+                                  <TableCell>Condition: {item.condition}</TableCell>
+                                </TableRow>
+                              ))}
+                              <TableRow>
+                                <TableCell colSpan={7}><strong>Other Details:</strong></TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell>Course: {row.courseSubject}</TableCell>
+                                <TableCell>Professor: {row.professor}</TableCell>
+                                <TableCell>Prof Present? {row.profAttendance}</TableCell>
+                                <TableCell>Room: {row.roomNo}</TableCell>
+                                <TableCell>Feedback: {row.feedbackEmoji}</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  <Typography variant="body1" color="textSecondary">
+                    No transactions for today.
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50]}
         component="div"
-        count={rows.length}
+        count={sortedRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

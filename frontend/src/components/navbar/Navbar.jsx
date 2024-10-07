@@ -3,22 +3,30 @@ import { Link } from 'react-router-dom';
 import './navbar.scss';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import ContrastRoundedIcon from '@mui/icons-material/ContrastRounded';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import Tooltip from '@mui/material/Tooltip';
 import axios from 'axios';
 import ProfileDropdown from '../profileDropdown/ProfileDropdown';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css'; 
+import { imageBaseURL } from '../../config/axiosConfig';
 
 const Navbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState(null); // Admin data from session
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [date, setDate] = useState(new Date());
+  const [profileImageError, setProfileImageError] = useState(false);
 
   const notificationsRef = useRef(null);
   const profileRef = useRef(null);
+  const calendarRef = useRef(null);
 
+  // Fetch Notifications and Admin data
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
@@ -29,54 +37,78 @@ const Navbar = () => {
         console.error('Error fetching unread notifications:', error);
       }
     };
-
-    fetchUnreadNotifications();
-  }, [showNotifications]);
+    fetchUnreadNotifications(); // Fetch immediately after mounting to keep count accurate
+  }, []);
 
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get('/api/admin/profiles/me'); // Fetch only the logged-in admin
-        setAdmin(response.data); // Set the admin state with the specific profile
+        const response = await axios.get('/api/adminProfile/profiles/me', { withCredentials: true });
+        setAdmin(response.data); // Set the admin data from session
       } catch (error) {
         console.error('Error fetching admin data:', error);
+        if (error.response) {
+          console.error('Response data:', error.response.data); // Log response error details
+        }
       }
     };
 
-    fetchAdminData();
+    fetchAdminData(); // Fetch the logged-in admin profile on component mount
   }, []);
 
+  // Update Time Every Second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Toggle dropdown states
   const toggleNotificationsDropdown = () => {
     setShowNotifications(prev => !prev);
-    if (showProfile) setShowProfile(false);
+    setShowProfile(false);
+    setShowCalendar(false);
   };
 
   const toggleProfileDropdown = () => {
-    setShowProfile(!showProfile);
+    setShowProfile(prev => !prev);
+    setShowNotifications(false);
+    setShowCalendar(false);
   };
 
+  const toggleCalendarDropdown = () => {
+    setShowCalendar(prev => !prev);
+    setShowProfile(false);
+    setShowNotifications(false);
+  };
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        (profileRef.current && !profileRef.current.contains(event.target)) &&
-        (notificationsRef.current && !notificationsRef.current.contains(event.target))
+        !profileRef.current?.contains(event.target) &&
+        !notificationsRef.current?.contains(event.target) &&
+        !calendarRef.current?.contains(event.target)
       ) {
         setShowProfile(false);
         setShowNotifications(false);
+        setShowCalendar(false);
       }
     };
-
+ 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Generate link for each notification
   const generateNotificationLink = (notification) => {
     const type = notification.type.toLowerCase();
     if (type.includes('new item')) {
       return `/items`;
     } else if (type.includes('user')) {
       return `/users`;
-    } else if (type.includes('overdue') || type.includes('extended')) {
+    } else if (type.includes('overdue') || type.includes('extended') || type.includes('returned') || type.includes('borrow')) {
       return `/`;
     } else if (type.includes('stock')) {
       return `/items`;
@@ -85,39 +117,54 @@ const Navbar = () => {
     }
   };
 
+  // Handle profile image load error
+  const handleImageError = () => {
+    setProfileImageError(true);
+  };
+
   const updateAdminProfile = (updatedProfile) => {
     setAdmin(updatedProfile);
+    setProfileImageError(false); // Reset error state when profile updates
   };
-  
 
   return (
     <div className="navbar">
-      <div className="logo">LABEEIS</div>
-      <div className="wrapper">
-        <div className="search">
-          <input type="text" placeholder="Search..." />
-          <SearchRoundedIcon className="icon" />
-        </div>
+      <div className="logo">
+        <img src="/LABEEIS-LOGO.png" alt="Logo" className="logo-image" />
+      </div>
 
+      <div className="wrapper">
         <div className="items">
-          <Tooltip title="Toggle Theme" disableInteractive>
-            <div className="item">
-              <ContrastRoundedIcon className="icon" />
+          <Tooltip title="Current Date" disableInteractive>
+            <div className="nav-item" onClick={toggleCalendarDropdown}>
+              <span>{currentDateTime.toLocaleDateString()}</span>
+              <span>{currentDateTime.toLocaleTimeString()}</span>
+              {showCalendar && (
+                <div
+                  className="calendar-dropdown"
+                  ref={calendarRef}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Calendar
+                    onChange={setDate}
+                    value={date}
+                    className="custom-calendar"
+                  />
+                </div>
+              )}
             </div>
           </Tooltip>
 
           <Tooltip title="Notifications" disableInteractive>
             <div
-              className="item"
+              className="nav-item"
               ref={notificationsRef}
               onClick={toggleNotificationsDropdown}
             >
               <NotificationsActiveRoundedIcon className="icon" />
-              {unreadCount > 0 && (
-                <div className="counter">{unreadCount}</div>
-              )}
+              {unreadCount > 0 && <div className="counter">{unreadCount}</div>}
               {showNotifications && (
-                <div className="dropdown">
+                <div className="notif-dropdown">
                   {notifications.length === 0 ? (
                     <p>No notifications</p>
                   ) : (
@@ -125,7 +172,7 @@ const Navbar = () => {
                       <Link
                         to={generateNotificationLink(notification)}
                         key={notification._id}
-                        className="notification-item"
+                        className="notif-item"
                         onClick={() => {
                           axios.patch(`/api/notifications/${notification._id}/read`);
                           setUnreadCount(prevCount => prevCount - 1);
@@ -142,8 +189,17 @@ const Navbar = () => {
           </Tooltip>
 
           <Tooltip title="Profile" disableInteractive>
-            <div ref={profileRef} onClick={toggleProfileDropdown} className="item">
-              {admin && <AccountCircleRoundedIcon className="icon" />}
+            <div ref={profileRef} onClick={toggleProfileDropdown} className="nav-item">
+              {admin && admin.profileImage && !profileImageError ? (
+                <img
+                  src={`${imageBaseURL}uploads/${admin.profileImage}`} // Dynamic image base URL
+                  alt="Profile"
+                  className="profile-icon"
+                  onError={handleImageError}
+                />
+              ) : (
+                <AccountCircleRoundedIcon className="icon" />
+              )}
               {showProfile && (
                 <ProfileDropdown
                   admin={admin}
@@ -152,7 +208,7 @@ const Navbar = () => {
                   updateAdminProfile={updateAdminProfile}
                 />
               )}
-            </div> 
+            </div>
           </Tooltip>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import "./categoryList.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import CategoryTable from "../../components/categoryTable/CategoryTable";
 import {Link} from "react-router-dom"
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const CategoryList = () => {
   return (
@@ -11,8 +11,8 @@ const CategoryList = () => {
       <Sidebar/>
       <div className="categoryListContainer">
         <Navbar/>
-          <div className="pageTitle">
-            <PageTitle page="Categories"/>
+        <div className="Content">
+            <CustomBreadcrumbs/>
              <div className="categoryListTable">
               <div className="categoryListTitle">
                 <span className="title">List of Categories</span>

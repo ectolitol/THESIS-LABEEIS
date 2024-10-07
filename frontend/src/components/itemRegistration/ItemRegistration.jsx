@@ -12,14 +12,19 @@ const ItemRegistration = () => {
     newCategory: "",
     brand: "",
     model: "",
+    manufacturer: "",  // Added Manufacturer field
     quantity: "",
+    serialNumber: "",  // Added Serial Number field
+    pupPropertyNumber: "",  // Added PUP Property Number field
+    number: "",  // Added Number field
     description: "",
     condition: "",
     location: "",
-    calibrationNeeded: "No",
-    calibrationDueDate: "",
-    calibrationStatus: "",
-    calibrationFrequency: "",
+    pmFrequency: "",  // Added PM Frequency field
+    specification: "",  // Added Specification field
+    pmNeeded: "No",
+    pmDueDate: "",
+    pmStatus: "",
     notesComments: "",
   });
 
@@ -77,7 +82,7 @@ const ItemRegistration = () => {
     // Prepare data for submission
     const submissionData = new FormData();
     for (const key in formData) {
-      if (formData.calibrationNeeded === "No" && key.startsWith('calibration') && key !== 'calibrationNeeded') {
+      if (formData.pmNeeded === "No" && key.startsWith('pm') && key !== 'pmNeeded') {
         continue;
       }
       submissionData.append(key, formData[key]);
@@ -183,6 +188,46 @@ const ItemRegistration = () => {
           />
         </div>
         <div className="newItemField">
+          <label>Manufacturer: </label>
+          <input
+            type="text"
+            name="manufacturer"
+            placeholder="Manufacturer"
+            value={formData.manufacturer}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="newItemField">
+          <label>Serial Number: </label>
+          <input
+            type="text"
+            name="serialNumber"
+            placeholder="Serial Number"
+            value={formData.serialNumber}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="newItemField">
+          <label>PUP Property Number: </label>
+          <input
+            type="text"
+            name="pupPropertyNumber"
+            placeholder="PUP Property Number"
+            value={formData.pupPropertyNumber}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="newItemField">
+          <label>Number: </label>
+          <input
+            type="number"
+            name="number"
+            placeholder="Number"
+            value={formData.number}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="newItemField">
           <label>Quantity: </label>
           <input
             type="number"
@@ -204,16 +249,21 @@ const ItemRegistration = () => {
           />
         </div>
         <div className="newItemField">
-          <label>Condition: </label>
+          <label>Specification: </label>
+          <textarea
+            name="specification"
+            placeholder="Specification"
+            value={formData.specification}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="newItemField">
+          <label>Status: </label>
           <select name="condition" value={formData.condition} onChange={handleChange}>
-            <option value="">Select Condition</option>
-            <option value="New">New</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Poor">Poor</option>
+            <option value="">Select Status</option>
+            <option value="Functional">Functional</option>
             <option value="Defective">Defective</option>
-            <option value="Missing">Missing</option>
+            <option value="For Disposal">For Disposal</option>
           </select>
         </div>
         <div className="newItemField">
@@ -228,26 +278,26 @@ const ItemRegistration = () => {
           />
         </div>
         <div className="newItemField">
-          <label>Calibration Needed? </label>
-          <select name="calibrationNeeded" value={formData.calibrationNeeded} onChange={handleChange}>
+          <label>PM Needed? </label>
+          <select name="pmNeeded" value={formData.pmNeeded} onChange={handleChange}>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </select>
         </div>
-        {formData.calibrationNeeded === "Yes" && (
+        {formData.pmNeeded === "Yes" && (
           <>
             <div className="newItemField">
               <label>Calibration Due Date: </label>
               <input
                 type="date"
-                name="calibrationDueDate"
-                value={formData.calibrationDueDate}
+                name="pmDueDate"
+                value={formData.pmDueDate}
                 onChange={handleChange}
               />
             </div>
             <div className="newItemField">
               <label>Calibration Status: </label>
-              <select name="calibrationStatus" value={formData.calibrationStatus} onChange={handleChange}>
+              <select name="pmStatus" value={formData.pmStatus} onChange={handleChange}>
                 <option value="">Select Status</option>
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
@@ -256,8 +306,8 @@ const ItemRegistration = () => {
               </select>
             </div>
             <div className="newItemField">
-              <label>Calibration Frequency: </label>
-              <select name="calibrationFrequency" value={formData.calibrationFrequency} onChange={handleChange}>
+              <label>PM Frequency: </label>
+              <select name="pmFrequency" value={formData.pmFrequency} onChange={handleChange}>
                 <option value="">Select Frequency</option>
                 <option value="Daily">Daily</option>
                 <option value="Weekly">Weekly</option>
@@ -287,7 +337,7 @@ const ItemRegistration = () => {
           </div>
         )}
       </form>
-    </div>
+    </div> 
   );
 };
 

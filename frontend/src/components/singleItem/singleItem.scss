@@ -76,6 +76,12 @@
     }
   }
 
+  .barcodeImage {
+    max-width: 200px;
+    height: auto;
+    margin-top: 15px;
+  }
+
   .itemDetailsBottom {
     padding: 20px;
     display: grid;
@@ -102,8 +108,9 @@
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   margin: 10px 20px;
   display: flex;
+  
 
-  .descrip {
+  .descrip, .pm {
     padding: 20px;
 
     p {

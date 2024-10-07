@@ -6,6 +6,7 @@ const ItemLogSchema = new mongoose.Schema({
   itemName: { type: String, required: true },
   quantityBorrowed: { type: Number, default: 0 },
   quantityReturned: { type: Number, default: 0 },
+  condition: { type: String },
   _id: false
 }); 
 
@@ -18,12 +19,15 @@ const BorrowReturnLogSchema = new mongoose.Schema({
   items: [ItemLogSchema], // Array of items being logged
   courseSubject: { type: String },
   professor: { type: String },
+  profAttendance: { type: String, enum: ['Yes','No', 'yes', 'no'] },
   roomNo: { type: String },
   borrowedDuration: { type: String },
   extendedDuration: { type: String, default: '0 minute' },
   dueDate: { type: Date },
   transactionType: { type: String, enum: ['Borrowed','Returned'] },
   returnStatus: { type: String, enum: ['Pending', 'Completed', 'Overdue', 'Partially Returned', 'Extended'], default: 'Pending' },
+  returnDate: { type: Date },
+  feedbackEmoji: { type: String }, // Store the selected emoji (e.g., 😊, 😐, 😢)
   notesComments: { type: String },
 
   reminderSent: {

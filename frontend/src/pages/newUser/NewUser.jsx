@@ -3,6 +3,7 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
 import UserRegistration from '../../components/userRegistration/UserRegistration';
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const NewUser = () => {
   return (
@@ -10,8 +11,8 @@ const NewUser = () => {
       <Sidebar/>
       <div className="newUserContainer">
         <Navbar/>
-        <div className="pageTitle">
-          <PageTitle page="New User"/>
+        <div className="Content">
+          <CustomBreadcrumbs/>
             <UserRegistration/>
         </div>
       </div>

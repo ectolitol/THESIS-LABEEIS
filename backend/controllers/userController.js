@@ -192,3 +192,17 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// Get count of users awaiting approval (status: 'Pending')
+exports.countAwaitingApprovalUsers = async (req, res) => {
+  try {
+    const users = await User.find({ status: 'Pending' });
+    if (users.length === 0) {
+      // console.log('No users found with a status of Pending');
+      return res.status(200).json({ awaitingApprovalCount: 0, message: 'No users are awaiting approval' });
+    }
+    res.status(200).json({ awaitingApprovalCount: users.length });
+  } catch (error) {
+    console.error('Error fetching users awaiting approval:', error.message);
+    res.status(500).json({ message: 'Failed to retrieve users awaiting approval' });
+  }
+};

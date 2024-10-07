@@ -1,12 +1,11 @@
 import './newUserRegistrationForm.scss'
-import UserRegistration from '../../../components/userRegistration/UserRegistration';
-
 import React from 'react'
+import NewUserReg from '../../../components/newUserReg/NewUserReg';
 
 const NewUserRegistrationForm = () => {
   return (
     <div>
-        <UserRegistration/>
+        <NewUserReg/>
     </div>
   )
 }

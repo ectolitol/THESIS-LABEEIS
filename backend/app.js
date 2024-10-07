@@ -28,7 +28,7 @@ store.on('error', function (error) {
 // Middleware
 app.use(express.json()); // Only include once
 app.use(cors({
-  origin: 'http://localhost:3000', // Your frontend's URL
+  origin: ['http://localhost:3000', 'http://192.168.236.73:3000'], // Your frontend's URL
   credentials: true // Allow cookies to be sent with requests
 }));
 app.use(express.urlencoded({ extended: true }));
@@ -61,7 +61,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/survey-questions', require('./routes/surveyQuestionRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api', require('./routes/feedbackRoutes'));
-app.use('/api/admin', require('./routes/adminProfileRoutes'));
+app.use('/api/adminProfile', require('./routes/adminProfileRoutes'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

@@ -1,8 +1,8 @@
 import "./category.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import CategoryItems from "../../components/categoryItems/CategoryItems";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const Category = () => {
   return (
@@ -10,8 +10,8 @@ const Category = () => {
       <Sidebar/>
         <div className="categoryContainer">
           <Navbar/> 
-            <div className="pageTitle"> 
-                <PageTitle page="Category"/>
+          <div className="Content">
+            <CustomBreadcrumbs/>
                 <div className="categoryItemContainer">
                   <div className="categoryTitle">List of Items found in this Category</div>
                     <CategoryItems/>

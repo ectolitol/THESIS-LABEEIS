@@ -1,8 +1,15 @@
 .dashboard{
    display: flex;
+   height: 100vh;
 
    .dashboardContainer{
         flex: 6;
+
+      
+         .dashboardContent {
+            overflow-y: auto;
+            height: calc(100vh - 60px); // Full height minus navbar height
+         }
 
         .widgets{
          display: flex;

@@ -1,29 +1,54 @@
 .itemTable {
-  
-    .MuiDataGrid-root {
-      background-color: white;
-    }
-  
-    .MuiDataGrid-cell {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  
-    button {
-      margin: 5px;
-    }
-  
-    img {
-      border-radius: 8px;
-    }
+  .MuiDataGrid-root {
+    background-color: white;
+    border-radius: 8px; // Add some rounding to the table edges
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); // Soft shadow for a modern look
+  }
 
-    .view-button{
-      padding: 2px 5px;
-      border-radius: 5px;
-      color: rgb(52, 52, 235);
-      border: 1px line rgba(3, 3, 62, 0.951);
-      cursor: pointer;
+  .MuiDataGrid-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; // Center the text content in the cell
+  }
+
+  button {
+    margin: 5px;
+  }
+
+  img {
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); // Add a subtle shadow around the image
+    transition: transform 0.3s ease; // Smooth transition on hover
+
+    &:hover {
+      transform: scale(1.05); // Slight zoom on hover
     }
   }
-  
+
+  .view-button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: rgb(52, 52, 235);
+    border: 1px solid rgba(3, 3, 62, 0.951); // Corrected border property
+    cursor: pointer;
+    background-color: rgba(52, 52, 235, 0.1); // Subtle background to highlight the button
+    transition: background-color 0.3s ease, color 0.3s ease; // Smooth transitions on hover
+
+    &:hover {
+      background-color: rgba(52, 52, 235, 0.2); // Slightly darker background on hover
+      color: rgb(0, 0, 170); // Darker text color on hover
+    }
+  }
+
+  .MuiDataGrid-columnHeader {
+    background-color: #f5f5f5; // Light background for headers
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .MuiDataGrid-footerContainer {
+    justify-content: center; // Center the footer content (e.g., pagination controls)
+  }
+}

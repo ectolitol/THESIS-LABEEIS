@@ -21,13 +21,13 @@ const CategoryItems = () => {
 
   // Define table columns
   const columns = [
-    { field: '_id', headerName: 'ID', minWidth: 230 },
-    { field: 'itemName', headerName: 'Item Name', minWidth: 250 },
+    { field: 'itemBarcode', headerName: 'Barcode', minWidth: 170},
+    { field: 'itemName', headerName: 'Item Name', minWidth: 245 },
     { field: 'brand', headerName: 'Brand', minWidth: 180 },
-    { field: 'model', headerName: 'Model', minWidth: 120 },
-    { field: 'quantity', headerName: 'Quantity', minWidth: 110 },
+    { field: 'model', headerName: 'Model', minWidth: 180 },
+    { field: 'quantity', headerName: 'Quantity', minWidth: 115 },
     { field: 'condition', headerName: 'Condition', minWidth: 120 },
-    { field: 'location', headerName: 'Location', minWidth: 200 },
+    { field: 'location', headerName: 'Location', minWidth: 185 },
   ];
 
   // Fetch item data from API

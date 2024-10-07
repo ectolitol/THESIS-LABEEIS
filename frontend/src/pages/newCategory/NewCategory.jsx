@@ -1,8 +1,8 @@
 import "./newCategory.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import CategoryRegistration from "../../components/categoryRegistration/CategoryRegistration";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const NewCategory = () => {
   return (
@@ -10,8 +10,8 @@ const NewCategory = () => {
       <Sidebar/>
         <div className="newCategoryContainer">
           <Navbar/>
-            <div className="pageTitle"> 
-                <PageTitle page="New Category"/>
+          <div className="Content">
+           <CustomBreadcrumbs/>
                 <CategoryRegistration/>
             </div>
         </div>

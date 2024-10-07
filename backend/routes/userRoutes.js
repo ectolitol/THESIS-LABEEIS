@@ -14,4 +14,6 @@ router.get('/:id/transactions', borrowReturnController.getUserTransactions);
 router.put('/:id', authMiddleware, userController.updateUser);
 router.delete('/:id', authMiddleware, userController.deleteUser);
 
+router.get('/pending/awaiting-approval-count', userController.countAwaitingApprovalUsers);
+
 module.exports = router;

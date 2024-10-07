@@ -42,10 +42,10 @@ const CategoryRegistration = () => {
       });
 
       if (response.ok) {
-        setShowModal(true); // Show the modal on success
+        navigate('/categories/categorySuccess');
       } else {
         const data = await response.json();
-        setErrors(data.errors || [data.error || 'Error creating category. Please try again later.']);
+        setErrors(data.errors || [data.error || 'Error registering item. Please try again later.']);
       }
     } catch (error) {
       setErrors(['Error connecting to the server. Please check your network connection or try again later.']);
@@ -76,15 +76,6 @@ const CategoryRegistration = () => {
           </div>
         )}
       </form>
-      {showModal && (
-        <Modal 
-          message="New category created successfully!" 
-          onClose={() => {
-            setShowModal(false);
-            navigate('/categories'); // Navigate when modal is closed
-          }} 
-        />
-      )}
     </div>
   );
 };

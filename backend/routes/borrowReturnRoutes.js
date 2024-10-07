@@ -12,6 +12,8 @@ router.delete('/:id', borrowReturnController.deleteLog);
 
 router.put('/:id/extend', borrowReturnController.extendBorrowingDuration);
 
+router.put('/feedback/:transactionID', borrowReturnController.updateFeedbackEmoji);
+
 router.post('/complete-return', borrowReturnController.completeReturn);
 
 

@@ -1,8 +1,8 @@
 import "./feedback.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import FeedbackForm from "../../components/feedbackForm/FeedbackForm";
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const Feedback = () => {
   return (
@@ -10,10 +10,9 @@ const Feedback = () => {
       <Sidebar/>
         <div className="feedbackContainer">
           <Navbar/>
-            <div className="pageTitle"> 
-                <PageTitle page="Feedback"/>
-                <FeedbackForm/>
-                
+          <div className="Content">
+            <CustomBreadcrumbs/>
+                <FeedbackForm/> 
             </div>
         </div>
     </div>

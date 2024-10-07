@@ -1,41 +1,42 @@
-.successMessage{
-    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-    padding: 20px;
-    margin: 20px;
-    margin-top: 50px;
-    text-align: center;
-    background-color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: gray;
+.successMessage {
+   -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+   padding: 20px;
+   margin: 20px;
+   margin-top: 50px;
+   text-align: center;
+   background-color: #fff;
+   font-size: 1.5rem;
+   font-weight: bold;
+   color: gray;
+}
 
-    .successTitle, .itemList{
-        margin-top: 20px;
+.buttonsContainer {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 20px; /* Space between buttons */
+   margin-top: 20px;
+}
 
-        .link{
-           text-decoration: none;
-           margin-bottom: 15px;  
-        }
+.link {
+   text-decoration: none;
+}
 
-        .addItem{
-           border: none;
-           padding: 5px;
-           background-color: gray;
-           border-radius: 5px;
-           cursor: pointer;
-           color: white;
-           font-size: 15px;
-           transition: background-color 0.3s ease;
+.addItem,
+.backItem {
+   border: none;
+   padding: 5px 10px;
+   background-color: gray;
+   border-radius: 5px;
+   cursor: pointer;
+   color: white;
+   font-size: 15px;
+   transition: background-color 0.3s ease;
+}
 
-           &:hover {
-              background-color: darkgray;
-           }
-        }            
-    }
-
-    .itemList{
-      margin-left: 643px;
-    }
-    
-} 
+.addItem:hover,
+.backItem:hover {
+   background-color: darkgray;
+}

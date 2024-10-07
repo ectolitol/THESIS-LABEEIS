@@ -5,6 +5,7 @@ import PageTitle from '../../components/pageTitle/PageTitle';
 import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import { ItemTable } from "../../components/itemTable/ItemTable";
 import {Link} from "react-router-dom"
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const ItemList = () => {
   return (
@@ -12,8 +13,8 @@ const ItemList = () => {
         <Sidebar/>
         <div className="itemListContainer">
             <Navbar/>
-            <div className="pageTitle">
-                <PageTitle page="Items"/>
+            <div className="Content">
+                <CustomBreadcrumbs/>
                 <div className="itemListTable">
                     <div className="itemListTitle">
                         <span className="title">List of Items</span>

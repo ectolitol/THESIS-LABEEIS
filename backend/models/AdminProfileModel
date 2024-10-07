@@ -18,6 +18,9 @@ const AdminProfileSchema = new mongoose.Schema({
       required: true,
       unique: true, // Ensure email is unique
     },
+    password: {
+      type: String,
+    },
     phone: {
       type: String, // Optional phone number
     }

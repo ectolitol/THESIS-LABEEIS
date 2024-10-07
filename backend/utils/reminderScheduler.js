@@ -71,7 +71,7 @@ const startSmsReminderCron = () => {
         returnStatus: { $in: ['Pending', 'Extended'] },
       }).populate('userID'); // Assuming userID is a reference to the User model
 
-      console.log(`Found ${logs.length} logs to check for overdue status.`);
+      // console.log(`Found ${logs.length} logs to check for overdue status.`);
 
       // Loop through all logs and send reminders if the due date is within the next 5 minutes
       for (const log of logs) {

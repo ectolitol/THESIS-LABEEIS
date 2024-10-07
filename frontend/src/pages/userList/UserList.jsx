@@ -4,6 +4,7 @@ import Navbar from '../../components/navbar/Navbar';
 import PageTitle from '../../components/pageTitle/PageTitle';
 import UserTable from '../../components/userTable/UserTable';
 import {Link} from "react-router-dom"
+import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
  
 const UserList = () => {
   return (
@@ -11,8 +12,8 @@ const UserList = () => {
       <Sidebar/>
       <div className="userListContainer">
         <Navbar/>
-        <div className="pageTitle"> 
-            <PageTitle page="Users"/>
+        <div className="Content">
+        <CustomBreadcrumbs/>
             <div className="userListTable">
               <div className="userListTitle">
                 <span className="title">List of Users</span>
@@ -21,7 +22,7 @@ const UserList = () => {
                   </Link>
               </div>
               <UserTable/>
-            </div>
+          </div>
         </div>
       </div>
     </div>

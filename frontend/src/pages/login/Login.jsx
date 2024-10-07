@@ -1,88 +1,124 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import './Login.scss'; // Import the SCSS file
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false); // State for password visibility
   const navigate = useNavigate();
 
-  // Check if user is already authenticated when the component mounts
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('/api/admin/check', { withCredentials: true });
+        console.log('Checking authentication status...');
+        const response = await axios.get('/api/admin/check', {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log('Authentication check response:', response);
         if (response.status === 200) {
-          // If already authenticated, redirect to the home page
+          console.log('User is authenticated. Redirecting...');
           navigate('/');
+        } else {
+          console.log('User is not authenticated. Status:', response.status);
         }
       } catch (error) {
-        // If not authenticated, stay on the login page
-        console.log('User not authenticated', error);
+        console.error('Error during authentication check:', error);
       } finally {
-        setLoading(false); // Set loading to false once the check is done
+        setLoading(false);
       }
     };
-
     checkAuth();
   }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading true while logging in
-    console.log('Attempting to log in with:', { email, password }); // Log email and password (omit in production)
-  
+    console.log('Login attempt with email:', email);
+    setLoading(true);
     try {
-      const response = await axios.post('/api/admin/login', { email, password }, { withCredentials: true });
-      console.log('Login response:', response.data);
+      const response = await axios.post('api/admin/login', 
+        { email, password }, 
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Login response:', response);
       setMessage(response.data.message);
-      navigate('/select-profile'); // Redirect to select admin profile after login
+      console.log('Redirecting to /select-profile...');
+      navigate('/select-profile');
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response) {
-        console.log('Error response data:', error.response.data);
-        console.log('Error status:', error.response.status);
-        console.log('Error headers:', error.response.headers);
-      }
       setMessage(error.response?.data?.message || 'An error occurred');
     } finally {
-      setLoading(false); // Set loading to false after login attempt
+      setLoading(false);
+      console.log('Loading state set to false.');
     }
   };
-  
+
+  const handleBackClick = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible); // Toggle the visibility state
+  };
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading message or spinner
+    return <div>Loading...</div>;
   }
 
   return (
-    <div>
-      <form onSubmit={handleLogin}>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className="login-wrapper">
+      {/* Background image */}
+      <img src="/ceafinal.png" alt="Background" className="bg-only" />
+
+      <div className="form-box login">
+        <h1>EELMS</h1>
+        <h3>Electrical Engineering Laboratory Management System</h3>
+
+        <form onSubmit={handleLogin}>
+          <div className="input-box">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <FaUser className="icon" />
+          </div>
+          <div className="input-box">
+            <input
+              type={passwordVisible ? 'text' : 'password'} // Toggle input type
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {passwordVisible ? (
+              <FaEyeSlash className="toggle-icon" onClick={togglePasswordVisibility} /> // Toggle eye/eye-slash icon
+            ) : (
+              <FaEye className="toggle-icon" onClick={togglePasswordVisibility} />
+            )}
+          </div>
+          <button type="submit">Login</button>
+          {message && <p>{message}</p>}
+
+          <div className="loginback-link-container">
+            <a className="loginback-link" onClick={handleBackClick}>Back</a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
