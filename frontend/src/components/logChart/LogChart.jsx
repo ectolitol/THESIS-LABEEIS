@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 import axios from 'axios';
 import './logChart.scss';
 
@@ -28,44 +28,47 @@ const LogChart = () => {
   }, []);
 
   return (
-    <div className="chart-container">
-      <LineChart
-        width={600} // Adjust width as needed
-        height={300} // Adjust height as needed
-        data={transactionData}
-        margin={{ top: 20, right: 30, left: 20, bottom: 60 }} // Increased bottom margin for legend
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date">
-          <Label value="Date" offset={-20} position="insideBottom" />
-        </XAxis>
-        <YAxis>
-          <Label value="Number of Transactions" angle={-90} position="insideLeft" offset={0} style={{ textAnchor: 'middle' }} />
-        </YAxis>
-        <Tooltip />
-        <Legend
-          layout="horizontal"
-          align="center"
-          verticalAlign="bottom"
-          wrapperStyle={{ paddingTop: 10 }} // Adjust padding to fit the legend
-        />
-        <Line
-          type="monotone"
-          dataKey="totalBorrowed"
-          stroke="#82ca9d"
-          dot={false}
-          strokeWidth={2}
-          activeDot={{ r: 8 }}
-        />
-        <Line
-          type="monotone"
-          dataKey="totalReturned"
-          stroke="#8884d8"
-          dot={false}
-          strokeWidth={2}
-          activeDot={{ r: 8 }}
-        />
-      </LineChart>
+    <div className="log-chart-container">
+      <h2 className="log-chart-title">Borrow vs Return Transactions Over Time</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart
+          data={transactionData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }} // Increase bottom margin to push legend lower
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date">
+            <Label value="Date" offset={-20} position="insideBottom" /> {/* Adjusted offset */}
+          </XAxis>
+          <YAxis>
+            <Label value="Number of Transactions" angle={-90} position="insideLeft" offset={0} style={{ textAnchor: 'middle' }} />
+          </YAxis>
+          <Tooltip />
+          <Legend
+            layout="horizontal"
+            align="center"
+            verticalAlign="bottom"
+            wrapperStyle={{ paddingTop: 30 }} // Add padding to push the legend down below the Date label
+          />
+          <Line
+            type="monotone"
+            dataKey="totalBorrowed"
+            stroke="#82ca9d"
+            dot={false}
+            strokeWidth={2}
+            activeDot={{ r: 8 }}
+            name="Total Borrowed"
+          />
+          <Line
+            type="monotone"
+            dataKey="totalReturned"
+            stroke="#8884d8"
+            dot={false}
+            strokeWidth={2}
+            activeDot={{ r: 8 }}
+            name="Total Returned"
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 };

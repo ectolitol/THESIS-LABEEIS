@@ -8,20 +8,22 @@ import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 const User = () => {
   return (
     <div className="user">
+      <img src="/blurred-bg.png" alt="Background" className="uuserr-bg" />
       <Sidebar/>
       <div className="userContainer">
         <Navbar/> 
-        <div className="Content">
+        <div className="userContent">
         <CustomBreadcrumbs/>
             <SingleUser/>
           <div className="bottom">
             <div className="userTitle">User Transactions</div>
             <SingleTransaction/>
           </div> 
+        
         </div>
       </div>
     </div>
   )
-}
+} 
 
 export default User 

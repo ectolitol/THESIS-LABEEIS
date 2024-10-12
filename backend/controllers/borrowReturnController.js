@@ -2,8 +2,8 @@ const BorrowReturnLog = require('../models/BorrowReturnLogModel');
 const User = require('../models/UserModel');
 const Item = require('../models/ItemModel');
 const { createNotification } = require('../utils/notificationService');
-const smsService = require('../utils/smsService');
 const { sendTransactionEmail } = require('../utils/emailService');
+const axios = require('axios'); // Import axios to send HTTP requests
 
 exports.logTransaction = async (req, res) => {
   try {
@@ -97,15 +97,22 @@ exports.logTransaction = async (req, res) => {
         `User ${user.fullName} has borrowed items: ${items.map(item => item.itemName).join(", ")}. Please ensure they are returned by ${borrowReturnLog.dueDate.toLocaleString()}.`,
         null // You can specify a user/admin if necessary
       );
-                                                                                                                                                                                        
-      // Send SMS notification for borrowing
-        const smsMessage = `Hello ${user.fullName}, you borrowed ${items.map(item => item.itemName).join(", ")}. Please return by ${borrowReturnLog.dueDate.toLocaleString()}.`;
-        try {
-          const response = await smsService.sendSMS(user.contactNumber, smsMessage);
-          console.log('SMS response:', response);
-        } catch (error) {
-          console.error('Error sending SMS:', error);
-        }
+
+      // Send SMS notification for borrowing via Server B
+      const smsMessage = `Hello ${user.fullName}, you borrowed ${items.map(item => item.itemName).join(", ")}. Please return by ${borrowReturnLog.dueDate.toLocaleString()}.`;
+      const smsRequestData = {
+        number: user.contactNumber,
+        message: smsMessage
+      };
+      console.log(user.contactNumber, smsMessage)
+
+      // Sending the SMS request to Server B
+      try {
+        const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+        console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
+      } catch (error) {
+        console.error('Error sending SMS via Server B:', error);
+      }
 
       res.status(201).json({ message: "Borrowing transaction logged successfully", borrowReturnLog });
     } else {
@@ -115,6 +122,7 @@ exports.logTransaction = async (req, res) => {
     res.status(500).json({ message: "Error logging transaction", error: error.message });
   }
 };
+
 
 // Helper function to convert the borrowed duration to milliseconds
 const convertDurationToMillis = (duration) => {
@@ -138,7 +146,6 @@ const convertDurationToMillis = (duration) => {
       throw new Error(`Unsupported time unit: ${unit}`);
   }
 };
-
 
 exports.completeReturn = async (req, res) => {
   try {
@@ -187,7 +194,6 @@ exports.completeReturn = async (req, res) => {
         // Log the item condition
         logItem.condition = returnedItem.condition || 'Unknown'; // Store the condition
 
-
         // If quantityReturned equals quantityBorrowed, mark the item as fully returned
         if (logItem.quantityReturned === logItem.quantityBorrowed) {
           logItem.returnStatus = 'Completed';
@@ -200,11 +206,6 @@ exports.completeReturn = async (req, res) => {
         }
 
         const updatedQuantity = foundItem.quantity + returnQuantity; // Increment stock by the return quantity
-
-        // Ensure updated quantity doesn't go below zero
-        if (updatedQuantity < 0) {
-          return res.status(400).json({ message: `Not enough stock for item: ${logItem.itemBarcode}` });
-        }
 
         try {
           // Update the item quantity in the database
@@ -220,8 +221,8 @@ exports.completeReturn = async (req, res) => {
       }
     }
 
-     // Set return date and time to the current date
-     borrowReturnLog.returnDate = new Date();
+    // Set return date and time to the current date
+    borrowReturnLog.returnDate = new Date();
 
     // Check if all items in the transaction have been returned
     const allItemsReturned = borrowReturnLog.items.every(
@@ -264,7 +265,7 @@ exports.completeReturn = async (req, res) => {
       null // Specify recipient if needed (e.g., admin ID)
     );
 
-    // Send SMS notification based on return status
+    // Send SMS notification via Server B
     const smsMessage = allItemsReturned
       ? `Hello ${borrowReturnLog.userName}, your return process has been completed successfully for the items: ${borrowReturnLog.items
           .map((item) => item.itemName)
@@ -273,10 +274,17 @@ exports.completeReturn = async (req, res) => {
           .map((item) => item.itemName)
           .join(", ")}. Please return the remaining items.`;
 
+    const smsRequestData = {
+      number: borrowReturnLog.contactNumber,
+      message: smsMessage
+    };
+
     try {
-      await smsService.sendSMS(borrowReturnLog.contactNumber, smsMessage);
+      // Send the SMS request to Server B
+      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+      console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
     } catch (err) {
-      console.error("Error sending SMS:", err);
+      console.error("Error sending SMS via Server B:", err);
     }
 
     res.status(200).json({
@@ -462,10 +470,22 @@ exports.extendBorrowingDuration = async (req, res) => {
       // Save the updated log
       await borrowReturnLog.save();
 
-      // Notify user about the extension via SMS
+      // Notify user about the extension via SMS (via Server B)
       const smsMessage = `Hello ${borrowReturnLog.userID.fullName}, your borrowing duration has been extended until ${extendedDueDate.toLocaleString()}.`;
       const userContactNumber = borrowReturnLog.userID.contactNumber;
-      await smsService.sendSMS(userContactNumber, smsMessage);
+
+      // Send the SMS request to Server B
+      const smsRequestData = {
+        number: userContactNumber,
+        message: smsMessage
+      };
+
+      try {
+        const smsResponse = await axios.post('http://<Server_B_IP>:3001/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+        console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
+      } catch (error) {
+        console.error('Error sending SMS via Server B:', error);
+      }
 
       // Optionally notify the user/admin
       await createNotification(
@@ -511,13 +531,71 @@ exports.updateFeedbackEmoji = async (req, res) => {
     // Update the feedback emoji
     transaction.feedbackEmoji = feedbackEmoji;
 
-    // Save the updated transaction
+    // Save the updated transaction 
     await transaction.save();
 
     res.status(200).json({ success: true, message: 'Feedback updated successfully' });
   } catch (error) {
     console.error('Error updating feedback:', error);
     res.status(500).json({ success: false, message: 'Error updating feedback' });
+  }
+};
+
+// PUT request handler for partial return reason
+exports.submitPartialReturnReason = async (req, res) => {
+  const { transactionID } = req.params;
+  const { reason } = req.body;
+
+  try {
+    // Validate reason
+    if (!reason) {
+      return res.status(400).json({ message: 'Reason for partial return is required.' });
+    }
+
+    // Find the transaction by ID and update the reason
+    const transaction = await BorrowReturnLog.findById(transactionID);
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found.' });
+    }
+
+    // Update the transaction with the reason
+    transaction.partialReturnReason = reason;
+    await transaction.save();
+
+    // Return success response
+    res.status(200).json({ message: 'Partial return reason submitted successfully.' });
+  } catch (error) {
+    console.error('Error submitting partial return reason:', error);
+    res.status(500).json({ message: 'Server error.' });
+  }
+};
+
+// Controller function to get top borrowed items
+exports.getTopBorrowedItems = async (req, res) => {
+  try {
+    // Aggregation to calculate total borrowed quantities for each item
+    const topItems = await BorrowReturnLog.aggregate([
+      { 
+        $unwind: "$items"  // Unwind the array of items to process each item individually
+      },
+      {
+        $group: {
+          _id: '$items.itemName', // Group by the item name
+          totalBorrowed: { $sum: '$items.quantityBorrowed' } // Sum the borrowed quantities
+        }
+      },
+      {
+        $sort: { totalBorrowed: -1 } // Sort by total borrowed in descending order
+      },
+      {
+        $limit: 10 // Limit to the top 10 borrowed items
+      }
+    ]);
+
+    res.status(200).json(topItems); // Send the result back as JSON
+  } catch (error) {
+    console.error('Error fetching top borrowed items:', error);
+    res.status(500).json({ error: 'Failed to fetch top borrowed items' });
   }
 };
 

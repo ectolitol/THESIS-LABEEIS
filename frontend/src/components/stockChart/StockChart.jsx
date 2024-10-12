@@ -3,7 +3,7 @@ import { PieChart, Pie, Tooltip, Legend, Cell } from 'recharts';
 import axios from 'axios'; // Import Axios
 import './stockChart.scss';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF4444']; // Customize as needed
+const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40', '#4BC0C0', '#9966FF']; // Customize as needed
 
 const StockChart = () => {
   const [categories, setCategories] = useState([]);
@@ -21,29 +21,34 @@ const StockChart = () => {
     fetchCategories();
   }, []);
 
-  const chartData = categories.map(category => ({
-    name: category.categoryName,
-    value: category.itemCount,
+  // Map the API data to a format compatible with Recharts PieChart
+  const chartData = categories.map((category, index) => ({
+    name: category.categoryName, // Name for the label
+    value: category.itemCount, // Value for the pie slice
   }));
 
   return (
-    <div className="chart-container">
-      <PieChart width={300} height={300}> {/* Adjust width and height as needed */}
-        <Pie
-          data={chartData}
-          dataKey="value"
-          nameKey="name"
-          outerRadius={100}
-          fill="#8884d8"
-          label
-        >
-          {chartData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
+    <div className="cat-chart-container">
+      <h2 className="cat-chart-title">Category Stock Levels</h2>
+      <PieChart width={300} height={300}>
+  <Pie
+    data={chartData}
+    dataKey="value"
+    nameKey="name"
+    outerRadius={100}
+    innerRadius={60}
+    fill="#8884d8"
+    isAnimationActive={true}
+    label={false} // Set label to false to hide labels
+  >
+    {chartData.map((entry, index) => (
+      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+    ))}
+  </Pie>
+  <Tooltip />
+  <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+</PieChart>
+
     </div>
   );
 };

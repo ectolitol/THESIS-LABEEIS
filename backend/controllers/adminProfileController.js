@@ -52,7 +52,7 @@ exports.getAdminProfiles = async (req, res) => {
 };
 
 exports.selectAdminProfile = async (req, res) => {
-  const { profileId } = req.body;
+  const { profileId } = req.body; 
 
   try {
     const selectedProfile = await AdminProfile.findById(profileId);

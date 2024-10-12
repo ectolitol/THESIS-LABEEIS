@@ -1,14 +1,13 @@
 import "./itemList.scss"
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-import PageTitle from '../../components/pageTitle/PageTitle';
 import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import { ItemTable } from "../../components/itemTable/ItemTable";
 import {Link} from "react-router-dom"
 import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 
 const ItemList = () => {
-  return (
+  return ( 
     <div className="itemList">
         <Sidebar/>
         <div className="itemListContainer">

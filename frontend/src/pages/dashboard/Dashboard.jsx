@@ -10,12 +10,13 @@ import CustomBreadcrumbs from '../../components/breadcrumbs/Breadcrumbs';
 
 const Dashboard = () => {
   return (
-    <div className="dashboard">
+    <div className="dashboard"> 
       <Sidebar/>
       <div className="dashboardContainer">
         <Navbar/>
         <div className="dashboardContent">
-          <CustomBreadcrumbs/>
+          <CustomBreadcrumbs/> 
+          <img src="/blurred-bg.png" alt="Background" className="dashboard-bg" />
           <div className="widgets">
             <Widget type="Total users" />
             <Widget type="Total items" />

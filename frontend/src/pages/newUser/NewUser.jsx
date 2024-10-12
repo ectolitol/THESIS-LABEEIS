@@ -12,11 +12,12 @@ const NewUser = () => {
       <div className="newUserContainer">
         <Navbar/>
         <div className="Content">
+          <img src="/blurred-bg.png" alt="Background" className="newuser-bg" />
           <CustomBreadcrumbs/>
             <UserRegistration/>
         </div>
       </div>
-    </div>
+    </div> 
   )
 }
 

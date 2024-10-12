@@ -1,26 +1,19 @@
 const express = require('express');
-const { generateDailyReport } = require('../controllers/reportController');
-
+const reportController = require('../controllers/reportController');
 const router = express.Router();
 
-// Route to generate daily report
-router.get('/daily', generateDailyReport);
+// GET route to fetch all reports
+router.get('/all-report', reportController.getAllReports);
+
+// POST route to create a new report
+router.post('/make-reports', reportController.createReport);
+
+// GET route to fetch all reports for a specific item
+router.get('/reports/:itemId', reportController.getReportsForItem);
+
+// Route to update the status of a specific report by its ID
+router.put('/:id/status', reportController.updateReportStatus);
+
+
 
 module.exports = router;
-
-// const express = require('express');
-// const router = express.Router();
-// const {
-//     generateDailyReport,
-//     generateWeeklyReport,
-//     generateMonthlyReport,
-//     generateAnnualReport
-// } = require('../controllers/reportController');
-
-// // Define routes for report generation
-// router.get('/daily', generateDailyReport);
-// router.get('/weekly', generateWeeklyReport);
-// router.get('/monthly', generateMonthlyReport);
-// router.get('/annual', generateAnnualReport);
-
-// module.exports = router;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
-import './ReturnSuccess.scss'; // Import SCSS
+import './ReturnSuccess.scss'; // Import SCSS 
 
 const ReturnSuccess = () => {
   const location = useLocation();

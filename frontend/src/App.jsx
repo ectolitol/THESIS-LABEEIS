@@ -31,11 +31,13 @@ import ReturningProcess from './pages/userPanel/returningProcess/returningProces
 import ItemReturnScan from './components/itemReturnScan/ItemReturnScan';
 import ReturnSuccess from './components/returnSuccess/ReturnSuccess';
 import ReturnPartial from './components/returnPartial/ReturnPartial';
+import ReportForm from './components/reportForm/ReportForm';
 import NewUserRegistrationForm from './pages/userPanel/newUserRegistrationForm/NewUserRegistrationForm';
 import CategorySuccess from './components/categorySuccess/CategorySuccess';
 import Report from './pages/reports/Report';
 import Archives from './pages/archives/Archives';
 import About from './pages/about/About';
+import Stocks from './pages/stocks/Stocks';
 
 function App() {
   return (
@@ -44,6 +46,7 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/LABEEIS" element={<Welcome />} />
+            <Route path="/report" element={<ReportForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/select-profile" element={<SelectAdmin />} />
 
@@ -134,6 +137,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CreationSuccess />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/items/stocks"
+              element={
+                <ProtectedRoute>
+                  <Stocks />
                 </ProtectedRoute>
               }
             />

@@ -86,13 +86,6 @@ const ItemSchema = new mongoose.Schema({
     default: '',
     required: true
   },
-  pmDueDate: {
-    type: Date,
-  },
-  pmStatus: {
-    type: String,
-    enum: ['Pending', 'In Progress', 'Completed', 'Overdue'],
-  },
   pmFrequency: { 
     type: String, // Changed from calibrationFrequency to pmFrequency
     enum: ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Annually', 'Other'],
@@ -102,7 +95,11 @@ const ItemSchema = new mongoose.Schema({
   },
   notesComments: {
     type: String,
-  }
+  },
+  maintenanceSchedule: [{
+    week: { type: String }, // e.g., 'Week 1', 'Week 2'
+    status: { type: String, enum: ['Pending', 'Completed', 'Skipped'], default: 'Pending' }
+  }]
 }, { 
   timestamps: true,
 });

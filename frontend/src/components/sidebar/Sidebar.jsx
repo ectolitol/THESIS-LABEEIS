@@ -110,13 +110,13 @@ const Sidebar = () => {
           <li>
             <Link to="/" className={`menu-link ${location.pathname === "/" ? "active" : ""}`}>
               <DashboardCustomizeRoundedIcon className="icon" />
-              <span>Dashboard</span>
+              <span className="sidebar-name">Dashboard</span>
             </Link>
           </li>
           <li>
             <Link to="/users" className={`menu-link ${location.pathname === "/users" ? "active" : ""}`}>
               <PersonRoundedIcon className="icon" />
-              <span>Users</span>
+              <span className="sidebar-name">Users</span>
               {awaitingApprovalCount > 0 && (
                 <span className="counter">{awaitingApprovalCount}</span>
               )}
@@ -125,19 +125,19 @@ const Sidebar = () => {
           <li>
             <Link to="/items" className={`menu-link ${location.pathname === "/items" ? "active" : ""}`}>
               <HomeRepairServiceRoundedIcon className="icon" />
-              <span>Items</span>
+              <span className="sidebar-name">Items</span>
             </Link>
           </li>
           <li>
             <Link to="/categories" className={`menu-link ${location.pathname === "/categories" ? "active" : ""}`}>
               <CategoryRoundedIcon className="icon" />
-              <span>Categories</span>
+              <span className="sidebar-name">Categories</span>
             </Link>
           </li>
           <li>
             <Link to="/notifications" className={`menu-link ${location.pathname === "/notifications" ? "active" : ""}`}>
               <NotificationsActiveRoundedIcon className="icon" />
-              <span>Notifications</span>
+              <span className="sidebar-name">Notifications</span>
               {unreadCount > 0 && (
                 <span className="counter">{unreadCount}</span>
               )}
@@ -146,25 +146,25 @@ const Sidebar = () => {
           <li>
             <Link to="/reports" className={`menu-link ${location.pathname === "/reports" ? "active" : ""}`}>
               <LeaderboardRoundedIcon className="icon" />
-              <span>Reports</span>
+              <span className="sidebar-name">Reports</span>
             </Link>
           </li>
           <li>
             <Link to="/archives" className={`menu-link ${location.pathname === "/archives" ? "active" : ""}`}>
               <ArchiveRoundedIcon className="icon" />
-              <span>Archives</span>
+              <span className="sidebar-name">Archives</span>
             </Link>
           </li>
           <li>
             <Link to="/feedback" className={`menu-link ${location.pathname === "/feedback" ? "active" : ""}`}>
               <RateReviewRoundedIcon className="icon" />
-              <span>Feedback/Support</span>
+              <span className="sidebar-name">Feedback/Support</span>
             </Link>
           </li>
           <li>
             <Link to="/about" className={`menu-link ${location.pathname === "/about" ? "active" : ""}`}>
               <InfoRoundedIcon className="icon" />
-              <span>About</span>
+              <span className="sidebar-name">About</span>
             </Link>
           </li>
         </ul>
@@ -175,7 +175,7 @@ const Sidebar = () => {
           <li>
             <span onClick={handleDialogOpen} className="menu-link">
               <ExitToAppRoundedIcon className="icon" />
-              <span>Logout</span>
+              <span className="sidebar-name">Logout</span>
             </span>
           </li>
         </ul>

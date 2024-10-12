@@ -27,7 +27,8 @@ const BorrowReturnLogSchema = new mongoose.Schema({
   transactionType: { type: String, enum: ['Borrowed','Returned'] },
   returnStatus: { type: String, enum: ['Pending', 'Completed', 'Overdue', 'Partially Returned', 'Extended'], default: 'Pending' },
   returnDate: { type: Date },
-  feedbackEmoji: { type: String }, // Store the selected emoji (e.g., 😊, 😐, 😢)
+  feedbackEmoji: { type: String }, 
+  partialReturnReason: { type: String },
   notesComments: { type: String },
 
   reminderSent: {

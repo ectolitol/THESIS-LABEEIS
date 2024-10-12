@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
 
+
   .deleteConfirmation{
 
     top: 31%;
@@ -23,7 +24,8 @@
 .userShow {
   flex: 1;
   padding: 20px;
-  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  background-color: #59000f;
+  border-radius: 10px;
   margin: 10px 20px;
   display: flex;
   flex-direction: column;
@@ -34,11 +36,12 @@
     gap: 10px; // Space between the items
     padding: 10px; // Optional padding for better spacing
     margin-bottom: none;
+
   }
   
   .userIcon {
     font-size: 80px; // Adjust size as needed
-    color: gray; // Set icon color
+    color: rgb(255, 255, 255); // Set icon color
   }
   
   .userDetailsTop {
@@ -49,21 +52,21 @@
   .userDetailsTop p {
     margin: 0; // Remove default margin
     font-size: 24px; // Adjust font size as needed
-    color: gray; // Set text color
+    color: rgb(255, 255, 255); // Set text color
     font-weight: bold;
   }
   
   .userDetailsTop h4 {
     margin: 0; // Remove default margin
     font-size: 14px; // Adjust font size as needed
-    color: gray; // Set text color
+    color: rgb(255, 255, 255); // Set text color
   }
 
 .userHeader{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: gray;
+    color: rgb(249, 249, 249);
 
   .itemTitle {
     font-weight: bold;
@@ -114,6 +117,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
+  color: white;
 
   p {
     font-size: 16px;

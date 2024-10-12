@@ -23,12 +23,12 @@ const ProfileDropdown = ({ admin, isOpen, toggleDropdown, updateAdminProfile }) 
     setFormData({
       name: admin?.name || '',
       email: admin?.contactInfo?.email || '',
-      password: admin?.contactInfo?.password || '',
+      password: admin?.contactInfo?.password || '', 
       phone: admin?.contactInfo?.phone || '',
       role: admin?.role || '',
       image: admin?.profileImage || '',
     });
-    setProfileImage(admin?.profileImage ? `${imageBaseURL}uploads/${admin.profileImage}` : '');
+    setProfileImage(admin?.profileImage ? `${imageBaseURL}/uploads/${admin.profileImage}` : '');
   }, [admin]);
 
   // Handle text input changes

@@ -65,8 +65,13 @@ const ArchiveBorrowReturn = () => {
       const matchesTransactionType = row.transactionType.toLowerCase().includes(searchTermLower);
       const matchesReturnStatus = row.returnStatus.toLowerCase().includes(searchTermLower);
       
-      // Check if the search term matches the date (formatted as a string)
-      const matchesDate = new Date(row.dateTime).toLocaleDateString().includes(searchTermLower);
+      // Check if the search term matches the date (formatted as "October 7, 2024")
+      const matchesDate = new Date(row.dateTime).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).toLowerCase().includes(searchTermLower);
+
       
       return matchesUserName || matchesTransactionType || matchesReturnStatus || matchesDate;
     });
@@ -95,7 +100,11 @@ const ArchiveBorrowReturn = () => {
 
     // Group the sorted rows by date
     const groupedRows = sortedFilteredRows.reduce((acc, row) => {
-      const dateKey = new Date(row.dateTime).toLocaleDateString();
+      const dateKey = new Date(row.dateTime).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });      
       if (!acc[dateKey]) {
         acc[dateKey] = [];
       }
@@ -206,6 +215,7 @@ const ArchiveBorrowReturn = () => {
                                     <TableCell>Barcode: {item.itemBarcode}</TableCell>
                                     <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
                                     <TableCell>Returned: {item.quantityReturned}</TableCell>
+                                    <TableCell>Condition: {item.condition}</TableCell>
                                   </TableRow>
                                 ))}
                                 <TableRow>
@@ -215,8 +225,16 @@ const ArchiveBorrowReturn = () => {
                                   <TableCell>Course: {row.courseSubject}</TableCell>
                                   <TableCell>Professor: {row.professor}</TableCell>
                                   <TableCell>Prof Present? {row.profAttendance}</TableCell>
-                                  <TableCell>Room: {row.roomNo}</TableCell>
+                                  <TableCell>Room: {row.roomNo}</TableCell> 
                                 </TableRow>
+
+                                <TableRow>
+                                  <TableCell colSpan={7}><strong>Other Concerns:</strong></TableCell>
+                                </TableRow>
+                                  <TableCell>Partial Return Reason: {row.partialReturnReason}</TableCell> 
+                                  <TableCell>Feedback: {row.feedbackEmoji}</TableCell>
+
+
                               </TableBody>
                             </Table>
                           </Collapse>

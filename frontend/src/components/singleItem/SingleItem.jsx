@@ -91,15 +91,21 @@ const SingleItem = () => {
 
   const handleSave = async () => {
     const formData = new FormData();
+    
+    // Append fields manually to ensure they are in the correct format
     Object.keys(updatedItem).forEach((key) => {
       if (key === 'image' && updatedItem.image instanceof File) {
-        // Append the image file
+        // Append the image file if it's a File instance
         formData.append('image', updatedItem.image);
-      } else {
+      } else if (key === 'category' && updatedItem.category?._id) {
+        // Serialize the category object (just use the ID or convert to string)
+        formData.append('category', updatedItem.category._id);
+      } else if (updatedItem[key] !== undefined && updatedItem[key] !== null) {
+        // Add other fields, ensuring they're valid
         formData.append(key, updatedItem[key]);
       }
     });
-
+  
     try {
       const response = await axios.put(`/api/items/${itemId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -196,14 +202,7 @@ const SingleItem = () => {
             <p><strong>Notes/Comments:</strong> {item.notesComments || "N/A"}</p>
           </div>
         </div>
-        <div className="bottom2">
-          <div className="pm">
-            <p><strong>PM Needed:</strong> {item.pmNeeded}</p> {/* Added */}
-            <p><strong>PM Frequency:</strong> {item.pmFrequency || "N/A"}</p> {/* Added */}
-            <p><strong>PM Due Date:</strong> {item.pmDueDate ? new Date(item.pmDueDate).toLocaleDateString() : "N/A"}</p> {/* Added */}
-            <p><strong>PM Status:</strong> {item.pmStatus || "N/A"}</p> {/* Added */}
-          </div>
-        </div>
+        
 
         {/* Drawer for editing item */}
         <Drawer
@@ -386,68 +385,6 @@ const SingleItem = () => {
                 fullWidth
                 margin="normal"
               />
-
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="pm-needed-label">PM Needed</InputLabel>
-                <Select
-                  labelId="pm-needed-label"
-                  name="pmNeeded"
-                  value={updatedItem.pmNeeded || ""}
-                  onChange={handleInputChange}
-                  label="PM Needed"
-                >
-                  <MenuItem value="Yes">Yes</MenuItem>
-                  <MenuItem value="No">No</MenuItem>
-                </Select>
-              </FormControl>
-
-              {updatedItem.pmNeeded === "Yes" && (
-                <>
-                  <TextField
-                    label="PM Due Date"
-                    name="pmDueDate"
-                    type="date"
-                    value={updatedItem.pmDueDate || ""}
-                    onChange={handleInputChange}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{ shrink: true }}
-                  />
-
-                  <FormControl fullWidth margin="normal">
-                    <InputLabel id="pm-status-label">PM Status</InputLabel>
-                    <Select
-                      labelId="pm-status-label"
-                      name="pmStatus"
-                      value={updatedItem.pmStatus || ""}
-                      onChange={handleInputChange}
-                      label="PM Status"
-                    >
-                      <MenuItem value="Pending">Pending</MenuItem>
-                      <MenuItem value="In Progress">In Progress</MenuItem>
-                      <MenuItem value="Completed">Completed</MenuItem>
-                      <MenuItem value="Overdue">Overdue</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl fullWidth margin="normal">
-                    <InputLabel>PM Frequency</InputLabel>
-                    <Select
-                      label="PM Frequency"
-                      name="pmFrequency"
-                      value={updatedItem.pmFrequency || ""}
-                      onChange={handleInputChange}
-                    >
-                      <MenuItem value="Daily">Daily</MenuItem>
-                      <MenuItem value="Weekly">Weekly</MenuItem>
-                      <MenuItem value="Monthly">Monthly</MenuItem>
-                      <MenuItem value="Quarterly">Quarterly</MenuItem>
-                      <MenuItem value="Annually">Annually</MenuItem>
-                      <MenuItem value="Other">Other</MenuItem>
-                    </Select>
-                  </FormControl>
-                </>
-              )}
 
               <Button
                 onClick={handleSave}

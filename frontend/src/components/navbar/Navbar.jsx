@@ -54,7 +54,7 @@ const Navbar = () => {
     };
 
     fetchAdminData(); // Fetch the logged-in admin profile on component mount
-  }, []);
+  }, []); 
 
   // Update Time Every Second
   useEffect(() => {
@@ -111,7 +111,7 @@ const Navbar = () => {
     } else if (type.includes('overdue') || type.includes('extended') || type.includes('returned') || type.includes('borrow')) {
       return `/`;
     } else if (type.includes('stock')) {
-      return `/items`;
+      return `/items/stocks`;
     } else {
       return `/notifications/${notification._id}`;
     }
@@ -130,7 +130,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="logo">
-        <img src="/LABEEIS-LOGO.png" alt="Logo" className="logo-image" />
+        <img src="/final-logohuhu.png" alt="Logo" className="logo-navbar" />
       </div>
 
       <div className="wrapper">
@@ -192,7 +192,7 @@ const Navbar = () => {
             <div ref={profileRef} onClick={toggleProfileDropdown} className="nav-item">
               {admin && admin.profileImage && !profileImageError ? (
                 <img
-                  src={`${imageBaseURL}uploads/${admin.profileImage}`} // Dynamic image base URL
+                  src={`${imageBaseURL}/uploads/${admin.profileImage}`} // Dynamic image base URL
                   alt="Profile"
                   className="profile-icon"
                   onError={handleImageError}

@@ -13,6 +13,7 @@ const UserList = () => {
       <div className="userListContainer">
         <Navbar/>
         <div className="Content">
+        <img src="/blurred-bg.png" alt="Background" className="userslist-bg" />
         <CustomBreadcrumbs/>
             <div className="userListTable">
               <div className="userListTitle">
@@ -21,7 +22,7 @@ const UserList = () => {
                     <button className="addUser">Add New User</button>
                   </Link>
               </div>
-              <UserTable/>
+              <UserTable/> 
           </div>
         </div>
       </div>

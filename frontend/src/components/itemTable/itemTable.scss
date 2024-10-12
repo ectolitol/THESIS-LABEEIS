@@ -1,54 +1,52 @@
 .itemTable {
-  .MuiDataGrid-root {
-    background-color: white;
-    border-radius: 8px; // Add some rounding to the table edges
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); // Soft shadow for a modern look
-  }
-
-  .MuiDataGrid-cell {
+  height: auto;
+  
+  .table-cell-image, .table-cell-barcode {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center; // Center the text content in the cell
+    justify-content: center;  // Center the content horizontally
+    align-items: center;      // Center the content vertically
+    height: 100%;             // Ensure the wrapper takes up the full cell height
   }
 
-  button {
-    margin: 5px;
-  }
-
-  img {
-    border-radius: 8px;
+  .item-image {
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); // Add a subtle shadow around the image
-    transition: transform 0.3s ease; // Smooth transition on hover
+    border-radius: 5px;       // Optional: to round the edges of images
+  }
 
-    &:hover {
-      transform: scale(1.05); // Slight zoom on hover
+  .item-barcode {
+    width: 120px;              // Fixed width for barcode
+    height: 120px;             // Fixed height for barcode
+    object-fit: contain;      // Ensures the barcode doesn't get distorted
+  }
+
+  
+    .export-controls {
+      display: flex;
+      justify-content: flex-start;  // Align items to the left
+      align-items: center;
+      gap: 10px; // Adds space between dropdown and button
+    }
+  
+    .export-select, .export-item-button {
+      width: 150px;  // Set both to the same fixed width
+    }
+  
+    .export-select {
+      width: 150px;  // Ensure the select menu has enough width
+      padding: none;
+    }
+  
+    .export-item-button {
+      width: 100px;  // Ensure the button matches the select menu size
+      color: black;
+
+      &:hover {
+        background-color: #b4b3b3; // Darker blue on hover
+      }
+      
     }
   }
+  
 
-  .view-button {
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: rgb(52, 52, 235);
-    border: 1px solid rgba(3, 3, 62, 0.951); // Corrected border property
-    cursor: pointer;
-    background-color: rgba(52, 52, 235, 0.1); // Subtle background to highlight the button
-    transition: background-color 0.3s ease, color 0.3s ease; // Smooth transitions on hover
-
-    &:hover {
-      background-color: rgba(52, 52, 235, 0.2); // Slightly darker background on hover
-      color: rgb(0, 0, 170); // Darker text color on hover
-    }
-  }
-
-  .MuiDataGrid-columnHeader {
-    background-color: #f5f5f5; // Light background for headers
-    font-weight: bold;
-    text-align: center;
-  }
-
-  .MuiDataGrid-footerContainer {
-    justify-content: center; // Center the footer content (e.g., pagination controls)
-  }
-}

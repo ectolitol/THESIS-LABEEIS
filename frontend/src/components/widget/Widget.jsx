@@ -92,6 +92,7 @@ const Widget = ({ type }) => {
             backgroundColor: "gray"
           }}
         />,
+        className: "total-users-widget"
       };
       break;
 
@@ -107,6 +108,7 @@ const Widget = ({ type }) => {
             backgroundColor: "#736f4e"
           }}
         />,
+        className: "total-items-widget"
       };
       break;
 
@@ -114,7 +116,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Low stock",
         counter: lowStockCount !== null ? lowStockCount : "Loading...", // Display 0 if no items, or Loading...
-        link: <Link to="/low-stock" className="link-style">See details</Link>,
+        link: <Link to="/items/stocks" className="link-style">See details</Link>,
         icon: <TrendingDownRoundedIcon
           className="icon"
           style={{
@@ -122,6 +124,7 @@ const Widget = ({ type }) => {
             backgroundColor: "#e89005"
           }}
         />,
+        className: "low-stock-widget"
       };
       break;
 
@@ -129,7 +132,7 @@ const Widget = ({ type }) => {
       data = {
         title: "Out of stock",
         counter: outOfStockCount !== null ? outOfStockCount : "Loading...", // Display 0 if no items, or Loading...
-        link: <Link to="/out-of-stock" className="link-style">See details</Link>,
+        link: <Link to="/items/stocks" className="link-style">See details</Link>,
         icon: <WarningAmberRoundedIcon
           className="icon"
           style={{
@@ -137,6 +140,7 @@ const Widget = ({ type }) => {
             backgroundColor: "#bf211e"
           }}
         />,
+        className: "out-of-stock-widget"
       };
       break;
 
@@ -145,14 +149,18 @@ const Widget = ({ type }) => {
   }
 
   return (
-    <div className="widget">
+    <div className={`widget ${data.className}`}>
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">{data.counter}</span>
         <span className="link">{data.link}</span>
       </div>
+      <div className="right">
+        {data.icon}
+      </div>
     </div>
   );
 };
+
 
 export default Widget;

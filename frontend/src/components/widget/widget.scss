@@ -1,54 +1,68 @@
-.widget{
+.total-users-widget {
+  background-color: #59000fda; /* Example color */
+}
+
+.total-items-widget {
+  background-color: #59000fda; /* Example color */
+}
+
+.low-stock-widget {
+  background-color: #59000fda; /* Example color */
+}
+
+.out-of-stock-widget {
+  background-color: #59000fda; /* Example color */
+}
+
+.widget {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  border-radius: 10px;
+  padding: 10px;
+  height: 100px;
+
+  .left,
+  .right {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    flex: 1;
-    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-    border-radius: 10px;
     padding: 10px;
-    height: 100px;
-    background-color: rgba(128, 128, 128, 0.619);
 
-    .left, 
-    .right{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 10px;
-
-        .title {
-            font-weight: bold;
-            font-size: 14px;
-            color: white;
-          }
-      
-          .counter {
-            font-size: 28px;
-            font-weight: bolder;
-            color: rgba(109, 4, 4, 0.9);
-          }
-      
-          .link {
-            width: max-content;
-            font-size: 12px;
-            border-bottom: 1px solid gray;
-            cursor: pointer;
-            text-decoration: none;
-          }
-
-        .icon {
-            font-size: 18px;
-            padding: 5px;
-            border-radius: 5px;
-            align-self: flex-end;
-            
-        }
-
-      .link-style{
-        text-decoration: none;
-      }
-
-        
+    .title {
+      font-weight: bold;
+      font-size: 14px;
+      color: rgb(255, 255, 255);
     }
-    
+
+    .counter {
+      font-size: 28px;
+      font-weight: bolder;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .link {
+      width: max-content;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .icon {
+      font-size: 18px;
+      padding: 5px;
+      border-radius: 5px;
+      align-self: flex-end;
+    }
+
+    .link-style {
+      text-decoration: none;
+      color: white;
+
+      &:hover{
+        text-decoration: underline;
+      }
+      
+    }
+  }
 }

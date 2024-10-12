@@ -12,7 +12,11 @@ const Welcome = () => {
   const handleAdminClick = () => {
     navigate('/login'); // Redirect to admin login page
   };
- 
+
+  const handleReportClick = () => {
+    navigate('/report'); // Redirect to the report form page
+  };
+
   return (
     <div className="welcome-container">
       {/* Background image */}
@@ -22,11 +26,12 @@ const Welcome = () => {
         <div className="welcome2-container">
           <h1>EELMS</h1>
           <h3>Electrical Engineering Laboratory Management System</h3>
- 
         </div>
         <div className="welcome-form-container">
           <button className="welcome-button" onClick={handleAdminClick}>Admin</button>
           <button className="welcome-button" onClick={handleUserClick}>User</button>
+          {/* New Report Button */}
+          <button className="welcome-button" onClick={handleReportClick}>Report an Issue</button>
         </div>
         <div className="welcome-guide-container">
           <a href="/path/to/guide.pdf" className="welcome-guide-link" target="_blank" rel="noopener noreferrer">

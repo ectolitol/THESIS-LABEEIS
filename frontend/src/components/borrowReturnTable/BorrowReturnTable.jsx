@@ -97,7 +97,7 @@ const BorrowReturnTable = () => {
     const bValue = b[orderBy];
     return order === "asc" ? (aValue < bValue ? -1 : 1) : (aValue > bValue ? -1 : 1);
   });
-
+ 
   const calculateUniqueItemCount = (items) => {
     const itemsArray = items || [];
     return new Set(itemsArray.map(item => item.itemName)).size;
@@ -223,7 +223,7 @@ const BorrowReturnTable = () => {
                                   <TableCell>Barcode: {item.itemBarcode}</TableCell>
                                   <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
                                   <TableCell>Returned: {item.quantityReturned}</TableCell>
-                                  <TableCell>Condition: {item.condition}</TableCell>
+                                  <TableCell>Condition: {row.condition}</TableCell> 
                                 </TableRow>
                               ))}
                               <TableRow>
@@ -234,8 +234,15 @@ const BorrowReturnTable = () => {
                                 <TableCell>Professor: {row.professor}</TableCell>
                                 <TableCell>Prof Present? {row.profAttendance}</TableCell>
                                 <TableCell>Room: {row.roomNo}</TableCell>
-                                <TableCell>Feedback: {row.feedbackEmoji}</TableCell>
+                                                
                               </TableRow>
+
+                              <TableRow>
+                                <TableCell colSpan={7}><strong>Other Concerns:</strong></TableCell>
+                              </TableRow>
+                              <TableCell>Partial Return Reason: {row.partialReturnReason}</TableCell> 
+                              <TableCell>Feedback: {row.feedbackEmoji}</TableCell>
+
                             </TableBody>
                           </Table>
                         </Collapse>

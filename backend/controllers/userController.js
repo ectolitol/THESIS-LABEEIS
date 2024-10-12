@@ -1,11 +1,11 @@
 const User = require('../models/UserModel');
 const mongoose = require('mongoose');
-const { sendAdminNotification, sendUserConfirmation, sendUserDeclineEmail } = require('../utils/emailService');
+const { sendAdminNotification } = require('../utils/emailService');
 const { generateQRCode, createPDFWithQRCode } = require('../utils/pdfService'); 
 const { createNotification } = require('../utils/notificationService');
 const path = require('path');
 const fs = require('fs');
-const { sendSMS } = require('../utils/smsService');
+const axios = require('axios'); // Add axios to send the HTTP request
 
 // Create a new user
 exports.createUser = async (req, res) => {
@@ -22,10 +22,16 @@ exports.createUser = async (req, res) => {
       // Create a notification for the admin
       await createNotification('User Registration', `New user ${newUser.fullName} registered and awaiting approval.`, null);
 
-      // Send SMS notification to the user
+      // Send SMS request to Server B
       const smsMessage = `Hello ${savedUser.fullName}, your registration has been received! Please await admin approval.`;
-      await sendSMS(savedUser.contactNumber, smsMessage);
-      console.log(`SMS sent to ${savedUser.contactNumber}: ${smsMessage}`); // Log SMS status
+      const smsRequestData = {
+          number: savedUser.contactNumber,
+          message: smsMessage
+      };
+
+      // Sending the SMS request to Server B
+      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       res.status(201).json({ message: 'Registration successful! Await admin approval.' });
   } catch (error) {
@@ -54,6 +60,8 @@ exports.createUser = async (req, res) => {
   }
 };
 
+
+
 // Approve user function
 exports.approveUser = async (req, res) => {
   try {
@@ -72,9 +80,17 @@ exports.approveUser = async (req, res) => {
       await createPDFWithQRCode(qrCodeFilePath, user.fullName, pdfFilePath);
       await sendUserConfirmation(user, pdfFilePath);
 
-      // Send SMS notification
+      // Prepare the SMS message
       const smsMessage = `Hello ${user.fullName}, your registration has been approved! Your QR code will be sent via email.`;
-      await sendSMS(user.contactNumber, smsMessage);
+
+      // Send SMS request to Server B
+      const smsRequestData = {
+          number: user.contactNumber,
+          message: smsMessage
+      };
+
+      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       // Create a notification for the admin
       await createNotification('User Registration Approved', `New user ${user.fullName} was approved.`, null);
@@ -107,9 +123,17 @@ exports.declineUser = async (req, res) => {
 
       await sendUserDeclineEmail(user, notesComments);
 
-      // Send SMS notification
+      // Prepare the SMS message
       const smsMessage = `Hello ${user.fullName}, your registration was declined. Reason: ${notesComments}`;
-      await sendSMS(user.contactNumber, smsMessage);
+
+      // Send SMS request to Server B
+      const smsRequestData = {
+          number: user.contactNumber,
+          message: smsMessage
+      };
+
+      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       // Create a notification for the admin
       await createNotification('User Registration Declined', `User ${user.fullName} was declined.`, null);
@@ -120,7 +144,6 @@ exports.declineUser = async (req, res) => {
       res.status(500).json({ message: 'Error declining user', error: error.message });
   }
 };
-
 
 // Get all users
 exports.getAllUsers = async (req, res) => {

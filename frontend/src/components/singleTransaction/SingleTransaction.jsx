@@ -166,6 +166,7 @@ const SingleTransaction = () => {
                                 <TableCell>Barcode: {item.itemBarcode}</TableCell>
                                 <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
                                 <TableCell>Returned: {item.quantityReturned}</TableCell>
+                                <TableCell>Condition: {item.condition}</TableCell>
                               </TableRow>
                             ))}
                             <TableRow>
@@ -174,8 +175,17 @@ const SingleTransaction = () => {
                             <TableRow>
                               <TableCell>Course: {transaction.courseSubject}</TableCell>
                               <TableCell>Professor: {transaction.professor}</TableCell>
+                              <TableCell>Prof Present? {transaction.profAttendance}</TableCell>
                               <TableCell>Room: {transaction.roomNo}</TableCell>
                             </TableRow>
+
+                            <TableRow>
+                                <TableCell colSpan={7}><strong>Other Concerns:</strong></TableCell>
+                            </TableRow>
+                              <TableCell>Partial Return Reason: {transaction.partialReturnReason}</TableCell> 
+                              <TableCell>Feedback: {transaction.feedbackEmoji}</TableCell>
+
+
                           </TableBody>
                         </Table>
                       </Collapse>

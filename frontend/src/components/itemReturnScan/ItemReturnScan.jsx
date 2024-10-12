@@ -22,6 +22,7 @@ const ItemReturnScan = () => {
   const [scannedItems, setScannedItems] = useState([...selectedTransaction.items.map(item => ({
     ...item,
     condition: '', // Add condition field
+    customCondition: '', // Add custom condition field for 'Others'
   }))]);
   const [barcode, setBarcode] = useState('');
   const [error, setError] = useState('');
@@ -83,6 +84,15 @@ const ItemReturnScan = () => {
   const handleConditionChange = (index, condition) => {
     const updatedItems = [...scannedItems];
     updatedItems[index].condition = condition;
+    if (condition !== 'Others') {
+      updatedItems[index].customCondition = ''; // Reset custom condition if it's not 'Others'
+    }
+    setScannedItems(updatedItems);
+  };
+
+  const handleCustomConditionChange = (index, value) => {
+    const updatedItems = [...scannedItems];
+    updatedItems[index].customCondition = value;
     setScannedItems(updatedItems);
   };
 
@@ -94,7 +104,7 @@ const ItemReturnScan = () => {
           itemBarcode: item.itemBarcode,
           itemName: item.itemName,
           quantity: item.quantityReturned,
-          condition: item.condition, // Include condition in the return data
+          condition: item.condition === 'Others' ? item.customCondition : item.condition, // Include custom condition for 'Others'
         }));
 
       if (itemsReturned.length === 0) {
@@ -119,7 +129,7 @@ const ItemReturnScan = () => {
           if (returnStatus === 'Completed') {
             navigate('/return-success', { state: { userID, userName, items: itemsReturned, pastTransactionID: selectedTransaction._id } });
           } else if (returnStatus === 'Partially Returned') {
-            navigate('/return-partial', { state: { userID, userName, items: itemsReturned } });
+            navigate('/return-partial', { state: { userID, userName, items: itemsReturned, pastTransactionID: selectedTransaction._id} });
           }
         }, 2000);
       } else {
@@ -160,7 +170,20 @@ const ItemReturnScan = () => {
               <option value="Good">Good</option>
               <option value="Damaged">Damaged</option>
               <option value="Broken">Broken</option>
+              <option value="Others">Others</option>
             </select>
+
+            {/* Show text input and "OK" button when "Others" is selected */}
+            {item.condition === 'Others' && (
+              <div className="custom-condition-container">
+                <input
+                  type="text"
+                  placeholder="Enter custom condition"
+                  value={item.customCondition}
+                  onChange={(e) => handleCustomConditionChange(index, e.target.value)}
+                />
+              </div>
+            )}
           </li>
         ))}
       </ul>

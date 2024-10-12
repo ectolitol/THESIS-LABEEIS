@@ -23,7 +23,7 @@ const SelectAdmin = () => {
         const profilesWithImage = response.data.map((admin) => ({
           ...admin,
           profileImage: admin?.profileImage
-            ? `${imageBaseURL}uploads/${admin.profileImage}`
+            ? `${imageBaseURL}/uploads/${admin.profileImage}`
             : '',
         }));
         setProfiles(profilesWithImage);

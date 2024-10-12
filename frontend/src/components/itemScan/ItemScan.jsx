@@ -201,14 +201,14 @@ const ItemScan = () => {
             <p>Item: {itemDetails.itemName}</p>
             {itemDetails.image && (
               <img
-                src={`http://localhost:4000${itemDetails.image}`}
+                src={`${imageBaseURL}${itemDetails.image}`}  // Concatenate base URL with image path
                 alt={itemDetails.itemName}
                 className="item-image"
                 onError={(e) => {
-                  e.target.src = '/path/to/placeholder.png';
-                  e.target.onError = null; // Prevent infinite loop
-                }}
-              />
+                e.target.src = '/path/to/placeholder.png';  // Set fallback image if the requested image fails to load
+                e.target.onError = null;  // Prevent infinite loop if the placeholder also fails
+              }}
+            />
             )}
           </div>
         )}

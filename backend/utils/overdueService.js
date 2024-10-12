@@ -1,24 +1,18 @@
 const BorrowReturnLog = require('../models/BorrowReturnLogModel');
 const { createNotification } = require('../utils/notificationService');
-const { sendSMS } = require('../utils/smsService'); // Ensure you import your SMS utility
+const axios = require('axios'); // Import axios to send HTTP requests
 
 exports.checkOverdueItems = async () => {
     try {
-        // console.log("Starting overdue items check...");
-
         // Get all pending or extended transactions that may be overdue
         const overdueLogs = await BorrowReturnLog.find({
             returnStatus: { $in: ['Pending', 'Extended', 'Partially Returned'] }
         });
 
-        // console.log(`Found ${overdueLogs.length} logs to check for overdue status.`);
-
         const currentTime = new Date().getTime();
-        // console.log(`Current time: ${new Date(currentTime).toLocaleString()}`);
 
         for (const log of overdueLogs) {
             const dueDate = new Date(log.dueDate).getTime();
-            // console.log(`Checking log ID: ${log._id}`);
             console.log(`Borrower: ${log.userName}, Due Date: ${new Date(dueDate).toLocaleString()}`);
 
             // Check if the current time is beyond the due date
@@ -40,17 +34,28 @@ exports.checkOverdueItems = async () => {
 
                 console.log(`Notification sent for log ID: ${log._id}`);
 
-                // Send SMS to user informing them of the overdue status
+                // Send SMS to user via Server B, informing them of the overdue status
                 const smsMessage = `Hi ${log.userName}, your borrowed item(s) are overdue. Please return them as soon as possible. Thank you!`;
-                await sendSMS(log.contactNumber, smsMessage);
+
+                // Prepare SMS request data
+                const smsRequestData = {
+                    number: log.contactNumber,
+                    message: smsMessage
+                };
+
+                try {
+                    // Send the SMS request to Server B
+                    const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+                    console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
+                } catch (error) {
+                    console.error(`Error sending SMS to ${log.userName} (Contact: ${log.contactNumber}):`, error.message);
+                }
 
                 console.log(`SMS sent to ${log.userName} (Contact: ${log.contactNumber}) regarding overdue items.`);
             } else {
                 console.log(`Log ID: ${log._id} is not overdue. Skipping...`);
             }
         }
-
-        // console.log('Overdue items check completed.');
     } catch (error) {
         console.error('Error checking overdue items:', error.message);
     }

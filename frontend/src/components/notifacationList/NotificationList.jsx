@@ -74,7 +74,7 @@ const NotificationList = () => {
     } else if (type.includes('overdue') || type.includes('extended') || type.includes('returned') || type.includes('borrow')) {
       return `/`;
     } else if (type.includes('stock')) {
-      return `/items`;
+      return `/items/stocks`;
     } else {
       return `/notifications`;
     }

@@ -17,4 +17,10 @@ router.get('/items/out-of-stock', authMiddleware, itemController.getOutOfStockIt
 router.get('/barcode/:itemBarcode/transactions', authMiddleware, borrowReturnController.getItemTransactions);
 router.delete('/:id', authMiddleware, itemController.deleteItem);
 
+// Get the maintenance schedule for a specific item
+router.get('/:itemId/schedule', authMiddleware, itemController.getMaintenanceSchedule);
+
+// Update maintenance status for a specific week
+router.put('/:itemId/schedule/update', authMiddleware, itemController.updateMaintenanceStatus);
+
 module.exports = router;

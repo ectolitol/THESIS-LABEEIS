@@ -90,21 +90,22 @@ exports.sendTransactionEmail = async (user, transactionDetails, dueDate) => {
             from: process.env.EMAIL_USER,
             to: user.email,
             subject: 'Borrowing Transaction Details',
-            text: `
-                Hello ${user.fullName || "Valued User"},
+            text: 
+`
+Hello ${user.fullName || "Valued User"},
 
-                Thank you for borrowing items from us. Here are the details of your transaction:
+Thank you for borrowing items from us. Here are the details of your transaction:
 
-                Borrowed Items:
-                ${itemsList}
+Borrowed Items:
+${itemsList}
 
-                Due Date: ${dueDate.toLocaleString()}
+Due Date: ${dueDate.toLocaleString()}
 
-                Please ensure that the items are returned by the due date to avoid any penalties.
+Please ensure that the items are returned by the due date to avoid any penalties.
 
-                Thank you,
-                Your Borrowing Team
-            `
+Thank you,
+Your Borrowing Team
+`
         };
 
         // Send the email using nodemailer transporter

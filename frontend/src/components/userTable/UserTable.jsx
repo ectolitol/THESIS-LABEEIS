@@ -9,8 +9,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField'; // Import TextField
+import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from 'xlsx';
+import { Checkbox, FormControlLabel, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 
 const UserTable = () => {
   const [rows, setRows] = React.useState([]);
@@ -20,14 +24,33 @@ const UserTable = () => {
   const [actionType, setActionType] = React.useState('');
   const [declineReason, setDeclineReason] = React.useState('');
   const [error, setError] = React.useState('');
+  const [openModal, setOpenModal] = React.useState(false);
+  const [selectedFields, setSelectedFields] = React.useState([]);
+  const [selectedStatus, setSelectedStatus] = React.useState('');
+  const [statuses, setStatuses] = React.useState([]);
   const navigate = useNavigate();
 
-  // Define table columns
+  const fields = [
+      { label: 'ID', field: '_id' },
+      { label: 'Full Name', field: 'fullName' },
+      { label: 'Email', field: 'email' }, // Included email
+      { label: 'Gender', field: 'gender' }, // Included gender
+      { label: 'Address', field: 'address' }, // Included address
+      { label: 'Student No', field: 'studentNo' },
+      { label: 'Program', field: 'program' },
+      { label: 'Year & Section', field: 'yearAndSection' },
+      { label: 'Contact Number', field: 'contactNumber' }, // Included contact number
+      { label: 'Registration Card', field: 'registrationCard' }, // Included registration card
+      { label: 'Updated Class Schedule', field: 'updatedClassSchedule' }, // Included updated class schedule
+      { label: 'Status', field: 'status' },
+      { label: 'Notes/Comments', field: 'notesComments' } // Included notes/comments
+    ];
+
   const columns = [
     { field: '_id', headerName: 'ID', minWidth: 230 },
-    { field: 'fullName', headerName: 'Full Name', minWidth: 250 },
+    { field: 'fullName', headerName: 'Full Name', minWidth: 265 },
     { field: 'studentNo', headerName: 'Student No', minWidth: 180 },
-    { field: 'program', headerName: 'Program', minWidth: 200 },
+    { field: 'program', headerName: 'Program', minWidth: 150 },
     { field: 'yearAndSection', headerName: 'Year & Section', minWidth: 120 },
     {
       field: 'status',
@@ -59,7 +82,7 @@ const UserTable = () => {
             <Button
               onClick={handleViewDetails}
               variant="outlined"
-              className="view-button"
+              className="view-user-button"
             >
               View
             </Button>
@@ -75,8 +98,7 @@ const UserTable = () => {
                 </Button>
                 <Button
                   onClick={() => handleOpenDialog('decline')}
-                  variant="contained"
-                  className="decline-button"
+                  variant="contained" className="decline-button"
                 >
                   Decline
                 </Button>
@@ -88,11 +110,16 @@ const UserTable = () => {
     }
   ];
 
-  // Fetch user data from API
   const fetchData = async () => {
     try {
       const response = await axios.get('/api/users');
       setRows(response.data);
+
+      // Extract unique statuses for filtering dropdown
+      const uniqueStatuses = [...new Set(response.data.map(user => user.status))];
+      setStatuses(uniqueStatuses);
+
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {
@@ -100,7 +127,6 @@ const UserTable = () => {
     }
   };
 
-  // Handle Approve or Decline action
   const handleAction = async () => {
     try {
       let response;
@@ -123,42 +149,116 @@ const UserTable = () => {
     }
   };
 
-  // Handle decline reason change
   const handleDeclineReasonChange = (event) => {
     setDeclineReason(event.target.value);
   };
 
-  // Close the dialog
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setDeclineReason('');
     setError('');
   };
 
-  // Fetch data when component mounts
   React.useEffect(() => {
     fetchData();
   }, []);
 
-  // Pagination settings
+  const handleLocationChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
+  const handleExport = () => setOpenModal(true);
+
+  const handleModalClose = () => setOpenModal(false);
+
+  const handleFieldChange = (fieldName) => {
+    setSelectedFields(prev => prev.includes(fieldName)
+      ? prev.filter(f => f !== fieldName)
+      : [...prev, fieldName]
+    );
+  };
+
+  const filteredRows = selectedStatus
+    ? rows.filter(row => row.status === selectedStatus)
+    : rows;
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredRows.map((row) => {
+        const data = {};
+        selectedFields.forEach((field) => {
+          data[field] = row[field] || 'N/A';
+        });
+        return data;
+      })
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    XLSX.writeFile(workbook, "UserTableExport.xlsx");
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text("User Table Export", 14, 10);
+
+    const data = filteredRows.map((row) => {
+      return selectedFields.map((field) => row[field] || 'N/A');
+    });
+
+    doc.autoTable({
+      head: [selectedFields],
+      body: data,
+      startY: 20,
+    });
+
+    doc.save("UserTableExport.pdf");
+  };
+
   const paginationModel = { page: 0, pageSize: 5 };
 
   return (
-    <>
-      <Paper sx={{ width: '100%', overflow: 'hidden', height: '100%' }}>
-        <div style={{ height: 520, width: '100%' }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[5, 10, 20]}
-            checkboxSelection
-            loading={loading}
-            getRowId={(row) => row._id}
-            className="user-table-grid"
-          />
+    <Paper className="userTable" sx={{ width: '100%', overflow: 'hidden', height: '100%' }}>
+      <div style={{ height: 520, width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="export-controls" style={{ marginBottom: '10px' }}>
+          
+          {/* Button to customize export */}
+          <Button className="export-user-button" onClick={handleExport}>
+            Export
+          </Button>
         </div>
-      </Paper>
+
+        {/* DataGrid */}
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10, 20]}
+          checkboxSelection
+          loading={loading}
+          getRowId={(row) => row._id}
+          style={{ flex: 1 }}
+        />
+      </div>
+
+      {/* Modal for selecting export fields */}
+      <Dialog open={openModal} onClose={handleModalClose}>
+        <DialogTitle>Select Fields to Export</DialogTitle>
+        <DialogContent>
+          {fields.map((field) => (
+            <FormControlLabel
+              key={field.field}
+              control={< Checkbox checked={selectedFields.includes(field.field)} onChange={() => handleFieldChange(field.field)} />}
+              label={field.label}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { exportToExcel(); handleModalClose(); }} color="primary">Export to Excel</Button>
+          <Button onClick={() => { exportToPDF(); handleModalClose(); }} color="secondary">Export to PDF</Button>
+          <Button onClick={handleModalClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Dialog for Approve/Decline */}
       <Dialog
@@ -181,7 +281,7 @@ const UserTable = () => {
               id="declineReason"
               label="Reason"
               type="text"
-              fullWidth
+              fullWidth 
               variant="standard"
               value={declineReason}
               onChange={handleDeclineReasonChange}
@@ -201,8 +301,8 @@ const UserTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Paper>
   );
-}; 
+};
 
 export default UserTable;
