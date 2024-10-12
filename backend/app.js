@@ -28,9 +28,10 @@ store.on('error', function (error) {
 // Middleware
 app.use(express.json()); // Only include once
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://192.168.123.198:3000'], 
+  origin: true, // Allow all origins
   credentials: true // Allow cookies to be sent with requests
 }));
+
 app.use(express.urlencoded({ extended: true }));
 
 // Session Middleware
