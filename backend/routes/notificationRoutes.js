@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Notification = require('../models/NotificationModel');
 const notificationController = require('../controllers/notificationController');
-const authMiddleware = require('../middleware/authMiddleware');
 
 // Apply authMiddleware to protected routes
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const notifications = await Notification.find().sort({ date: -1 });
         res.json(notifications);
@@ -14,7 +13,7 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/user/:userID', authMiddleware, async (req, res) => {
+router.get('/user/:userID', async (req, res) => {
     try {
         const notifications = await Notification.find({ userID: req.params.userID }).sort({ date: -1 });
         res.json(notifications);
@@ -23,9 +22,9 @@ router.get('/user/:userID', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/:id', authMiddleware, notificationController.getNotificationById);
+router.get('/:id', notificationController.getNotificationById);
 
-router.patch('/:id/read', authMiddleware, async (req, res) => {
+router.patch('/:id/read', async (req, res) => {
     try {
         const notification = await Notification.findById(req.params.id);
         if (!notification) {
@@ -41,7 +40,7 @@ router.patch('/:id/read', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/notif/unread', authMiddleware, async (req, res) => {
+router.get('/notif/unread', async (req, res) => {
     try {
       const unreadNotifications = await Notification.find({ isRead: false }).sort({ date: -1 });
       res.json(unreadNotifications);
@@ -50,6 +49,6 @@ router.get('/notif/unread', authMiddleware, async (req, res) => {
     }
 });
 
-router.delete('/:id', authMiddleware, notificationController.deleteNotification);
+router.delete('/:id', notificationController.deleteNotification);
 
 module.exports = router;

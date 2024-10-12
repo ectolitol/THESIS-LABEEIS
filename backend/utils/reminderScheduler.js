@@ -75,7 +75,6 @@ const startSmsReminderCron = () => {
         await sendReminderIfDue(log); // Check and send SMS if the due date is near
       }
 
-      console.log('SMS reminder process completed.');
     } catch (error) {
       console.error("Error while sending SMS reminders:", error.message);
     }

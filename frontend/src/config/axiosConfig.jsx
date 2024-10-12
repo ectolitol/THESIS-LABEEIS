@@ -4,7 +4,7 @@ import axios from 'axios';
 axios.defaults.baseURL = window.location.hostname === 'localhost' 
   ? 'http://localhost:4000/' 
   : ''; 
-
+// 47.129.7.196
 // Ensure credentials (cookies, auth headers) are sent with each request if necessary
 axios.defaults.withCredentials = true;
 

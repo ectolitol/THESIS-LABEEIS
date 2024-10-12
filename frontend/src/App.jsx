@@ -70,157 +70,157 @@ function App() {
             <Route
               path="/"
               element={
-                <ProtectedRoute>
+                
                   <Dashboard />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/users"
               element={
-                <ProtectedRoute>
+                
                   <UserList />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/users/:userId"
               element={
-                <ProtectedRoute>
+                
                   <User />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/users/newUser"
               element={
-                <ProtectedRoute>
+                
                   <NewUser />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/users/registrationSuccessful"
               element={
-                <ProtectedRoute>
+                
                   <RegistrationSuccess />
-                </ProtectedRoute>
+                
               }
             />
 
             <Route
               path="/items"
               element={
-                <ProtectedRoute>
+                
                   <ItemList />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/items/:itemId"
               element={
-                <ProtectedRoute>
+                
                   <Item />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/items/newItem"
               element={
-                <ProtectedRoute>
+                
                   <NewItem />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/items/CreationSuccessful"
               element={
-                <ProtectedRoute>
+                
                   <CreationSuccess />
-                </ProtectedRoute>
+                
               }
             />
 
             <Route
               path="/items/stocks"
               element={
-                <ProtectedRoute>
+                
                   <Stocks />
-                </ProtectedRoute>
+                
               }
             />
 
             <Route
               path="/categories"
               element={
-                <ProtectedRoute>
+                
                   <CategoryList />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/categories/:categoryId"
               element={
-                <ProtectedRoute>
+                
                   <Category />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/categories/newCategory"
               element={
-                <ProtectedRoute>
+                
                   <NewCategory />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/categories/CategorySuccess"
               element={
-                <ProtectedRoute>
+                
                   <CategorySuccess />
-                </ProtectedRoute>
+                
               }
             />
 
             <Route
               path="/notifications"
               element={
-                <ProtectedRoute>
+                
                   <Notification />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/reports"
               element={
-                <ProtectedRoute>
+                
                   <Report />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/archives"
               element={
-                <ProtectedRoute>
+                
                   <Archives />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/feedback"
               element={
-                <ProtectedRoute>
+                
                   <Feedback />
-                </ProtectedRoute>
+                
               }
             />
             <Route
               path="/about"
               element={
-                <ProtectedRoute>
+                
                   <About />
-                </ProtectedRoute>
+                
               }
             />
           </Routes>

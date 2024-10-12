@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../utils/upload');
-const authMiddleware = require('../middleware/authMiddleware');
 const feedbackController = require('../controllers/feedbackController');
 
 // Apply authMiddleware if needed
-router.post('/feedback', authMiddleware, upload.single('attachment'), (req, res) => {
+router.post('/feedback', upload.single('attachment'), (req, res) => {
     feedbackController.sendFeedback({
         name: req.body.name,
         email: req.body.email,
