@@ -53,7 +53,7 @@ const ReturnSuccess = () => {
       console.log('Feedback successfully submitted!');
       
       // Navigate back to the main page or another relevant page
-      navigate('/LABEEIS');
+      navigate('/');
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }

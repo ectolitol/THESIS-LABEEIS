@@ -19,7 +19,6 @@ import Feedback from './pages/feedback/Feedback';
 import ProtectedRoute from './components/ProtectedRoute';
 import SelectAdmin from './pages/selectAdmin/SelectAdmin';
 import './config/axiosConfig';
-import Welcome from './pages/welcome/Welcome';
 import UserSelection from './pages/userPanel/userSelection/UserSelection';
 import NewUserInstruction from './pages/userPanel/newUserInstruction/newUserInstruction';
 import BorrowReturnSelection from './pages/userPanel/borrowReturnSelection/BorrowReturnSelection';
@@ -38,6 +37,8 @@ import Report from './pages/reports/Report';
 import Archives from './pages/archives/Archives';
 import About from './pages/about/About';
 import Stocks from './pages/stocks/Stocks';
+import UserWelcome from './pages/UserWelcome/UserWelcome';
+import AdminWelcome from './pages/adminWelcome/AdminWelcome';
 
 function App() {
   return (
@@ -45,7 +46,8 @@ function App() {
       <BrowserRouter>
           <Routes>
             {/* Public Routes */}
-            <Route path="/LABEEIS" element={<Welcome />} />
+            <Route path="/" element={<UserWelcome />} />
+            <Route path="/administrator" element={<AdminWelcome />} />
             <Route path="/report" element={<ReportForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/select-profile" element={<SelectAdmin />} />
@@ -68,7 +70,7 @@ function App() {
 
             {/* Protected Admin Routes */}
             <Route
-              path="/"
+              path="/EELMS"
               element={
                 
                   <Dashboard />

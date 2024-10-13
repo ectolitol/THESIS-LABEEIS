@@ -38,7 +38,7 @@ const ReturnPartial = ({ remainingItems }) => {
       console.log('Partial return reason submitted successfully!');
       
       // Navigate to the desired path after submission
-      navigate('/LABEEIS');
+      navigate('/'); 
     } catch (error) {
       console.error('Error submitting partial return reason:', error);
     }
@@ -58,7 +58,7 @@ const ReturnPartial = ({ remainingItems }) => {
           {items && items.length > 0 ? (
             items.map((item, index) => (
               <li key={index} className="item">
-                <strong>{item.itemName}</strong> ({item.itemBarcode}) - Quantity Left: {item.quantity}
+                <strong>{item.itemName}</strong>  ({item.itemBarcode}) 
               </li>
             ))
           ) : (

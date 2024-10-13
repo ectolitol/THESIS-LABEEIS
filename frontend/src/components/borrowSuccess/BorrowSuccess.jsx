@@ -49,7 +49,7 @@ const BorrowSuccess = () => {
         ))}
       </ul>
 
-      <button onClick={() => window.location.href = '/LABEEIS'}>Done</button>
+      <button onClick={() => window.location.href = '/'}>Done</button>
     </div>
   );
 };

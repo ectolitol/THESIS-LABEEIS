@@ -112,6 +112,12 @@
         cursor: not-allowed;
       }
     }
+
+    .custom-condition-container{
+      input{
+        margin-top: 5px;
+      }
+    }
   
     .complete-return-btn {
       background-color: #5cb85c;

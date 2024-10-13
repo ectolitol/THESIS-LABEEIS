@@ -74,7 +74,7 @@ const UserRegistration = () => {
   // Handle closing the dialog and navigating
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    navigate('/LABEEIS');
+    navigate('/EELMS');
   };
 
   // Handle going back to the previous page

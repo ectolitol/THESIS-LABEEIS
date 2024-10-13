@@ -61,7 +61,7 @@ const Sidebar = () => {
     try {
       await axios.post('/api/admin/logout', {}, { withCredentials: true });
       // Clear any local state or storage if needed
-      navigate('/LABEEIS'); // Redirect to login page
+      navigate('/'); // Redirect to login page
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -108,7 +108,7 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <li>
-            <Link to="/" className={`menu-link ${location.pathname === "/" ? "active" : ""}`}>
+            <Link to="/EELMS" className={`menu-link ${location.pathname === "/" ? "active" : ""}`}>
               <DashboardCustomizeRoundedIcon className="icon" />
               <span className="sidebar-name">Dashboard</span>
             </Link>

@@ -25,7 +25,7 @@ const Login = () => {
         console.log('Authentication check response:', response);
         if (response.status === 200) {
           console.log('User is authenticated. Redirecting...');
-          navigate('/');
+          navigate('/EELMS');
         } else {
           console.log('User is not authenticated. Status:', response.status);
         }

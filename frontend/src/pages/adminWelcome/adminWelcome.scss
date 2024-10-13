@@ -1,9 +1,10 @@
-.welcome-container {
+.admin-welcome-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Align the content to the left */
     align-items: center;
     height: 100vh;
     position: relative;
+    padding-left: 50px; /* Add some padding from the left side */
   
     .bg-only {
       position: fixed;
@@ -15,43 +16,41 @@
       z-index: -1;
     }
   
-    .welcome-content-container {
+    .admin-welcome-content-container {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start; 
         padding: 40px;
-        height: 89%;
+        height: 89.1%;
+        margin-left: -50px;
         max-width: 400px;
-        background: rgba(255, 255, 255, 0.426); /* Slightly transparent background */
+        background: rgba(255, 255, 255, 0.426);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      }
+    }
   
-    .welcome2-container h1 {
+    .admin-welcome2-container h1 {
       font-size: 36px;
       margin-bottom: 10px;
       color: #000;
       text-align: center;
-      
     }
   
-    .welcome2-container h3 {
+    .admin-welcome2-container h3 {
       font-size: 14px;
-      margin-bottom: 20px; // Adjusted for better spacing
+      margin-bottom: 20px;
       color: #000;
-      
     }
   
-    .welcome-form-container {
-      width: 100%;
+    .admin-welcome-form-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      
+      width: 100%;
     }
   
-    .welcome-button {
-      background-color: #59000F;
+    .admin-welcome-button {
+      background-color: #59000f;
       color: white;
       padding: 15px;
       font-size: 18px;
@@ -65,21 +64,4 @@
         background-color: #a32a2a;
       }
     }
-  
-    .welcome-guide-container {
-      margin-top: 20px;
-      color: #59000F;
-    }
-  
-    .welcome-guide-link {
-      font-size: 16px;
-      font-weight: bold;
-      color: #59000F;
-      text-decoration: none;
-  
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
-  

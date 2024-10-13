@@ -27,6 +27,7 @@ const ItemScan = () => {
   const [availableQuantity, setAvailableQuantity] = useState(0);
   const [quantityExceededMessage, setQuantityExceededMessage] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
 
   const barcodeInputRef = useRef(null);
 
@@ -133,10 +134,11 @@ const ItemScan = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Set loading to true when submitting
 
-    // Validate itemsToSubmit
     if (scannedItems.length === 0) {
         setErrorMessage('No items to submit. Please add items before submitting.');
+        setIsLoading(false); // Set loading to false if no items
         return;
     }
 
@@ -165,17 +167,14 @@ const ItemScan = () => {
         if (response.status === 201) {
             navigate('/borrow-success', { state: transactionDetails });
         } else {
-            // Log the response status and data for debugging
-            console.error('Error response:', response.data);
             setErrorMessage('Error processing the transaction. Please try again.');
         }
     } catch (error) {
-        // Log detailed error information
-        console.error('Failed to log the transaction:', error.response ? error.response.data : error.message);
         setErrorMessage('Failed to log the transaction. Please check the console for details.');
+        console.error('Failed to log the transaction:', error);
     }
-};
-
+    setIsLoading(false); // Set loading to false after submission
+  };
 
   return (
     <div className="item-scan">
@@ -252,10 +251,13 @@ const ItemScan = () => {
 
       {scannedItems.length > 0 && (
         <div className="submit-section">
-          <button onClick={handleSubmit}>Submit Transaction</button>
+          <button onClick={handleSubmit} disabled={isLoading}>Submit Transaction</button>
         </div>
       )}
       </div>
+
+      {/* Show Loading... message when isLoading is true */}
+      {isLoading && <p>Loading...</p>}
     </div>
   );
 };

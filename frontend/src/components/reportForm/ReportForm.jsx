@@ -1,55 +1,21 @@
 import "./reportForm.scss";
-import React, { useState, useRef, useEffect } from 'react';
-import Webcam from 'react-webcam';
-import { BrowserMultiFormatReader } from '@zxing/library'; // ZXing barcode scanner library
+import React, { useState, useRef } from 'react';
 import axios from 'axios'; // Import axios
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const ReportForm = () => {
   const [reportedByName, setReportedByName] = useState('');
   const [issue, setIssue] = useState('');
   const [priority, setPriority] = useState('medium');
   const [itemId, setItemId] = useState(''); // Will be filled with the scanned barcode
-  const [scanning, setScanning] = useState(false); // Toggles scanner visibility
-  const [scanResult, setScanResult] = useState(''); // Stores scan result or error
-  const [frameStatus, setFrameStatus] = useState('not-detected'); // Scanner frame color state
-  const webcamRef = useRef(null); // Ref to access the webcam
-  const codeReader = new BrowserMultiFormatReader();
+  const [showScanInput, setShowScanInput] = useState(false); // Toggles visibility of the scan input field
+  const inputRef = useRef(null); // Ref to focus on the input box
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  useEffect(() => {
-    let interval;
-    if (scanning) {
-      interval = setInterval(() => {
-        handleScan();
-      }, 500); // Try scanning every 500ms
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [scanning]);
-
-  // Function to capture an image from the webcam and scan the barcode
-  const handleScan = async () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot(); // Capture the image from the webcam
-      if (imageSrc) {
-        try {
-          const result = await codeReader.decodeFromImage(undefined, imageSrc); // Pass the screenshot directly
-          if (result) {
-            setItemId(result.text); // Set the scanned barcode text as itemId
-            setScanResult(`Scanned item ID: ${result.text}`);
-            setFrameStatus('detected'); // Change frame to green
-          } else {
-            setFrameStatus('not-detected'); // Change frame to red
-          }
-        } catch (err) {
-          setFrameStatus('not-detected'); // Change frame to red if not detected
-          setScanResult('No barcode detected. Please ensure the barcode is clearly visible.');
-        }
-      }
-    }
+  // Function to handle clicking the "Scan" button
+  const handleScanClick = () => {
+    setShowScanInput(true); // Show the input field
+    setTimeout(() => inputRef.current.focus(), 100); // Focus on the input box
   };
 
   // Submit function with logging
@@ -67,10 +33,11 @@ const ReportForm = () => {
       });
 
       // Log the response from the server
-      console.log("Response from backend:", response);
+      console.log("Response from backend:", response.status);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert('Report submitted successfully');
+        navigate('/'); // Navigate to home after alert is closed
       } else {
         alert('Failed to submit the report');
       }
@@ -103,43 +70,26 @@ const ReportForm = () => {
           placeholder="Enter your name"
         />
 
-        <label htmlFor="itemId">Item ID</label>
-        <input
-          type="text"
-          id="itemId"
-          value={itemId}
-          onChange={(e) => setItemId(e.target.value)}
-          required
-          placeholder="Scan or enter the Item ID"
-        />
-
-        {/* Button to open the scanner */}
-        <button type="button" onClick={() => setScanning(true)}>
-          Scan Barcode
+        {/* "Scan" button to trigger input for scanning */}
+        <button type="button" onClick={handleScanClick}>
+          Scan Item ID
         </button>
 
-        {/* Display the webcam when scanning is true */}
-        {scanning && (
-          <div className="scanner-container">
-            <div className="webcam-container">
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={{ facingMode: 'environment' }} // Use back camera if available
-              />
-              {/* Scanner Frame */}
-              <div className={`scanner-frame ${frameStatus}`}></div>
-            </div>
-
-            <button type="button" className="capture-btn" onClick={handleScan}>
-              Capture & Scan
-            </button>
-          </div>
+        {/* Show input field when "Scan" button is clicked */}
+        {showScanInput && (
+          <>
+            <label htmlFor="itemId">Item ID</label>
+            <input
+              type="text"
+              id="itemId"
+              ref={inputRef} // This will allow us to focus on this input
+              value={itemId}
+              onChange={(e) => setItemId(e.target.value)}
+              required
+              placeholder="Scan or enter the Item ID"
+            />
+          </>
         )}
-
-        {/* Display scan result or error message */}
-        {scanResult && <p>{scanResult}</p>}
 
         <label htmlFor="issue">Issue Description</label>
         <textarea

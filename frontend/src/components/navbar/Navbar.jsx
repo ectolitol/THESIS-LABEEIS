@@ -43,7 +43,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get('/api/adminProfile/profiles/me', { withCredentials: true });
+        const response = await axios.get('/api/adminProfile/profiles/me', );  
         setAdmin(response.data); // Set the admin data from session
       } catch (error) {
         console.error('Error fetching admin data:', error);
@@ -109,7 +109,7 @@ const Navbar = () => {
     } else if (type.includes('user')) {
       return `/users`;
     } else if (type.includes('overdue') || type.includes('extended') || type.includes('returned') || type.includes('borrow')) {
-      return `/`;
+      return `/EELMS`;
     } else if (type.includes('stock')) {
       return `/items/stocks`;
     } else {

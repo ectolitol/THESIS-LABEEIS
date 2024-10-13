@@ -60,7 +60,7 @@ const SelectAdmin = () => {
         if (response.status === 200) {
           console.log('Profile selected successfully:', response.data.profile);
           // Navigate to the dashboard or homepage
-          navigate('/');
+          navigate('/EELMS');
         } else {
           alert("Failed to select profile");
         }

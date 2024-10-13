@@ -5,7 +5,7 @@
   border-radius: 8px;
   text-align: center;
   max-width: 600px;
-  margin-top: 170px;
+  margin-top: 140px;
   margin-left: 425px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 
@@ -27,12 +27,14 @@
 .return-partial-title {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: white;
 }
 
 .return-partial-description,
 .return-partial-instruction {
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
+  color: white;
 }
 
 .return-partial-items {
@@ -45,7 +47,7 @@
 .items-list {
   list-style-type: none;
   padding: 0;
-  margin: 0;
+  margin-left: 80px;
   text-align: center;
 
   li {
@@ -58,6 +60,7 @@
 .item {
   margin-bottom: 10px;
   font-size: 1rem;
+  text-align: center;
 }
 
 .all-returned-message {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ItemReturnScan.scss'; // Import the SCSS file
@@ -6,6 +6,7 @@ import './ItemReturnScan.scss'; // Import the SCSS file
 const ItemReturnScan = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const inputRef = useRef(null); // Create a ref for the input element
 
   const { selectedTransaction, userID, userName, transactionType } = location.state || {};
 
@@ -28,6 +29,11 @@ const ItemReturnScan = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isReturnComplete, setIsReturnComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
+
+  useEffect(() => {
+    inputRef.current.focus(); // Focus the input element on component mount
+  }, []);
 
   const fetchItemName = async (barcode) => {
     try {
@@ -79,6 +85,7 @@ const ItemReturnScan = () => {
     }
 
     setBarcode('');
+    inputRef.current.focus(); // Refocus the input after scanning
   };
 
   const handleConditionChange = (index, condition) => {
@@ -97,6 +104,7 @@ const ItemReturnScan = () => {
   };
 
   const handleCompleteReturn = async () => {
+    setIsLoading(true); // Set loading state to true
     try {
       const itemsReturned = scannedItems
         .filter(item => item.quantityReturned > 0 && item.quantityReturned <= item.quantityBorrowed)
@@ -109,6 +117,7 @@ const ItemReturnScan = () => {
 
       if (itemsReturned.length === 0) {
         setError('No items to return.');
+        setIsLoading(false); // Set loading state to false
         return;
       }
 
@@ -139,6 +148,7 @@ const ItemReturnScan = () => {
       setError('Error completing the return process.');
       console.error(err);
     }
+    setIsLoading(false); // Set loading state to false
   };
 
   return (
@@ -198,6 +208,7 @@ const ItemReturnScan = () => {
             type="text"
             placeholder="Scan Item Barcode"
             value={barcode}
+            ref={inputRef} // Attach the ref to the input
             onChange={(e) => setBarcode(e.target.value)}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -212,11 +223,15 @@ const ItemReturnScan = () => {
       {error && <p className="error">{error}</p>}
       {success && <p className="success">{success}</p>}
 
-      {scannedItems.some(item => item.quantityReturned > 0 && item.condition) && !isReturnComplete && (
+      {/* Display "Complete Return" button only when there are returned items and the return is not complete */}
+      {scannedItems.some(item => item.quantityReturned > 0 && item.condition) && !isReturnComplete && !isLoading && (
         <button className="complete-return-btn" onClick={handleCompleteReturn}>
-          Complete Return
+          Submit Return
         </button>
       )}
+
+      {/* Show loading message when the return process is ongoing */}
+      {isLoading && <p>Loading...</p>}
 
       {isReturnComplete && <p>Return process completed. Redirecting...</p>}
     </div>

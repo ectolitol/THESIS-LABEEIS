@@ -267,9 +267,7 @@ exports.completeReturn = async (req, res) => {
 
     // Send SMS notification via Server B
     const smsMessage = allItemsReturned
-      ? `Hello ${borrowReturnLog.userName}, your return process has been completed successfully for the items: ${borrowReturnLog.items
-          .map((item) => item.itemName)
-          .join(", ")}. Thank you!`
+      ? `Hello ${borrowReturnLog.userName}, your return process has been completed successfully. Thank you!`
       : `Hello ${borrowReturnLog.userName}, your return process is partially completed for the items: ${itemsToProcess
           .map((item) => item.itemName)
           .join(", ")}. Please return the remaining items.`;
@@ -444,7 +442,7 @@ exports.extendBorrowingDuration = async (req, res) => {
       }
 
       // Update the borrowed duration and calculate the new extended time
-      const newExtensionMillis = convertDurationToMillis(borrowedDuration);
+      const newExtensionMillis = convertDurationToMillis(borrowedDuration); // Convert duration to milliseconds
       const currentDate = new Date();
       const extendedDueDate = new Date(currentDate.getTime() + newExtensionMillis);
 
@@ -463,8 +461,9 @@ exports.extendBorrowingDuration = async (req, res) => {
       borrowReturnLog.returnStatus = "Extended";
       borrowReturnLog.markModified('returnStatus');
 
-      // Log the extended duration and due date
-      console.log(`Extended Duration: ${borrowedDuration}`);
+      // Log the total extended duration in minutes for readability
+      const totalExtendedMinutes = Math.floor(borrowReturnLog.extendedDuration / 60000); // Convert to minutes for logging
+      console.log(`Total Extended Duration: ${totalExtendedMinutes} minutes`);
       console.log(`New Due Date: ${extendedDueDate.toLocaleString()}`);
 
       // Save the updated log
@@ -481,7 +480,7 @@ exports.extendBorrowingDuration = async (req, res) => {
       };
 
       try {
-        const smsResponse = await axios.post('http://<Server_B_IP>:3001/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+        const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
         console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
       } catch (error) {
         console.error('Error sending SMS via Server B:', error);
@@ -500,6 +499,7 @@ exports.extendBorrowingDuration = async (req, res) => {
       res.status(500).json({ message: 'Error extending borrowing duration', error: error.message });
   }
 };
+
 
 const formatDuration = (millis) => {
   const seconds = millis / 1000;
