@@ -1,27 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 
-// Set the base URL dynamically based on the hostname
-axios.defaults.baseURL = window.location.hostname === 'localhost' 
-  ? 'http://13.212.191.232:4000/' 
-  : ''; 
-// 47.129.7.196
-// Ensure credentials (cookies, auth headers) are sent with each request if necessary
-axios.defaults.withCredentials = true;
+// Set the base URL dynamically based on the environment
+axios.defaults.baseURL =
+  window.location.hostname === "localhost"
+    ? "http://13.212.191.232:4000/" // Development (local)
+    : "http://13.212.191.232:4000/"; // Production (use the same base URL)
 
-export const imageBaseURL = window.location.hostname === 'localhost' 
-  ? 'http://13.212.191.232:4000' 
-  : '';
+axios.defaults.withCredentials = true; // Ensure credentials (cookies, auth headers) are sent with each request if necessary
 
-//   axios.defaults.baseURL = window.location.hostname === 'localhost' 
-//   ? 'http://localhost:4000/' 
-//   : ''; 
-// // 47.129.7.196
-// // Ensure credentials (cookies, auth headers) are sent with each request if necessary
-// axios.defaults.withCredentials = true;
-
-// export const imageBaseURL = window.location.hostname === 'localhost' 
-//   ? 'http://localhost:4000' 
-//   : '';
+export const imageBaseURL =
+  window.location.hostname === "localhost"
+    ? "http://13.212.191.232:4000" // Development (local)
+    : "http://13.212.191.232:4000"; // Production (same image base URL)
 
 export default axios;
- 
