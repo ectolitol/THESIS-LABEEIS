@@ -1,6 +1,6 @@
 const User = require('../models/UserModel');
 const mongoose = require('mongoose');
-const { sendAdminNotification,sendUserConfirmation,sendUserDeclineEmail } = require('../utils/emailService');
+const { sendAdminNotification, sendUserConfirmation, sendUserDeclineEmail } = require('../utils/emailService');
 const { generateQRCode, createPDFWithQRCode } = require('../utils/pdfService'); 
 const { createNotification } = require('../utils/notificationService');
 const path = require('path');
