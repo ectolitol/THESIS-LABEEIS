@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./newUserReg.scss";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import axios from 'axios';
 
 const NewUserReg = () => { 
   // State to store form data
@@ -39,16 +40,14 @@ const NewUserReg = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/users/create', {
-        method: 'POST',
+      const response = await axios.post('/api/users/create', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 201) {
+        const data = response.data;
 
         // Assuming the response contains information about the user's authentication status
         if (data.isAuthenticated) {
@@ -58,10 +57,9 @@ const NewUserReg = () => {
           setOpenDialog(true);
         }
       } else {
-        const data = await response.json();
-        if (data.errors) {
+        if (response.data.errors) {
           // Display multiple error messages
-          setErrors(data.errors);
+          setErrors(response.data.errors);
         } else {
           setErrors(['Error registering user']);
         }

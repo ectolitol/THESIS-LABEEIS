@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./UserRegistration.scss";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import axios from 'axios';
 
 const UserRegistration = () => { 
   // State to store form data
@@ -24,6 +25,9 @@ const UserRegistration = () => {
   // State to control success dialog visibility
   const [openDialog, setOpenDialog] = useState(false);
 
+  // State to show loading state
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   // Handle form input changes
@@ -37,20 +41,19 @@ const UserRegistration = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);  // Start loading
 
     try {
-      const response = await fetch('/api/users/create', {
-        method: 'POST',
+      const response = await axios.post('/api/users/create', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 201 || response.status === 200) {
+        const data = response.data;
 
-        // Assuming the response contains information about the user's authentication status
+        // Check if the user is authenticated or not
         if (data.isAuthenticated) {
           navigate('/users/registrationSuccessful');
         } else {
@@ -58,16 +61,17 @@ const UserRegistration = () => {
           setOpenDialog(true);
         }
       } else {
-        const data = await response.json();
-        if (data.errors) {
-          // Display multiple error messages
-          setErrors(data.errors);
-        } else {
-          setErrors(['Error registering user']);
-        }
+        throw new Error('Unexpected response status');
       }
     } catch (error) {
-      setErrors(['Error connecting to the server.']);
+      // Display error message if an error occurs
+      if (error.response && error.response.data.errors) {
+        setErrors(error.response.data.errors);
+      } else {
+        setErrors(['Error registering user']);
+      }
+    } finally {
+      setIsLoading(false);  // Stop loading
     }
   };
 
@@ -216,10 +220,14 @@ const UserRegistration = () => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="submitButton">Register</button>
+        <button type="submit" className="submitButton" disabled={isLoading}>
+          {isLoading ? "Loading..." : "Register"}
+        </button>
 
         {/* Back Button */}
-        <button type="button" className="backButton" onClick={handleGoBack}>Back</button>
+        <button type="button" className="backButton" onClick={handleGoBack} disabled={isLoading}>
+          Back
+        </button>
 
         {/* Error Messages */}
         {errors.length > 0 && (

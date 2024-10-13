@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './categoryRegistration.scss';
+import axios from 'axios'; // Import axios
 import Modal from '../modal/Modal'; 
 
 const CategoryRegistration = () => {
@@ -35,17 +36,16 @@ const CategoryRegistration = () => {
     }
 
     try {
-      const response = await fetch('/api/categories/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+      const response = await axios.post('/api/categories/create', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (response.ok) {
+      if (response.status === 201) {
         navigate('/categories/categorySuccess');
       } else {
-        const data = await response.json();
-        setErrors(data.errors || [data.error || 'Error registering item. Please try again later.']);
+        setErrors([response.data.error || 'Error registering category. Please try again later.']);
       }
     } catch (error) {
       setErrors(['Error connecting to the server. Please check your network connection or try again later.']);

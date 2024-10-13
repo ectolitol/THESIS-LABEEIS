@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './itemRegistration.scss';
+import axios from 'axios';
 
 const ItemRegistration = () => {
   const navigate = useNavigate();
@@ -35,10 +36,8 @@ const ItemRegistration = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/categories');
-        if (!response.ok) throw new Error('Failed to fetch categories');
-        const data = await response.json();
-        setCategories(data);
+        const response = await axios.get('/api/categories');
+        setCategories(response.data);
       } catch (error) {
         setErrors(['Error fetching categories.']);
       }
@@ -61,24 +60,24 @@ const ItemRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     let validationErrors = [];
-  
+
     // Ensure either category or newCategory is selected/filled
     const categorySelected = formData.category && formData.category.trim() !== '';
     const newCategoryFilled = formData.newCategory && formData.newCategory.trim() !== '';
-  
+
     if (!categorySelected && !newCategoryFilled) {
       validationErrors.push('Please select a category or add a new one.');
     }
-  
+
     // Add more validation checks if needed...
-  
+
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       return;
     }
-  
+
     // Prepare data for submission
     const submissionData = new FormData();
     for (const key in formData) {
@@ -87,24 +86,24 @@ const ItemRegistration = () => {
       }
       submissionData.append(key, formData[key]);
     }
-  
+
     try {
-      const response = await fetch('/api/items/create', {
-        method: 'POST',
-        body: submissionData,
+      const response = await axios.post('/api/items/create', submissionData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-  
-      if (response.ok) {
+
+      if (response.status === 201) {
         navigate('/items/CreationSuccessful');
       } else {
-        const data = await response.json();
-        setErrors(data.errors || [data.error || 'Error registering item. Please try again later.']);
+        setErrors(response.data.errors || [response.data.error || 'Error registering item. Please try again later.']);
       }
     } catch (error) {
       setErrors(['Error connecting to the server. Please check your network connection or try again later.']);
     }
   };
-  
+
   useEffect(() => {
     return () => {
       if (imageFile) URL.revokeObjectURL(imageFile);

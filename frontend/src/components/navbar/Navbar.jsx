@@ -40,22 +40,6 @@ const Navbar = () => {
     fetchUnreadNotifications(); // Fetch immediately after mounting to keep count accurate
   }, []);
 
-  useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const response = await axios.get('/api/adminProfile/profiles/me', );  
-        setAdmin(response.data); // Set the admin data from session
-      } catch (error) {
-        console.error('Error fetching admin data:', error);
-        if (error.response) {
-          console.error('Response data:', error.response.data); // Log response error details
-        }
-      }
-    };
-
-    fetchAdminData(); // Fetch the logged-in admin profile on component mount
-  }, []); 
-
   // Update Time Every Second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -184,29 +168,6 @@ const Navbar = () => {
                     ))
                   )}
                 </div>
-              )}
-            </div>
-          </Tooltip>
-
-          <Tooltip title="Profile" disableInteractive>
-            <div ref={profileRef} onClick={toggleProfileDropdown} className="nav-item">
-              {admin && admin.profileImage && !profileImageError ? (
-                <img
-                  src={`${imageBaseURL}/uploads/${admin.profileImage}`} // Dynamic image base URL
-                  alt="Profile"
-                  className="profile-icon"
-                  onError={handleImageError}
-                />
-              ) : (
-                <AccountCircleRoundedIcon className="icon" />
-              )}
-              {showProfile && (
-                <ProfileDropdown
-                  admin={admin}
-                  isOpen={showProfile}
-                  toggleDropdown={toggleProfileDropdown}
-                  updateAdminProfile={updateAdminProfile}
-                />
               )}
             </div>
           </Tooltip>
