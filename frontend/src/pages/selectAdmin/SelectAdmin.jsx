@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { AccountCircle } from '@mui/icons-material'; // MUI icon for profile placeholder
 import './SelectAdmin.scss'; // Import the SCSS file
 import { imageBaseURL } from '../../config/axiosConfig';
 
@@ -24,7 +25,7 @@ const SelectAdmin = () => {
           ...admin,
           profileImage: admin?.profileImage
             ? `${imageBaseURL}/uploads/${admin.profileImage}`
-            : '',
+            : '', // If no image, fallback to empty string
         }));
         setProfiles(profilesWithImage);
       } catch (err) {
@@ -98,7 +99,7 @@ const SelectAdmin = () => {
                   className="profile-image"
                 />
               ) : (
-                <div className="profile-placeholder">No Image</div>
+                <AccountCircle style={{ fontSize: 120 }} className="profile-placeholder-icon" /> // Use an icon as fallback
               )}
             </div>
             <strong className="profile-name">{profile.name}</strong>
@@ -122,7 +123,7 @@ const SelectAdmin = () => {
                     className="profile-modal-image"
                   />
                 ) : (
-                  <div className="profile-modal-placeholder">No Image</div>
+                  <AccountCircle style={{ fontSize: 200 }} className="profile-modal-placeholder" /> // Icon as fallback in modal
                 )}
               </div>
               {/* Profile name and role display */}

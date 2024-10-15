@@ -87,6 +87,7 @@ const Navbar = () => {
 
   // Generate link for each notification
   const generateNotificationLink = (notification) => {
+   
     const type = notification.type.toLowerCase();
     if (type.includes('new item')) {
       return `/items`;
@@ -96,7 +97,7 @@ const Navbar = () => {
       return `/EELMS`;
     } else if (type.includes('stock')) {
       return `/items/stocks`;
-    }else if (type.includes('new report')) {
+    }else if (type.includes('report')) {
       return `/reports`;
     } else {
       return `/notifications`;

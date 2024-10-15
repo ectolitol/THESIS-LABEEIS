@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import './FeedbackForm.scss'; 
-import Modal from '../modal/Modal'; 
+import './FeedbackForm.scss';
+import Modal from '../modal/Modal';
 
 const FeedbackForm = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,8 @@ const FeedbackForm = () => {
     message: '',
     attachment: null
   });
-
+  
+  const [loading, setLoading] = useState(false); // State for loading
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef(null); // Create a ref for the file input
 
@@ -25,6 +26,7 @@ const FeedbackForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     const data = new FormData();
     Object.keys(formData).forEach(key => {
@@ -58,6 +60,8 @@ const FeedbackForm = () => {
     } catch (error) {
       console.error('Error submitting feedback:', error); // Log error
       alert('Error submitting feedback.');
+    } finally {
+      setLoading(false); // Stop loading after action is complete
     }
   };
 
@@ -69,7 +73,7 @@ const FeedbackForm = () => {
           <span className="form-label">Name:</span>
           <input
             className="form-input"
-            type="text"
+            type="text" 
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -120,7 +124,9 @@ const FeedbackForm = () => {
             ref={fileInputRef} // Attach ref to file input
           />
         </label>
-        <button className="form-button" type="submit">Submit</button>
+        <button className="form-button" type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Submit'} {/* Change button text based on loading */}
+        </button>
       </form>
 
       {showModal && (

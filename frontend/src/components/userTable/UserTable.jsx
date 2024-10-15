@@ -29,6 +29,7 @@ const UserTable = () => {
   const [selectedStatus, setSelectedStatus] = React.useState('');
   const [statuses, setStatuses] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [actionLoading, setActionLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const fields = [
@@ -129,6 +130,7 @@ const UserTable = () => {
   };
 
   const handleAction = async () => {
+    setActionLoading(true); // Start loading
     try {
       let response;
 
@@ -147,6 +149,8 @@ const UserTable = () => {
       }
     } catch (error) {
       setError(`Error during ${actionType} action: ${error.message}`);
+    } finally {
+      setActionLoading(false); // Stop loading after action is done
     }
   };
 
@@ -272,65 +276,54 @@ const UserTable = () => {
       </div>
 
       {/* Modal for selecting export fields */}
-      <Dialog open={openModal} onClose={handleModalClose}>
-        <DialogTitle>Select Fields to Export</DialogTitle>
-        <DialogContent>
-          {fields.map((field) => (
-            <FormControlLabel
-              key={field.field}
-              control={< Checkbox checked={selectedFields.includes(field.field)} onChange={() => handleFieldChange(field.field)} />}
-              label={field.label}
-            />
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => { exportToExcel(); handleModalClose(); }} color="primary">Export to Excel</Button>
-          <Button onClick={() => { exportToPDF(); handleModalClose(); }} color="secondary">Export to PDF</Button>
-          <Button onClick={handleModalClose}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialog for Approve/Decline */}
       <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-      >
-        <DialogTitle className="dialog-title">
-          {actionType === 'approve' ? 'Approve User' : 'Decline User'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {actionType === 'approve'
-              ? 'Are you sure you want to approve this user?'
-              : 'Are you sure you want to decline this user?'}
+      open={openDialog}
+      onClose={handleCloseDialog}
+    >
+      <DialogTitle className="dialog-title">
+        {actionType === 'approve' ? 'Approve User' : 'Decline User'}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          {actionType === 'approve'
+            ? 'Are you sure you want to approve this user?'
+            : 'Are you sure you want to decline this user?'}
+        </DialogContentText>
+        {actionType === 'decline' && (
+          <TextField
+            autoFocus
+            margin="dense"
+            id="declineReason"
+            label="Reason"
+            type="text"
+            fullWidth 
+            variant="standard"
+            value={declineReason}
+            onChange={handleDeclineReasonChange}
+          />
+        )}
+        {error && <DialogContentText color="error">{error}</DialogContentText>}
+
+        {/* Display Loading... text when action is being processed */}
+        {actionLoading && (
+          <DialogContentText style={{ color: 'blue', marginTop: '10px' }}>
+            Loading...
           </DialogContentText>
-          {actionType === 'decline' && (
-            <TextField
-              autoFocus
-              margin="dense"
-              id="declineReason"
-              label="Reason"
-              type="text"
-              fullWidth 
-              variant="standard"
-              value={declineReason}
-              onChange={handleDeclineReasonChange}
-            />
-          )}
-          {error && <DialogContentText color="error">{error}</DialogContentText>}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleAction}
-            color="secondary"
-          >
-            {actionType === 'approve' ? 'Approve' : 'Submit'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog} color="primary" disabled={actionLoading}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleAction}
+          color="secondary"
+          disabled={actionLoading} // Disable button if loading
+        >
+          {actionType === 'approve' ? 'Approve' : 'Submit'}
+        </Button>
+      </DialogActions>
+    </Dialog>
     </Paper>
   );
 };

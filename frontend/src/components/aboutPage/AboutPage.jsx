@@ -102,7 +102,7 @@ const AboutPage = () => {
           <div className="team-member">
             <img src="/tolitol.jpg" alt="Erika" />
             <h3>Erika</h3>
-            <p>The coding prodigy, who could turn lines of code into magic.</p>
+            <p>A dedicated coder, constantly learning and refining her craft.</p>
           </div>
           <div className="team-member">
             <img src="/padilla.jpg" alt="Carmelle" />

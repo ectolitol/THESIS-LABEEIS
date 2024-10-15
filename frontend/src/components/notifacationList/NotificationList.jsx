@@ -75,6 +75,8 @@ const NotificationList = () => {
       return `/EELMS`;
     } else if (type.includes('stock')) {
       return `/items/stocks`;
+    } else if (type.includes('report')) {
+      return `/reports`;
     } else {
       return `/notifications`;
     }
