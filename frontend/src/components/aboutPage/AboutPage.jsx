@@ -127,14 +127,19 @@ const AboutPage = () => {
         <div className="contact-info">
           <div className="contact-item">
             <Language className="icon" />
-            <span className="text">http://pupeelms.com</span>
+            <a href="http://pupeelms.com" className="text" target="_blank" rel="noopener noreferrer">
+              http://pupeelms.com
+            </a>
           </div>
           <div className="contact-item">
             <Mail className="icon" />
-            <span className="text">pupeelms@gmail.com</span>
+            <a href="mailto:pupeelms@gmail.com" className="text">
+              pupeelms@gmail.com
+            </a>
           </div>
         </div>
       </div>
+
     </div>
   );
 };

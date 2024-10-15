@@ -53,7 +53,7 @@ exports.createUser = async (req, res) => {
           });
       }
 
-      return res.status(500).json({ 
+      return res.status(201).json({ 
           message: 'Server Error', 
           error: error.message || 'An unknown error occurred while registering the user.' 
       });
@@ -98,7 +98,7 @@ exports.approveUser = async (req, res) => {
       res.status(200).json({ message: 'User approved successfully', user });
   } catch (error) {
       console.error('Error approving user:', error);
-      res.status(500).json({ message: 'Error approving user', error: error.message });
+      res.status(200).json({ message: 'Error approving user', error: error.message });
   }
 };
 
@@ -141,7 +141,7 @@ exports.declineUser = async (req, res) => {
       res.status(200).json({ message: 'User declined successfully', user });
   } catch (error) {
       console.error('Error declining user:', error);
-      res.status(500).json({ message: 'Error declining user', error: error.message });
+      res.status(200).json({ message: 'Error declining user', error: error.message });
   }
 };
 

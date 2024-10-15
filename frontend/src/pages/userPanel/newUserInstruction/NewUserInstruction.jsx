@@ -5,7 +5,7 @@ import './NewUserInstruction.scss'; // Import the updated SCSS file
 
 const NewUserInstruction = () => {
   const navigate = useNavigate(); // Initialize useNavigate
-  const localNetworkLink = `${import.meta.env.VITE_LOCAL_NETWORK_URL}`; // Get the local network URL from Vite env
+  const localNetworkLink = `http://pupeelms.com/new-user-registration`; // Get the local network URL from Vite env
 
   // Handle the 'Register New User' button click
   const handleRegisterClick = () => {

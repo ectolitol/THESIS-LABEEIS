@@ -118,7 +118,7 @@ exports.logTransaction = async (req, res) => {
       res.status(400).json({ message: "Invalid transaction type. Only 'Borrowed' transactions are allowed." });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error logging transaction", error: error.message });
+    res.status(201).json({ message: "Error logging transaction", error: error.message });
   }
 };
 
@@ -291,7 +291,7 @@ exports.completeReturn = async (req, res) => {
     });
   } catch (error) {
     console.error("Error completing return process:", error);
-    res.status(500).json({
+    res.status(200).json({
       message: "Error completing return process",
       error: error.message,
     });
@@ -495,7 +495,7 @@ exports.extendBorrowingDuration = async (req, res) => {
       res.status(200).json({ message: 'Borrowing duration extended successfully', borrowReturnLog });
   } catch (error) {
       console.error('Error extending borrowing duration:', error);
-      res.status(500).json({ message: 'Error extending borrowing duration', error: error.message });
+      res.status(200).json({ message: 'Error extending borrowing duration', error: error.message });
   }
 };
 

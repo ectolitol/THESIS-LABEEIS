@@ -12,7 +12,7 @@ import 'react-calendar/dist/Calendar.css';
 import { imageBaseURL } from '../../config/axiosConfig';
 
 const Navbar = () => {
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false); 
   const [showProfile, setShowProfile] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -96,8 +96,10 @@ const Navbar = () => {
       return `/EELMS`;
     } else if (type.includes('stock')) {
       return `/items/stocks`;
+    }else if (type.includes('new report')) {
+      return `/reports`;
     } else {
-      return `/notifications/${notification._id}`;
+      return `/notifications`;
     }
   };
 

@@ -32,7 +32,7 @@ const UserWelcome = () => {
         </div>
         <div className="user-welcome-guide-container">
           <a
-            href="/path/to/guide.pdf"
+            href="https://drive.google.com/drive/folders/1hbp5ooHATv_wyFEDZ74u4qL-FjmpJAds?usp=sharing"
             className="user-welcome-guide-link"
             target="_blank"
             rel="noopener noreferrer"
