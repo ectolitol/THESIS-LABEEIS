@@ -3,6 +3,7 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import React from 'react'
 import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
+import AboutPage from "../../components/aboutPage/AboutPage";
 
 const About = () => {
     return (
@@ -12,6 +13,7 @@ const About = () => {
             <Navbar/> 
             <div className="Content">
                 <CustomBreadcrumbs/>
+                <AboutPage/>
             </div>
         </div>
     </div>

@@ -101,8 +101,8 @@ const SelectAdmin = () => {
                 <div className="profile-placeholder">No Image</div>
               )}
             </div>
-            <p className="profile-name">{profile.name}</p>
-            <p className="profile-name">{profile.role}</p>
+            <strong className="profile-name">{profile.name}</strong>
+            <p className="profile-role">{profile.role}</p>
           </div>
         ))}
       </div> 
@@ -147,10 +147,6 @@ const SelectAdmin = () => {
                   ) : (
                     <FaEye className="toggle-password-icon" onClick={togglePasswordVisibility} />
                   )}
-                </div>
-                <div className="remember-me-container">
-                    <input type="checkbox" id="remember" />
-                    <label htmlFor="remember">Remember Password</label>
                 </div>
                 <button className="login-button" onClick={handleLogin}>
                   Login

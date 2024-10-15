@@ -6,9 +6,8 @@
   position: relative;
   background: #59000fd8; /* Slightly transparent background */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
-  margin-top: 100px;
-  margin-left: 425px;
+  max-width: 600px;
+  margin: 90px auto;
   border-radius: 8px;
   
   .bg-only {
@@ -29,6 +28,7 @@
 
   .input-group {
     margin-bottom: 20px;
+    margin-right: 15px;
     
   .barcode-scann {
     margin-top: 5px;
@@ -59,7 +59,7 @@
   }
 
   .item-details {
-    margin: 20px 0;
+    margin: 15px 0;
     
     p {
       font-size: 18px;

@@ -1,11 +1,10 @@
 .navbar {
   height: 50px;
-  border-bottom: 0.5px solid #d7d6d6;
   display: flex;
   align-items: center;
   font-size: 14px;
   color: #1b2021;
-  background-color: #d9d9d9;
+  background-color: #ffffff;
   border-bottom: 2px solid #59000f;
 
   .logo {
@@ -33,10 +32,21 @@
       align-items: center;
       margin-left: auto; /* This will push the items to the right */
       
-      .nav-item {
+      .nav-calendar{
         display: flex;
         align-items: center;
         margin-right: 20px;
+        position: relative; /* Ensures counter and dropdown are positioned correctly */
+        cursor: pointer;
+        color: #59000f;
+        font-weight: bold;
+        gap: 10px;
+
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        margin-right: 40px;
         position: relative; /* Ensures counter and dropdown are positioned correctly */
         cursor: pointer;
         color: #59000f;
@@ -58,7 +68,7 @@
           height: 18px;
           background-color: #bf211e;
           border-radius: 50%;
-          color: #d9d9d9;
+          color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -97,6 +107,7 @@
 
             p{
               font-size: 16px;
+              color: #000000;
             }
 
             &:last-child {

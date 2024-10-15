@@ -1,4 +1,16 @@
 .categoryTable {
+
+  .export-cat-button {
+    width: 100px;  // Ensure the button matches the select menu size
+    color: black;
+    background-color: #d9d9d9;
+    padding: 8px;
+    
+
+    &:hover {
+      background-color: #b4b3b3; // Darker blue on hover
+    }
+  }
   
     .MuiDataGrid-root {
       background-color: white;
@@ -18,17 +30,16 @@
       border-radius: 8px;
     }
   
-    .view-button {
-      padding: 2px 5px;
-      border-radius: 5px;
-      color: rgb(52, 52, 235);
-      border: 1px solid rgba(3, 3, 62, 0.951); /* Fixed typo */
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    .edit-button:hover {
+      background-color: white;
+    }
+
+    .delete-button:hover {
+      background-color: white;
     }
   
     .view-button:hover {
-      background-color: rgba(52, 52, 235, 0.1);
+      background-color: white;
     }
 
   /* Drawer Styles */

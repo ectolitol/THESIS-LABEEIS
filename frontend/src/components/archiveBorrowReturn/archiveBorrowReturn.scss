@@ -34,5 +34,15 @@
       background-color: rgb(198, 198, 195);
       padding: 10px;
     }
+
+    
   }
+  
+  .export-archive-button {
+
+    &:hover {
+      background-color: #8d8c8c; // Darker blue on hover
+    }
+  }
+
   

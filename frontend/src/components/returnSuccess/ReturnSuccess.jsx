@@ -64,7 +64,6 @@ const ReturnSuccess = () => {
       <img src="/ceafinal.png" alt="Background" className="bg-only" />
       <h2>Return Transaction Completed!</h2>
       <p>Thank you for returning the items.</p>
-      <p>Your transaction has been successfully completed.</p>
 
       <div className="qr-code">
         <p>Please scan the QR code below using your phone to provide feedback on your experience with our system:</p>

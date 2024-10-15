@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
@@ -8,35 +8,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Removed the initial true state
   const [passwordVisible, setPasswordVisible] = useState(false); // State for password visibility
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        console.log('Checking authentication status...');
-        const response = await axios.get('/api/admin/check', {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        console.log('Authentication check response:', response);
-        if (response.status === 200) {
-          console.log('User is authenticated. Redirecting...');
-          navigate('/EELMS');
-        } else {
-          console.log('User is not authenticated. Status:', response.status);
-        }
-      } catch (error) {
-        console.error('Error during authentication check:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

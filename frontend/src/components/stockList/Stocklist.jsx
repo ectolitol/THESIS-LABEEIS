@@ -52,6 +52,7 @@ const Stocklist = () => {
         <Button
           variant="outlined"
           color="primary"
+          className="view-stock"
           onClick={() => navigate(`/items/${params.row._id}`)}
         >
           View Details
@@ -70,6 +71,7 @@ const Stocklist = () => {
         <Button
           variant="outlined"
           color="primary"
+          className="view-stock"
           onClick={() => navigate(`/items/${params.row._id}`)}
         >
           View Details

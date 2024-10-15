@@ -8,7 +8,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { IconButton, Collapse, TextField, TableSortLabel } from "@mui/material";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from 'xlsx';
+import { IconButton, Collapse, TextField, TableSortLabel, Button, Tooltip } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControlLabel } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
 
@@ -20,6 +24,40 @@ const ArchiveBorrowReturn = () => {
   const [openRow, setOpenRow] = useState({});
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("dateTime");
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedFields, setSelectedFields] = useState([]); // Track selected fields
+
+  // New state variables for date filtering
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+// List of fields available for selection
+const fields = [
+  { label: 'Date', field: 'dateTime' }, // Matches 'dateTime' in schema
+  { label: 'Borrower Name', field: 'userName' }, // Matches 'userName'
+  { label: 'Contact Number', field: 'contactNumber' }, // Matches 'contactNumber'
+  { label: 'Course', field: 'courseSubject' }, // Matches 'courseSubject'
+  { label: 'Professor', field: 'professor' }, // Matches 'professor'
+  { label: 'Professor Attendance', field: 'profAttendance' }, // Matches 'profAttendance'
+  { label: 'Room', field: 'roomNo' }, // Matches 'roomNo'
+  { label: 'Borrowed Duration', field: 'borrowedDuration' }, // Matches 'borrowedDuration'
+  { label: 'Extended Duration', field: 'extendedDuration' }, // Matches 'extendedDuration'
+  { label: 'Due Date', field: 'dueDate' }, // Matches 'dueDate'
+  { label: 'Transaction Type', field: 'transactionType' }, // Matches 'transactionType'
+  { label: 'Return Status', field: 'returnStatus' }, // Matches 'returnStatus'
+  { label: 'Return Date', field: 'returnDate' }, // Matches 'returnDate'
+  { label: 'Feedback', field: 'feedbackEmoji' }, // Matches 'feedbackEmoji'
+  { label: 'Partial Return Reason', field: 'partialReturnReason' }, // Matches 'partialReturnReason'
+  { label: 'Notes/Comments', field: 'notesComments' }, // Matches 'notesComments'
+  { label: 'Reminder Sent', field: 'reminderSent' }, // Matches 'reminderSent'
+  { label: 'Item Barcode', field: 'items.itemBarcode' }, // Inside 'items', matches 'itemBarcode' for each item
+  { label: 'Item Name', field: 'items.itemName' }, // Inside 'items', matches 'itemName'
+  { label: 'Quantity Borrowed', field: 'items.quantityBorrowed' }, // Inside 'items', matches 'quantityBorrowed'
+  { label: 'Quantity Returned', field: 'items.quantityReturned' }, // Inside 'items', matches 'quantityReturned'
+  { label: 'Condition', field: 'items.condition' }, // Inside 'items', matches 'condition' for each item
+];
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,24 +94,37 @@ const ArchiveBorrowReturn = () => {
     setOpenRow((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const handleExport = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
+
+  const handleFieldChange = (field) => {
+    setSelectedFields(prev => prev.includes(field)
+      ? prev.filter(f => f !== field)
+      : [...prev, field]
+    );
+  };
+
   const filterAndGroupByDate = () => {
     const filteredRows = rows.filter((row) => {
       const searchTermLower = searchTerm.toLowerCase();
-      
+      const rowDate = new Date(row.dateTime);
+
       // Search by userName, transactionType, returnStatus, or date
       const matchesUserName = row.userName.toLowerCase().includes(searchTermLower);
       const matchesTransactionType = row.transactionType.toLowerCase().includes(searchTermLower);
       const matchesReturnStatus = row.returnStatus.toLowerCase().includes(searchTermLower);
-      
-      // Check if the search term matches the date (formatted as "October 7, 2024")
-      const matchesDate = new Date(row.dateTime).toLocaleDateString(undefined, {
+      const matchesDate = rowDate.toLocaleDateString(undefined, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       }).toLowerCase().includes(searchTermLower);
 
-      
-      return matchesUserName || matchesTransactionType || matchesReturnStatus || matchesDate;
+      // Filter by date range
+      const matchesDateRange =
+        (!startDate || rowDate >= new Date(startDate)) &&
+        (!endDate || rowDate <= new Date(endDate));
+
+      return (matchesUserName || matchesTransactionType || matchesReturnStatus || matchesDate) && matchesDateRange;
     });
 
     // Sort the filtered rows by the selected column and order
@@ -83,15 +134,15 @@ const ArchiveBorrowReturn = () => {
           ? new Date(a.dateTime) - new Date(b.dateTime)
           : new Date(b.dateTime) - new Date(a.dateTime);
       } else if (orderBy === "userName") {
-        return order === "asc"
+        return order === "desc"
           ? a.userName.localeCompare(b.userName)
           : b.userName.localeCompare(a.userName);
       } else if (orderBy === "transactionType") {
-        return order === "asc"
+        return order === "desc"
           ? a.transactionType.localeCompare(b.transactionType)
           : b.transactionType.localeCompare(a.transactionType);
       } else if (orderBy === "returnStatus") {
-        return order === "asc"
+        return order === "desc"
           ? a.returnStatus.localeCompare(b.returnStatus)
           : b.returnStatus.localeCompare(a.returnStatus);
       }
@@ -122,8 +173,144 @@ const ArchiveBorrowReturn = () => {
     return new Set(itemsArray.map((item) => item.itemName)).size;
   };
 
+ // Utility function to format the date in 'MM/DD/YYYY HH:mm' format
+const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true // 24-hour format
+  });
+};
+
+const exportToExcel = () => {
+  if (selectedFields.length === 0) {
+    alert("Please select at least one field to export.");
+    return;
+  }
+
+  const filteredRows = Object.values(sortedRows).flat(); // Flatten the grouped data
+  const worksheet = XLSX.utils.json_to_sheet(
+    filteredRows.map((row) => {
+      const data = {};
+      selectedFields.forEach((field) => {
+        switch (field) {
+          case 'items.itemBarcode':
+            data['Item Barcode'] = row.items && row.items.map(item => item.itemBarcode).join(', ') || 'N/A';
+            break;
+          case 'items.itemName':
+            data['Item Name'] = row.items && row.items.map(item => item.itemName).join(', ') || 'N/A';
+            break;
+          case 'items.quantityBorrowed':
+            data['Quantity Borrowed'] = row.items && row.items.map(item => item.quantityBorrowed).join(', ') || 0;
+            break;
+          case 'items.quantityReturned':
+            data['Quantity Returned'] = row.items && row.items.map(item => item.quantityReturned).join(', ') || 0;
+            break;
+          case 'items.condition':
+            data['Condition'] = row.items && row.items.map(item => item.condition).join(', ') || 'N/A';
+            break;
+          case 'dateTime':
+            data['Date Time'] = row.dateTime ? formatDateTime(row.dateTime) : 'N/A'; // Format date
+            break;
+          case 'returnDate':
+            data['Return Date'] = row.returnDate ? formatDateTime(row.returnDate) : 'N/A'; // Format return date
+            break;
+          default:
+            data[field] = row[field] || 'N/A';
+        }
+      });
+      return data;
+    })
+  );
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "BorrowReturnRecords");
+  XLSX.writeFile(workbook, "BorrowReturnRecords.xlsx");
+};
+
+const exportToPDF = () => {
+  if (selectedFields.length === 0) {
+    alert("Please select at least one field to export.");
+    return;
+  }
+
+  const filteredRows = Object.values(sortedRows).flat(); // Flatten the grouped data
+  const doc = new jsPDF({ orientation: 'landscape' });
+  doc.text("Borrow Return Records", 14, 10);
+
+  const data = filteredRows.map((row) => {
+    return selectedFields.map((field) => {
+      switch (field) {
+        case 'items.itemBarcode':
+          return row.items && row.items.map(item => item.itemBarcode).join(', ') || 'N/A';
+        case 'items.itemName':
+          return row.items && row.items.map(item => item.itemName).join(', ') || 'N/A';
+        case 'items.quantityBorrowed':
+          return row.items && row.items.map(item => item.quantityBorrowed).join(', ') || 0;
+        case 'items.quantityReturned':
+          return row.items && row.items.map(item => item.quantityReturned).join(', ') || 0;
+        case 'items.condition':
+          return row.items && row.items.map(item => item.condition).join(', ') || 'N/A';
+        case 'dateTime':
+          return row.dateTime ? formatDateTime(row.dateTime) : 'N/A'; // Format date
+        case 'returnDate':
+          return row.returnDate ? formatDateTime(row.returnDate) : 'N/A'; // Format return date
+        default:
+          return row[field] || 'N/A';
+      }
+    });
+  });
+
+  doc.autoTable({
+    head: [selectedFields.map(field => {
+      return field.split('.').pop().replace(/([A-Z])/g, ' $1').trim(); // Adds spaces before capital letters and removes prefixes
+    })],
+    body: data,
+    startY: 20,
+    styles: {
+      cellPadding: { top: 8, bottom: 5 },
+    },
+  });
+  
+  doc.save("BorrowReturnRecords.pdf");
+};
+
+  
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <div style={{ display: "flex", gap: "1rem"}}>
+        {/* Date pickers for date range filtering */}
+        <Tooltip>
+        <label htmlFor="start-date">Start Date </label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </Tooltip>
+        <Tooltip>
+        <label htmlFor="end-date">End Date </label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </Tooltip>
+        <Button 
+          className="export-archive-button" 
+          onClick={handleExport} 
+          style={{ color: "black", backgroundColor: "#d9d9d9" }}>
+          EXPORT
+        </Button>
+      </div>
+
       <TextField
         label="Search Transactions"
         variant="outlined"
@@ -132,6 +319,7 @@ const ArchiveBorrowReturn = () => {
         onChange={handleSearch}
         value={searchTerm}
       />
+
       <TableContainer sx={{ maxHeight: 700 }} className="table">
         <Table stickyHeader aria-label="archive borrow-return logs table">
           <TableHead>
@@ -256,6 +444,26 @@ const ArchiveBorrowReturn = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+<Dialog open={openModal} onClose={handleModalClose}>
+        <DialogTitle>Select Fields to Export</DialogTitle>
+        <DialogContent>
+          {fields.map((field) => (
+            <FormControlLabel
+              key={field.field}
+              control={<Checkbox checked={selectedFields.includes(field.field)} onChange={() => handleFieldChange(field.field)} />}
+              label={field.label}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+      <Button onClick={() => { exportToExcel(); handleModalClose(); }} color="primary">Export to Excel</Button>
+      <Button onClick={() => { exportToPDF(); handleModalClose(); }} color="secondary">Export to PDF</Button>
+      <Button onClick={handleModalClose}>Cancel</Button>
+    </DialogActions>
+      </Dialog>
+
+      
     </Paper>
   );
 };

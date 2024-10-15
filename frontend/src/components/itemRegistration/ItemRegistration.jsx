@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import './itemRegistration.scss';
 import axios from 'axios';
 
@@ -27,11 +28,13 @@ const ItemRegistration = () => {
     pmDueDate: "",
     pmStatus: "",
     notesComments: "",
-  });
+  }); 
 
   const [imageFile, setImageFile] = useState(null);
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -60,7 +63,7 @@ const ItemRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true); // Set loading state to true when submission starts
     let validationErrors = [];
 
     // Ensure either category or newCategory is selected/filled
@@ -75,6 +78,7 @@ const ItemRegistration = () => {
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
+      setLoading(false); 
       return;
     }
 
@@ -95,12 +99,14 @@ const ItemRegistration = () => {
       });
 
       if (response.status === 201) {
-        navigate('/items/CreationSuccessful');
+        setOpenDialog(true);
       } else {
         setErrors(response.data.errors || [response.data.error || 'Error registering item. Please try again later.']);
       }
     } catch (error) {
       setErrors(['Error connecting to the server. Please check your network connection or try again later.']);
+    } finally {
+      setLoading(false); // Set loading state to false when submission is complete
     }
   };
 
@@ -110,9 +116,20 @@ const ItemRegistration = () => {
     };
   }, [imageFile]);
 
+  // Handle closing the dialog and navigating
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  useEffect(() => {
+    if (!openDialog) {
+      navigate('/items');  // Navigate only after dialog is fully closed
+    }
+  }, [openDialog, navigate]);
+
+
   return (
     <div className="itemRegistration">
-      <div className="newItemTitle">New Item Registration</div>
       <form className="newItemForm" onSubmit={handleSubmit}>
         <div className="newItemField">
           <label>Item Name: </label>
@@ -286,25 +303,6 @@ const ItemRegistration = () => {
         {formData.pmNeeded === "Yes" && (
           <>
             <div className="newItemField">
-              <label>Calibration Due Date: </label>
-              <input
-                type="date"
-                name="pmDueDate"
-                value={formData.pmDueDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="newItemField">
-              <label>Calibration Status: </label>
-              <select name="pmStatus" value={formData.pmStatus} onChange={handleChange}>
-                <option value="">Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Overdue">Overdue</option>
-              </select>
-            </div>
-            <div className="newItemField">
               <label>PM Frequency: </label>
               <select name="pmFrequency" value={formData.pmFrequency} onChange={handleChange}>
                 <option value="">Select Frequency</option>
@@ -327,7 +325,9 @@ const ItemRegistration = () => {
             onChange={handleChange}
           />
         </div>
-        <button type="submit" className='submitButton'>Create Item</button>
+        <button type="submit" className='submitButton' disabled={loading}>
+          {loading ? 'Loading...' : 'Create Item'} {/* Display "Loading..." when submitting */}
+        </button>
         {errors.length > 0 && (
           <div className="errorMessages">
             {errors.map((error, index) => (
@@ -336,6 +336,20 @@ const ItemRegistration = () => {
           </div>
         )}
       </form>
+
+      {/* Success Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogContent>
+          <p>New item registration successful!</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div> 
   );
 };

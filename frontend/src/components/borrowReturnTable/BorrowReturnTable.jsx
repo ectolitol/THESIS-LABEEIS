@@ -223,7 +223,7 @@ const BorrowReturnTable = () => {
                                   <TableCell>Barcode: {item.itemBarcode}</TableCell>
                                   <TableCell>Borrowed: {item.quantityBorrowed}</TableCell>
                                   <TableCell>Returned: {item.quantityReturned}</TableCell>
-                                  <TableCell>Condition: {row.condition}</TableCell> 
+                                  <TableCell>Condition: {item.condition}</TableCell> 
                                 </TableRow>
                               ))}
                               <TableRow>

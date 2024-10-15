@@ -64,23 +64,33 @@ const ReportsList = ({ itemId }) => {
     { field: 'reportedBy', headerName: 'Reported By', width: 200 },
     { field: 'priority', headerName: 'Priority', width: 120 },
     {
-      field: 'status',
-      headerName: 'Status',
-      width: 150,
-      renderCell: (params) => (
-        <Select
-          value={params.row.status}
-          onChange={(e) => handleStatusChange(e, params.row.id)}
-          className="statusSelect"
-        >
-          <MenuItem value="pending">Pending</MenuItem>
-          <MenuItem value="reviewed">Reviewed</MenuItem>
-          <MenuItem value="resolved">Resolved</MenuItem>
-        </Select>
-      ),
+        field: 'status',
+        headerName: 'Status',
+        width: 150,
+        renderCell: (params) => {
+            const statusColor = {
+                pending: 'orange',
+                reviewed: 'blue',
+                resolved: 'green',
+            }[params.row.status] || 'black'; // Default color if status not found
+            
+            return (
+                <Select
+                    value={params.row.status}
+                    onChange={(e) => handleStatusChange(e, params.row.id)}
+                    className="statusSelect"
+                    style={{ color: statusColor }} // Change text color based on status
+                >
+                    <MenuItem className='report-pending' value="pending" style={{ color: 'orange' }}>Pending</MenuItem>
+                    <MenuItem className='report-reviewed' value="reviewed" style={{ color: 'blue' }}>Reviewed</MenuItem>
+                    <MenuItem className='report-resolved' value="resolved" style={{ color: 'green' }}>Resolved</MenuItem>
+                </Select>
+            );
+        },
     },
     { field: 'date', headerName: 'Date Reported', width: 200 },
-  ];
+];
+
 
   // Transform the reports data to match the DataGrid structure
   const rows = reports.map((report) => ({
@@ -177,6 +187,16 @@ const ReportsList = ({ itemId }) => {
       columns={columns}
       pageSize={10}
       getRowId={(row) => row.id} // Ensure each row has a unique id
+      sx={{
+        '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: '#d9d9d9', // Change the background color of the header
+          color: '#dark gray', // Change the text color
+          fontSize: '16px', // Change the font size
+        },
+        '& .MuiDataGrid-columnHeaderTitle': {
+          fontWeight: 'bold',
+        },
+      }}
     />
   
     {/* Modal for selecting export fields */}

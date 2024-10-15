@@ -1,12 +1,14 @@
 .borrow-success {
   text-align: center;
-  margin-top: 83px;
-  margin-left: 455px;
   background-color: #3d000be4; // Red background with transparency
   padding: 30px;
   border-radius: 10px;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   color: #fff; // White text color
+  max-width: 500px;
+  margin: 90px auto;
+  justify-content: center;
 
   .bg-only {
     position: fixed;
@@ -71,6 +73,7 @@
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
+
 
     &:hover {
       background-color: #c7a200;

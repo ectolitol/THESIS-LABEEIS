@@ -1,15 +1,14 @@
 import "./itemTable.scss";
-import * as React from 'react';
+import React, { useState, useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from 'xlsx';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControlLabel, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControlLabel } from '@mui/material';
 import { imageBaseURL } from '../../config/axiosConfig';
 
 export const ItemTable = () => {
@@ -19,12 +18,13 @@ export const ItemTable = () => {
   const [selectedFields, setSelectedFields] = React.useState([]);  // Track selected field names (strings)
   const [selectedLocation, setSelectedLocation] = React.useState('');  // Track the selected location
   const [locations, setLocations] = React.useState([]);  // Store unique locations
+  const [searchTerm, setSearchTerm] = React.useState("");
+
   const navigate = useNavigate();
 
-  // Define available fields for export, including barcode
   const fields = [
     { label: 'Name', field: 'itemName' },
-    { label: 'Item Barcode', field: 'itemBarcode' }, 
+    { label: 'Item Barcode', field: 'itemBarcode' },
     { label: 'Category', field: 'category' },
     { label: 'Quantity', field: 'quantity' },
     { label: 'Location', field: 'location' },
@@ -35,18 +35,16 @@ export const ItemTable = () => {
     { label: 'Serial Number', field: 'serialNumber' },
     { label: 'PUP Property Number', field: 'pupPropertyNumber' },
     { label: 'Specification', field: 'specification' },
-    { label: 'Barcode', field: 'barcodeImage' }, 
+    { label: 'Barcode', field: 'barcodeImage' },
     { label: 'Notes/Comments', field: 'notesComments' }
   ];
 
-  // Fetch items from the server (populating category)
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('/api/items'); // Assume backend handles population
+        const response = await axios.get('/api/items');
         setRows(response.data);
 
-        // Extract unique locations for filtering dropdown
         const uniqueLocations = [...new Set(response.data.map(item => item.location))];
         setLocations(uniqueLocations);
 
@@ -90,32 +88,44 @@ export const ItemTable = () => {
         ) : <p>No Barcode</p>;
       },
     },
-    { field: 'category', headerName: 'Category', minWidth: 150, renderCell: (params) => params.row?.category?.categoryName || 'N/A' },
-    { field: 'quantity', headerName: 'Quantity Left', minWidth: 110 },
+    { field: 'category', headerName: 'Category', minWidth: 200, renderCell: (params) => params.row?.category?.categoryName || 'N/A' },
+    { field: 'quantity', headerName: 'Quantity Left', minWidth: 130 },
     { field: 'location', headerName: 'Location', minWidth: 150 },
     { field: 'condition', headerName: 'Status', minWidth: 130 },
     {
       field: 'action',
       headerName: 'Action',
-      width: 149,
+      width: 200,
       renderCell: (params) => (
-        <Button variant="outlined" color="primary" onClick={() => navigate(`/items/${params.row._id}`)}>
+        <Button className="viewItem" variant="outlined" color="primary" onClick={() => navigate(`/items/${params.row._id}`)}>
           View Details
         </Button>
       ),
     },
   ];
 
-  // Handle location change from the dropdown
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
   };
 
-  // Open the field selection modal
+  const filteredRows = rows.filter((row) => {
+    // Apply location filter if selected
+    const matchesLocation = selectedLocation
+      ? row.location?.toLowerCase().trim() === selectedLocation.toLowerCase().trim()
+      : true;
+  
+    // Apply search term filter
+    const matchesSearchTerm = searchTerm
+      ? row.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (row.location && row.location.toLowerCase().includes(searchTerm.toLowerCase()))
+      : true;
+  
+    return matchesLocation && matchesSearchTerm;  // Combine both filters
+  });
+  
+
   const handleExport = () => setOpenModal(true);
-
   const handleModalClose = () => setOpenModal(false);
-
   const handleFieldChange = (fieldName) => {
     setSelectedFields(prev => prev.includes(fieldName)
       ? prev.filter(f => f !== fieldName)
@@ -123,12 +133,7 @@ export const ItemTable = () => {
     );
   };
 
-  // Filter rows based on selected location before exporting
-  const filteredRows = selectedLocation
-    ? rows.filter(row => row.location === selectedLocation)
-    : rows;
-
- // Export to Excel based on selected fields and location
+  // Export to Excel based on selected fields and location
  const exportToExcel = () => {
   const worksheet = XLSX.utils.json_to_sheet(
     filteredRows.map((row) => {
@@ -200,68 +205,80 @@ const exportToPDF = () => {
   doc.save("ItemTableExport.pdf");
 };
 
-  // Pagination settings
   const paginationModel = { page: 0, pageSize: 5 };
-  
+
   return (
-<Paper className="itemTable">
-  <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}> {/* Container allowing dynamic height */}
-    <div className="export-controls" style={{ marginBottom: '10px' }}>
-      {/* Dropdown for location filtering */}
-      <FormControl className="export-select">
-        <InputLabel id="location-label"></InputLabel>
-        <Select
-          labelId="location-label"
-          value={selectedLocation}
-          onChange={handleLocationChange}
-          displayEmpty
-        >
-          <MenuItem value=""><em>All Locations</em></MenuItem>
-          {locations.map((loc) => (
-            <MenuItem key={loc} value={loc}>{loc}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Paper className="itemTable" sx={{ width: '100%', overflow: 'hidden', height: '100%' }}>
+      <div style={{ height: 520, width: '100%', display: 'flex', flexDirection: 'column' }}>
+         
+        <div className="export-controls" style={{ marginTop: '5px', marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
+          <div className="location-filter">
+            <label style={{ marginRight: '5px' }}>Filter by Location:</label>
+            <select onChange={handleLocationChange} value={selectedLocation} style={{ padding: '5px', fontSize: '16px' }}>
+              <option value="">All Locations</option>
+              {locations.map((loc, index) => (
+                <option key={index} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* Button to customize export */}
-      <Button className="export-item-button" onClick={handleExport}>
-        EXPORT
-      </Button>
-    </div>
+           {/* Search Bar */}
+          <div className="search-bar" style={{ marginLeft: '20px', marginRight: '20px' }}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ padding: '4px 8px', fontSize: '14px', width: '200px', height: '28px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+          </div>
 
-    {/* DataGrid */}
-    <DataGrid
-       rows={rows}
-       columns={columns}
-       initialState={{ pagination: { paginationModel } }}
-       pageSizeOptions={[5, 10, 20]}
-       checkboxSelection
-       loading={loading}
-       getRowId={(row) => row._id}
-       style={{ flex: 1 }}
-    />
-  </div>
+          <Button className="export-item-button" onClick={handleExport} >
+            EXPORT
+          </Button>
+        </div>
 
-  {/* Modal for selecting export fields */}
-  <Dialog open={openModal} onClose={handleModalClose}>
-    <DialogTitle>Select Fields to Export</DialogTitle>
-    <DialogContent>
-      {fields.map((field) => (
-        <FormControlLabel
-          key={field.field}
-          control={<Checkbox checked={selectedFields.includes(field.field)} onChange={() => handleFieldChange(field.field)} />}
-          label={field.label}
+        <DataGrid
+          rows={filteredRows}  // Use combined filtered rows here
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10, 20]}
+          checkboxSelection
+          loading={loading}
+          getRowId={(row) => row._id}  // Use _id as the unique identifier
+          style={{ flex: 1 }}
+          sx={{
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#d9d9d9', // Change the background color of the header
+              color: 'maroon', // Change the text color
+              fontSize: '16px', // Change the font size
+            },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              fontWeight: 'bold',
+            },
+          }}
         />
-      ))}
-    </DialogContent>
-    <DialogActions>
+      </div>
+
+      <Dialog open={openModal} onClose={handleModalClose}>
+        <DialogTitle>Select Fields to Export</DialogTitle>
+        <DialogContent>
+          {fields.map((field) => (
+            <FormControlLabel
+              key={field.field}
+              control={<Checkbox checked={selectedFields.includes(field.field)} onChange={() => handleFieldChange(field.field)} />}
+              label={field.label}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
       <Button onClick={() => { exportToExcel(); handleModalClose(); }} color="primary">Export to Excel</Button>
       <Button onClick={() => { exportToPDF(); handleModalClose(); }} color="secondary">Export to PDF</Button>
       <Button onClick={handleModalClose}>Cancel</Button>
     </DialogActions>
-  </Dialog>
-</Paper>
-
-
+      </Dialog>
+    </Paper>
   );
 };

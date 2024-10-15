@@ -12,13 +12,19 @@
   // Main container for the component
   .return-container {
     text-align: center;
-    margin-top: 100px;
-    margin-left: 300px;
     background-color: #3d000bd6; // Red background with transparency
     padding: 30px;
     border-radius: 10px;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     color: #fff; // White text color
+    max-width: 500px;
+    margin: 90px auto;
+    justify-content: center;
+
+    p{
+      color: #fff; 
+    }
   }
   
   // Button styling

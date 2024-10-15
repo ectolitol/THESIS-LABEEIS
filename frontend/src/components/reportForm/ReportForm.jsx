@@ -8,15 +8,8 @@ const ReportForm = () => {
   const [issue, setIssue] = useState('');
   const [priority, setPriority] = useState('medium');
   const [itemId, setItemId] = useState(''); // Will be filled with the scanned barcode
-  const [showScanInput, setShowScanInput] = useState(false); // Toggles visibility of the scan input field
   const inputRef = useRef(null); // Ref to focus on the input box
   const navigate = useNavigate(); // Initialize useNavigate
-
-  // Function to handle clicking the "Scan" button
-  const handleScanClick = () => {
-    setShowScanInput(true); // Show the input field
-    setTimeout(() => inputRef.current.focus(), 100); // Focus on the input box
-  };
 
   // Submit function with logging
   const handleSubmit = async (e) => {
@@ -70,26 +63,17 @@ const ReportForm = () => {
           placeholder="Enter your name"
         />
 
-        {/* "Scan" button to trigger input for scanning */}
-        <button type="button" onClick={handleScanClick}>
-          Scan Item ID
-        </button>
-
-        {/* Show input field when "Scan" button is clicked */}
-        {showScanInput && (
-          <>
-            <label htmlFor="itemId">Item ID</label>
-            <input
-              type="text"
-              id="itemId"
-              ref={inputRef} // This will allow us to focus on this input
-              value={itemId}
-              onChange={(e) => setItemId(e.target.value)}
-              required
-              placeholder="Scan or enter the Item ID"
-            />
-          </>
-        )}
+        {/* Item barcode input field is always shown now */}
+        <label htmlFor="itemId">Item Barcode</label>
+        <input
+          type="text"
+          id="itemId"
+          ref={inputRef} // This will allow us to focus on this input
+          value={itemId}
+          onChange={(e) => setItemId(e.target.value)}
+          required
+          placeholder="BC******"
+        />
 
         <label htmlFor="issue">Issue Description</label>
         <textarea

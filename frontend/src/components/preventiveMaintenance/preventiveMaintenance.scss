@@ -9,10 +9,11 @@
   
     .filter-export-container {
       display: flex;
-      justify-content: space-between; // Distribute space between the dropdown and the button
+      justify-content: flex-start; // Distribute space between the dropdown and the button
       align-items: center; // Vertically center the items
       margin-bottom: 20px; // Add some space below
-  
+      gap: 20px;
+      
       .location-filter {
         label {
           margin-right: 10px; // Add space between label and dropdown
@@ -25,19 +26,38 @@
           border-radius: 3px;
         }
       }
-  
+
+      .adjust-button{
+
+       button {
+        background-color: #d9d9d9;
+        color: #000000;
+        border: none;
+        padding: 7px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: 500;
+
+        &:hover {
+          background-color: #a3a0a0; // Darker green on hover
+        }
+      }
+    }
+      
       .export-button {
         button {
-          background-color: #4CAF50;
-          color: white;
+          background-color: #d9d9d9;
+          color: #000000;
           border: none;
-          padding: 10px 15px;
+          padding: 7px 15px;
           font-size: 14px;
           cursor: pointer;
-          border-radius: 3px;
-  
+          border-radius: 4px;
+          font-weight: 500;
+        
           &:hover {
-            background-color: #45a049; // Darker green on hover
+            background-color: #a3a0a0; // Darker green on hover
           }
         }
       }
@@ -71,12 +91,18 @@
       }
   
       .week-header th {
-        background-color: #e6f7ff; // Light blue background for weeks
+        background-color: #d9d9d9; // Light blue background for weeks
+        border-bottom: 2px solid #4a4a4a;
+        border-right: #695f5f 1px solid;
+        color: #000000;
       }
   
       .month-header th {
-        background-color: #d9edf7;
-        border-bottom: 2px solid #007bff; // Stronger bottom border for clarity
+        background-color: #d9d9d9;
+        border-bottom: 2px solid #4a4a4a; // Stronger bottom border for clarity
+        border-top: 2px solid #4a4a4a;
+        border-right: #695f5f 1px solid;
+        color: #000000;
       }
   
       select {
@@ -89,5 +115,59 @@
         background-color: #f1f1f1; // Highlight row on hover
       }
     }
+
+    .month-form {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f5f5f5; // Light background for form
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: max-content;
+    
+      .month-range-input {
+        display: flex;
+        align-items: center;
+        margin: 8px 0;
+    
+        label {
+          font-weight: bold;
+          margin-right: 10px;
+          width: 50px;
+        }
+    
+        input {
+          width: 40px;
+          padding: 5px;
+          margin: 0 5px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          text-align: center;
+    
+          &:focus {
+            outline: none;
+            border-color: #007bff; // Focus color (blue)
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); // Slight glow
+          }
+        }
+      }
+    
+      button {
+        display: block;
+        margin-top: 15px;
+        padding: 8px 15px;
+        background-color: #f0ad4e; // Bootstrap-like yellow button color
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    
+        &:hover {
+          background-color: #ec971f; // Darker yellow on hover
+        }
+      }
+    }
+    
   }
   

@@ -286,6 +286,15 @@ const SingleItem = () => {
               </FormControl>
 
               <TextField
+                label="Location"
+                name="location"
+                value={updatedItem.location || ""}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+
+              <TextField
                 label="Brand"
                 name="brand"
                 value={updatedItem.brand || ""}
@@ -377,14 +386,39 @@ const SingleItem = () => {
                   <MenuItem value="For Disposal">For Disposal</MenuItem>
                 </Select>
               </FormControl>
-              <TextField
-                label="Location"
-                name="location"
-                value={updatedItem.location || ""}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
+              
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="pmNeeded-label">PM Needed</InputLabel>
+                <Select
+                  labelId="pmNeeded-label"
+                  name="pmNeeded"
+                  value={updatedItem.pmNeeded || ""} // Add pmNeeded state
+                  onChange={handleInputChange} // Use handleInputChange for simple Select input
+                  label="PM Needed"
+                >
+                  <MenuItem value="Yes">Yes</MenuItem>
+                  <MenuItem value="No">No</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="pmFrequency-label">PM Frequency</InputLabel>
+                <Select
+                  labelId="pmFrequency-label"
+                  name="pmFrequency"
+                  value={updatedItem.pmFrequency || ""} // Add pmFrequency state
+                  onChange={handleInputChange} // Use handleInputChange for simple Select input
+                  label="PM Frequency"
+                >
+                  <MenuItem value="Daily">Daily</MenuItem>
+                  <MenuItem value="Weekly">Weekly</MenuItem>
+                  <MenuItem value="Monthly">Monthly</MenuItem>
+                  <MenuItem value="Quarterly">Quarterly</MenuItem>
+                  <MenuItem value="Annually">Annually</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+              </FormControl>
+
 
               <Button
                 onClick={handleSave}

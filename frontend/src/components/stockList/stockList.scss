@@ -6,7 +6,7 @@
     max-width: 100%;  // Ensure the container doesn't exceed 100% of the viewport
     
   }
-  
+
   .lowstocklist-column, .outstocklist-column  {
     max-width: 680px;  // Limit the maximum width of the tables to prevent horizontal scrolling
     
@@ -34,10 +34,18 @@
   h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
+    color: #59000f;
   }
   
   p {
     font-size: 1.2rem;
     color: #888;
+  }
+
+  .view-stock{
+
+    &:hover{
+      background-color: white;
+    }
   }
   

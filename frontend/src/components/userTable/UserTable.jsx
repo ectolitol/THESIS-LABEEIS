@@ -28,6 +28,7 @@ const UserTable = () => {
   const [selectedFields, setSelectedFields] = React.useState([]);
   const [selectedStatus, setSelectedStatus] = React.useState('');
   const [statuses, setStatuses] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
 
   const fields = [
@@ -82,7 +83,7 @@ const UserTable = () => {
             <Button
               onClick={handleViewDetails}
               variant="outlined"
-              className="view-user-button"
+              className="view-userlist-button"
             >
               View
             </Button>
@@ -102,7 +103,7 @@ const UserTable = () => {
                 >
                   Decline
                 </Button>
-              </>
+              </> 
             )}
           </div>
         );
@@ -178,9 +179,17 @@ const UserTable = () => {
     );
   };
 
-  const filteredRows = selectedStatus
-    ? rows.filter(row => row.status === selectedStatus)
-    : rows;
+  const filteredRows = rows.filter((row) => {
+    const matchesStatus = selectedStatus ? row.status === selectedStatus : true;
+    const matchesSearchTerm = searchTerm
+      ? row.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.program.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+  
+    return matchesStatus && matchesSearchTerm;
+  });
+  
 
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
@@ -222,15 +231,26 @@ const UserTable = () => {
       <div style={{ height: 520, width: '100%', display: 'flex', flexDirection: 'column' }}>
         <div className="export-controls" style={{ marginBottom: '10px' }}>
           
+          {/* Search Bar */}
+          <div className="search-user" >
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ padding: '4px 8px', fontSize: '14px', width: '200px', height: '30px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+          </div>
+
           {/* Button to customize export */}
           <Button className="export-user-button" onClick={handleExport}>
             Export
           </Button>
         </div>
 
-        {/* DataGrid */}
+         {/* DataGrid */}
         <DataGrid
-          rows={rows}
+          rows={filteredRows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10, 20]}
@@ -238,6 +258,16 @@ const UserTable = () => {
           loading={loading}
           getRowId={(row) => row._id}
           style={{ flex: 1 }}
+          sx={{
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#d9d9d9', // Change the background color of the header
+              color: 'maroon', // Change the text color
+              fontSize: '16px', // Change the font size
+            },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              fontWeight: 'bold',
+            },
+          }}
         />
       </div>
 

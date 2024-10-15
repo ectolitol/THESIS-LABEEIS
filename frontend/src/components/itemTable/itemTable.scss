@@ -1,5 +1,5 @@
 .itemTable {
-  height: auto;
+  height: 100vh;
   
   .table-cell-image, .table-cell-barcode {
     display: flex;
@@ -26,21 +26,30 @@
       display: flex;
       justify-content: flex-start;  // Align items to the left
       align-items: center;
-      gap: 10px; // Adds space between dropdown and button
+      gap: 1px; // Adds space between dropdown and button
     }
   
     .export-select, .export-item-button {
       width: 150px;  // Set both to the same fixed width
+      
     }
   
     .export-select {
-      width: 150px;  // Ensure the select menu has enough width
-      padding: none;
+      width: 150px;  // Ensure the select menu 1%has enough width
+      
+    }
+
+    .viewItem{
+      &:hover{
+        background-color: white;
+      }
     }
   
     .export-item-button {
       width: 100px;  // Ensure the button matches the select menu size
       color: black;
+      background-color: #d9d9d9;
+      
 
       &:hover {
         background-color: #b4b3b3; // Darker blue on hover
@@ -49,4 +58,4 @@
     }
   }
   
-
+ 

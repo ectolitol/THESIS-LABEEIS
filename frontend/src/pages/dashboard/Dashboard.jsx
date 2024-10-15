@@ -16,7 +16,7 @@ const Dashboard = () => {
         <Navbar/>
         <div className="dashboardContent">
           <CustomBreadcrumbs/> 
-          <img src="/blurred-bg.png" alt="Background" className="dashboard-bg" />
+          {/* <img src="/blurred-bg.png" alt="Background" className="dashboard-bg" /> */}
           <div className="widgets">
             <Widget type="Total users" />
             <Widget type="Total items" />

@@ -120,7 +120,7 @@ const Navbar = () => {
       <div className="wrapper">
         <div className="items">
           <Tooltip title="Current Date" disableInteractive>
-            <div className="nav-item" onClick={toggleCalendarDropdown}>
+            <div className="nav-calendar" onClick={toggleCalendarDropdown}>
               <span>{currentDateTime.toLocaleDateString()}</span>
               <span>{currentDateTime.toLocaleTimeString()}</span>
               {showCalendar && (

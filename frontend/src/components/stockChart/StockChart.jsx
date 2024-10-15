@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PieChart, Pie, Tooltip, Legend, Cell } from 'recharts';
+import { PieChart, Pie, Tooltip, Cell } from 'recharts';
 import axios from 'axios'; // Import Axios
 import './stockChart.scss';
 
@@ -30,25 +30,39 @@ const StockChart = () => {
   return (
     <div className="cat-chart-container">
       <h2 className="cat-chart-title">Category Stock Levels</h2>
-      <PieChart width={300} height={300}>
-  <Pie
-    data={chartData}
-    dataKey="value"
-    nameKey="name"
-    outerRadius={100}
-    innerRadius={60}
-    fill="#8884d8"
-    isAnimationActive={true}
-    label={false} // Set label to false to hide labels
-  >
-    {chartData.map((entry, index) => (
-      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-    ))}
-  </Pie>
-  <Tooltip />
-  <Legend layout="horizontal" verticalAlign="bottom" align="center" />
-</PieChart>
-
+      <div className="chart-wrapper">
+        <div className="chart-pie">
+          <PieChart width={300} height={250}>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={100}
+              innerRadius={60}
+              fill="#8884d8"
+              isAnimationActive={true}
+              label={({ percent }) => `${(percent * 100).toFixed(0)}%`} // Show only percentage in the chart
+              labelLine={false} // Remove label lines
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
+        <div className="custom-legend">
+          {chartData.map((entry, index) => (
+            <div key={`legend-${index}`} className="legend-item">
+              <span
+                className="legend-color"
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="legend-name">{entry.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

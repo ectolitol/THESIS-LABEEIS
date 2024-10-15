@@ -2,15 +2,15 @@
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
     box-shadow: 2px 4px 10px 1px rgba(103, 82, 82, 0.47);
     padding: 20px;
-    margin: 20px;
-    margin-left: 500px;
     background-color: #eec50fd9;
     justify-content: center;   // Centers content horizontally
-    width: 450px;
-    border-radius: 10px;
+    border-radius: 8px;
+    max-width: 450px;
+    margin: 90px auto;
     align-items: center;
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .bg-only {
         position: fixed;

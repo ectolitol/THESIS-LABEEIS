@@ -24,7 +24,7 @@
 .userShow {
   flex: 1;
   padding: 20px;
-  background-color: #59000f;
+  box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
   border-radius: 10px;
   margin: 10px 20px;
   display: flex;
@@ -41,7 +41,7 @@
   
   .userIcon {
     font-size: 80px; // Adjust size as needed
-    color: rgb(255, 255, 255); // Set icon color
+    color: black; // Set icon color
   }
   
   .userDetailsTop {
@@ -52,26 +52,26 @@
   .userDetailsTop p {
     margin: 0; // Remove default margin
     font-size: 24px; // Adjust font size as needed
-    color: rgb(255, 255, 255); // Set text color
+    color: black; // Set text color
     font-weight: bold;
   }
   
   .userDetailsTop h4 {
     margin: 0; // Remove default margin
     font-size: 14px; // Adjust font size as needed
-    color: rgb(255, 255, 255); // Set text color
+    color: rgb(0, 0, 0); // Set text color
   }
 
 .userHeader{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: rgb(249, 249, 249);
+    color: #59000f;
 
   .itemTitle {
     font-weight: bold;
     font-size: 24px;
-    color: gray;
+    color: rgb(0, 0, 0);
   }
 
     .buttonGroup{
@@ -117,17 +117,19 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
-  color: white;
+  color: rgb(0, 0, 0);
 
   p {
     font-size: 16px;
     display: flex;
     align-items: center;
     margin: 0;
+    color: rgb(0, 0, 0);
 
     strong {
       font-weight: bold;
       margin-right: 10px;
+      color: rgb(0, 0, 0);
     }
   }
 }

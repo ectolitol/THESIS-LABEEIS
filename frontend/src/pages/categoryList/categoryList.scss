@@ -13,11 +13,11 @@
 
         .categoryListTable{
             flex: 1;
-            -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-            box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+            box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
             padding: 20px;
             margin: 20px;
-        
+            border-radius: 10px;
+         
             .categoryListTitle{
                 display: flex;
                 justify-content: space-between;
@@ -26,7 +26,7 @@
                 
                 .title {
                    font-weight: bold; 
-                   color: gray;
+                   color: #59000f;
                    margin-bottom: 15px;  
                  }
 
@@ -42,8 +42,10 @@
                    border-radius: 5px;
                    cursor: pointer;
                    color: white;
-                   font-size: 15px;
+                   font-size: 16px;
                    transition: background-color 0.3s ease;
+                   text-transform: none;
+                   margin-bottom: 10px;
 
                    &:hover {
                       background-color: darkgray;

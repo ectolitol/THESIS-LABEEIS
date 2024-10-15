@@ -1,17 +1,18 @@
 .total-users-widget {
-  background-color: #59000fda; /* Example color */
+  background-color: #59000f; /* Example color */
+  border: #59000f 5px;
 }
 
 .total-items-widget {
-  background-color: #59000fda; /* Example color */
+  background-color: #59000f; /* Example color */
 }
 
 .low-stock-widget {
-  background-color: #59000fda; /* Example color */
+  background-color: #59000f; /* Example color */
 }
 
 .out-of-stock-widget {
-  background-color: #59000fda; /* Example color */
+  background-color: #59000f; /* Example color */
 }
 
 .widget {
@@ -21,7 +22,9 @@
   border-radius: 10px;
   padding: 10px;
   height: 100px;
-
+  border: 3px solid #59000f; /* Add a border with your desired color */
+  background-color: transparent; /* Remove the background color */
+  
   .left,
   .right {
     display: flex;
@@ -32,13 +35,13 @@
     .title {
       font-weight: bold;
       font-size: 14px;
-      color: rgb(255, 255, 255);
+      color: #59000f;
     }
 
     .counter {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: bolder;
-      color: rgba(255, 255, 255, 0.9);
+      color: #59000f;
     }
 
     .link {
@@ -49,7 +52,8 @@
     }
 
     .icon {
-      font-size: 18px;
+      font-size: 50px;
+      margin-top: 10px;
       padding: 5px;
       border-radius: 5px;
       align-self: flex-end;
@@ -57,12 +61,12 @@
 
     .link-style {
       text-decoration: none;
-      color: white;
+      color: #59000f;
+      font-size: 13px;
 
-      &:hover{
+      &:hover {
         text-decoration: underline;
       }
-      
     }
   }
 }

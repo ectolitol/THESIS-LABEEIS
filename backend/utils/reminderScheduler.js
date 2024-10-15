@@ -13,7 +13,7 @@ const sendSMSOnce = async (recipient, message) => {
     };
 
     // Send the SMS request to Server B
-    const response = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP or domain
+    const response = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with Server B's IP or domain
     
     // Log the response after sending SMS
     console.log(`SMS sent successfully to ${recipient}. Response: ${JSON.stringify(response.data)}`);

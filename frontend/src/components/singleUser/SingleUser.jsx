@@ -6,6 +6,13 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 
 const SingleUser = () => {
   const { userId } = useParams(); // Use 'userId' to match route parameter
@@ -15,7 +22,7 @@ const SingleUser = () => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useEffect(() => { 
     if (userId) {
       fetchUser();
     }
@@ -211,14 +218,26 @@ const SingleUser = () => {
           </div>
         </Drawer>
 
-        {/* Delete confirmation modal */}
-        {showDeleteConfirmation && (
-          <div className="deleteConfirmation">
-            <p>Are you sure you want to delete this user?</p>
-            <Button className="yes" variant="contained" color="primary" onClick={handleDeleteConfirm}>Yes</Button>
-            <Button className="no" variant="outlined" color="secondary" onClick={() => setShowDeleteConfirmation(false)}>No</Button>
-          </div>
-        )}
+         {/* Delete confirmation dialog */}
+         <Dialog
+          open={showDeleteConfirmation}
+          onClose={() => setShowDeleteConfirmation(false)}
+        >
+          <DialogTitle>{"Confirm Delete"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this user? This action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowDeleteConfirmation(false)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteConfirm} color="secondary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );

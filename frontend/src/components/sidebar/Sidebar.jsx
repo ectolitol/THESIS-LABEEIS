@@ -30,6 +30,7 @@ const Sidebar = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [awaitingApprovalCount, setAwaitingApprovalCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0); // For reports
 
   const toggleSidebar = () => {
     const newIsOpen = !isOpen;
@@ -57,11 +58,26 @@ const Sidebar = () => {
     fetchUnreadNotifications();
   }, []);
 
+  useEffect(() => {
+    const fetchPendingReports = async () => {
+      try {
+        const response = await axios.get('/api/reports/all-report');
+        const reports = response.data;
+        const pendingReports = reports.filter(report => report.status === 'pending');
+        setPendingCount(pendingReports.length);
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+      }
+    };
+
+    fetchPendingReports();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await axios.post('/api/admin/logout', {}, { withCredentials: true });
       // Clear any local state or storage if needed
-      navigate('/'); // Redirect to login page
+      navigate('/administrator'); // Redirect to login page
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -107,12 +123,13 @@ const Sidebar = () => {
 
       <div className="center">
         <ul>
-          <li>
-            <Link to="/EELMS" className={`menu-link ${location.pathname === "/" ? "active" : ""}`}>
-              <DashboardCustomizeRoundedIcon className="icon" />
-              <span className="sidebar-name">Dashboard</span>
-            </Link>
-          </li>
+        <li>
+          <Link to="/EELMS" className={`menu-link ${location.pathname === "/EELMS" ? "active" : ""}`}>
+            <DashboardCustomizeRoundedIcon className="icon" />
+            <span className="sidebar-name">Dashboard</span>
+          </Link>
+        </li>
+
           <li>
             <Link to="/users" className={`menu-link ${location.pathname === "/users" ? "active" : ""}`}>
               <PersonRoundedIcon className="icon" />
@@ -144,11 +161,15 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/reports" className={`menu-link ${location.pathname === "/reports" ? "active" : ""}`}>
-              <LeaderboardRoundedIcon className="icon" />
-              <span className="sidebar-name">Reports</span>
-            </Link>
-          </li>
+        <Link to="/reports" className={`menu-link ${location.pathname === "/reports" ? "active" : ""}`}>
+          <LeaderboardRoundedIcon className="icon" />
+          <span className="sidebar-name">Reports</span>
+          {pendingCount > 0 && (
+            <span className="counter">{pendingCount}</span>
+          )}
+        </Link>
+      </li>
+
           <li>
             <Link to="/archives" className={`menu-link ${location.pathname === "/archives" ? "active" : ""}`}>
               <ArchiveRoundedIcon className="icon" />
@@ -181,7 +202,7 @@ const Sidebar = () => {
         </ul>
       </div>
 
-      <Dialog
+      <Dialog 
         open={openDialog}
         onClose={handleDialogClose}
         aria-labelledby="alert-dialog-title"

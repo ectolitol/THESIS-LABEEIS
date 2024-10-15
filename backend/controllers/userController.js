@@ -30,7 +30,7 @@ exports.createUser = async (req, res) => {
       };
 
       // Sending the SMS request to Server B
-      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
       console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       res.status(201).json({ message: 'Registration successful! Await admin approval.' });
@@ -89,7 +89,7 @@ exports.approveUser = async (req, res) => {
           message: smsMessage
       };
 
-      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
       console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       // Create a notification for the admin
@@ -132,7 +132,7 @@ exports.declineUser = async (req, res) => {
           message: smsMessage
       };
 
-      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
+      const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with the actual IP address of Server B
       console.log(`SMS request sent to Server B. Response: ${smsResponse.data.message}`);
 
       // Create a notification for the admin

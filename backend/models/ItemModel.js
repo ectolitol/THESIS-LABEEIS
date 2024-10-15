@@ -85,7 +85,7 @@ const ItemSchema = new mongoose.Schema({
     enum: ['Yes', 'No'], 
     default: '',
     required: true
-  },
+  }, 
   pmFrequency: { 
     type: String, // Changed from calibrationFrequency to pmFrequency
     enum: ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Annually', 'Other'],

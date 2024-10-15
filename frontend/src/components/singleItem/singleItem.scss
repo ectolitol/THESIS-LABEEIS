@@ -1,6 +1,7 @@
 .singleItem {
   flex: 6; // Same as .singleUser
   cursor: auto;
+  
 }
 
 .deleteConfirmation {
@@ -36,6 +37,8 @@
 .singleItemContainer {
   display: flex;
   flex-direction: column;
+  
+
 }
 
 .itemShow {
@@ -45,10 +48,13 @@
   margin: 10px 20px;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  border-radius: 10px;
 
   .itemInfo {
     display: flex;
     align-items: center;
+    
   }
 
   .itemImage {
@@ -65,13 +71,13 @@
 
     h4 {
       font-size: 15px;
-      color: #555;
+      color: #000000;
     }
 
     p {
       margin: 5px 0;
       font-size: 30px;
-      color: #555;
+      color: #000000;
       font-weight: bold;
     }
   }
@@ -87,15 +93,17 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr); // Create three equal-width columns
     gap: 15px; // Space between grid items
+    
 
     p {
       margin: 0; // Remove default margin
       font-size: 16px;
       display: flex; // Align content within each cell
       align-items: center;
+      color: #000000;
 
       strong {
-        color: rgb(67, 67, 67);
+        color: rgb(0, 0, 0);
         font-weight: bold;
         margin-right: 10px; // Add space between label and value
       }
@@ -105,9 +113,10 @@
 
 .bottom2 {
   padding: 20px;
-  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   margin: 10px 20px;
   display: flex;
+  box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  border-radius: 10px;
   
 
   .descrip, .pm {
@@ -119,9 +128,10 @@
       display: flex; // Align content within each cell
       align-items: start;
       margin-bottom: 15px;
+      color: #000000;
 
       strong {
-        color: rgb(67, 67, 67);
+        color: rgb(0, 0, 0);
         font-weight: bold;
         margin-right: 10px; // Add space between label and value
       }
@@ -210,6 +220,6 @@
   .itemTitle {
     font-weight: bold;
     font-size: 24px;
-    color: gray;
+    color: #59000f;
   }
 }

@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './categoryRegistration.scss';
 import axios from 'axios'; // Import axios
-import Modal from '../modal/Modal'; 
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 const CategoryRegistration = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // Loading state
+  const [openDialog, setOpenDialog] = useState(false);
+  const [errors, setErrors] = useState([]);
 
   // State to store form data
   const [formData, setFormData] = useState({
     categoryName: "",
-  }); 
-
-  const [errors, setErrors] = useState([]);
-  const [showModal, setShowModal] = useState(false); // Modal state
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +35,9 @@ const CategoryRegistration = () => {
       return;
     }
 
+    // Set loading to true when form submission starts
+    setLoading(true);
+
     try {
       const response = await axios.post('/api/categories/create', formData, {
         headers: {
@@ -43,18 +46,30 @@ const CategoryRegistration = () => {
       });
 
       if (response.status === 201) {
-        navigate('/categories/categorySuccess');
+        setOpenDialog(true);
       } else {
         setErrors([response.data.error || 'Error registering category. Please try again later.']);
       }
     } catch (error) {
       setErrors(['Error connecting to the server. Please check your network connection or try again later.']);
+    } finally {
+      setLoading(false); // Set loading to false after form submission completes
     }
   };
 
+  // Handle closing the dialog and navigating
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  useEffect(() => {
+    if (!openDialog) {
+      navigate('/categories');  // Navigate only after dialog is fully closed
+    }
+  }, [openDialog, navigate]);
+
   return (
     <div className="categoryRegistration">
-      <div className="newCategoryTitle">New Category Registration</div>
       <form className="newCategoryForm" onSubmit={handleSubmit}>
         <div className="newCategoryField">
           <label>Category Name: </label>
@@ -67,7 +82,9 @@ const CategoryRegistration = () => {
             required
           />
         </div>
-        <button type="submit" className='submitButton'>Create Category</button>
+        <button type="submit" className='submitButton' disabled={loading}>
+          {loading ? 'Loading...' : 'Create Category'} {/* Show Loading when submitting */}
+        </button>
         {errors.length > 0 && (
           <div className="errorMessages">
             {errors.map((error, index) => (
@@ -76,6 +93,19 @@ const CategoryRegistration = () => {
           </div>
         )}
       </form>
+
+      {/* Success Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogContent>
+          <p>New category registration successful!</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

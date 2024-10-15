@@ -25,6 +25,9 @@ const NewUserReg = () => {
   // State to control success dialog visibility
   const [openDialog, setOpenDialog] = useState(false);
 
+  // State to control loading
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   // Handle form input changes
@@ -38,6 +41,7 @@ const NewUserReg = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
 
     try {
       const response = await axios.post('/api/users/create', formData, {
@@ -49,16 +53,13 @@ const NewUserReg = () => {
       if (response.status === 201) {
         const data = response.data;
 
-        // Assuming the response contains information about the user's authentication status
         if (data.isAuthenticated) {
           navigate('/users/registrationSuccessful');
         } else {
-          // Show the dialog for successful registration
-          setOpenDialog(true);
+          setOpenDialog(true); // Show success dialog
         }
       } else {
         if (response.data.errors) {
-          // Display multiple error messages
           setErrors(response.data.errors);
         } else {
           setErrors(['Error registering user']);
@@ -66,6 +67,8 @@ const NewUserReg = () => {
       }
     } catch (error) {
       setErrors(['Error connecting to the server.']);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -77,12 +80,12 @@ const NewUserReg = () => {
 
   // Handle going back to the previous page
   const handleGoBack = () => {
-    navigate(-1); // This will navigate to the previous page
+    navigate(-1);
   };
 
   return (
     <div className="newUserReg">
-         <img src="/ceaa.png" alt="Background" className="bg-only" />
+      <img src="/ceaa.png" alt="Background" className="bg-only" />
       <div className="newRegUserTitle">NEW USER REGISTRATION</div>
 
       <form className="newRegUserForm" onSubmit={handleSubmit}>
@@ -215,7 +218,13 @@ const NewUserReg = () => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="newRegSubmitButton">Register</button>
+        <button
+          type="submit"
+          className="newRegSubmitButton"
+          disabled={isLoading} // Disable button while loading
+        >
+          {isLoading ? 'Loading...' : 'Register'} {/* Change button text based on loading state */}
+        </button>
 
         {/* Back Button */}
         <button type="button" className="newRegBackButton" onClick={handleGoBack}>Back</button>

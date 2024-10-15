@@ -17,8 +17,9 @@ const Report = () => {
                 <Navbar/>
                 <div className="Content">
                     <CustomBreadcrumbs/>
-                    <div className="charts-container"> {/* Add this wrapper */}
+                    <div className="charts-container"> {/* This is the container for your charts */}
                         <LogChart/>
+                        <TopBorrowedChart/>
                         <StockChart/>
                     </div>
                     <div className="reportlist-container">
@@ -28,7 +29,7 @@ const Report = () => {
                         <PreventiveMaintenance/>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     );
 };

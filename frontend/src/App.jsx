@@ -9,14 +9,11 @@ import NewUser from './pages/newUser/NewUser';
 import ItemList from './pages/itemList/ItemList';
 import Item from './pages/item/Item';
 import NewItem from './pages/newItem/NewItem';
-import RegistrationSuccess from './pages/registrationSuccess/RegistrationSuccess';
 import CategoryList from './pages/categoryList/CategoryList';
-import CreationSuccess from './pages/creationSuccess/CreationSuccess';
 import Category from './pages/category/Category';
 import NewCategory from './pages/newCategory/NewCategory';
 import Notification from './pages/notification/Notification';
 import Feedback from './pages/feedback/Feedback';
-import ProtectedRoute from './components/ProtectedRoute';
 import SelectAdmin from './pages/selectAdmin/SelectAdmin';
 import './config/axiosConfig';
 import UserSelection from './pages/userPanel/userSelection/UserSelection';
@@ -32,7 +29,6 @@ import ReturnSuccess from './components/returnSuccess/ReturnSuccess';
 import ReturnPartial from './components/returnPartial/ReturnPartial';
 import ReportForm from './components/reportForm/ReportForm';
 import NewUserRegistrationForm from './pages/userPanel/newUserRegistrationForm/NewUserRegistrationForm';
-import CategorySuccess from './components/categorySuccess/CategorySuccess';
 import Report from './pages/reports/Report';
 import Archives from './pages/archives/Archives';
 import About from './pages/about/About';
@@ -101,14 +97,6 @@ function App() {
                 
               }
             />
-            <Route
-              path="/users/registrationSuccessful"
-              element={
-                
-                  <RegistrationSuccess />
-                
-              }
-            />
 
             <Route
               path="/items"
@@ -131,14 +119,6 @@ function App() {
               element={
                 
                   <NewItem />
-                
-              }
-            />
-            <Route
-              path="/items/CreationSuccessful"
-              element={
-                
-                  <CreationSuccess />
                 
               }
             />
@@ -173,14 +153,6 @@ function App() {
               element={
                 
                   <NewCategory />
-                
-              }
-            />
-            <Route
-              path="/categories/CategorySuccess"
-              element={
-                
-                  <CategorySuccess />
                 
               }
             />

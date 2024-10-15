@@ -42,7 +42,7 @@ const Widget = ({ type }) => {
       } catch (error) {
         console.error("Error fetching low stock items:", error);
         setLowStockCount(0);
-      }
+      } 
     };
 
     const fetchOutOfStockItems = async () => {

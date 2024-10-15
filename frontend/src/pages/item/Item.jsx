@@ -18,7 +18,7 @@ const Item = () => {
         <CustomBreadcrumbs/>
           <SingleItem itemId={itemId} /> {/* Pass itemId to SingleItem */}
           <div className="bottom">
-            <div className="itemTitle">Item Transaction History</div>
+            <div className="itemTitlee">Item Transaction History</div>
             <ItemTransaction itemBarcode={itemId} /> {/* Pass itemBarcode to ItemTransaction */}
           </div> 
         </div>

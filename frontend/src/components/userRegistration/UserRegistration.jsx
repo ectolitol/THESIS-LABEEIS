@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./UserRegistration.scss";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
@@ -55,7 +55,7 @@ const UserRegistration = () => {
 
         // Check if the user is authenticated or not
         if (data.isAuthenticated) {
-          navigate('/users/registrationSuccessful');
+          navigate('/users');
         } else {
           // Show the dialog for successful registration
           setOpenDialog(true);
@@ -78,17 +78,16 @@ const UserRegistration = () => {
   // Handle closing the dialog and navigating
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    navigate('/EELMS');
   };
 
-  // Handle going back to the previous page
-  const handleGoBack = () => {
-    navigate(-1); // This will navigate to the previous page
-  };
+  useEffect(() => {
+    if (!openDialog) {
+      navigate('/users');  // Navigate only after dialog is fully closed
+    }
+  }, [openDialog, navigate]);
 
   return (
     <div className="userRegistration">
-      <div className="newUserTitle">NEW USER REGISTRATION</div>
 
       <form className="newUserForm" onSubmit={handleSubmit}>
         {/* Full Name */}
@@ -217,16 +216,11 @@ const UserRegistration = () => {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> 
 
         {/* Submit Button */}
         <button type="submit" className="submitButton" disabled={isLoading}>
           {isLoading ? "Loading..." : "Register"}
-        </button>
-
-        {/* Back Button */}
-        <button type="button" className="backButton" onClick={handleGoBack} disabled={isLoading}>
-          Back
         </button>
 
         {/* Error Messages */}
@@ -241,9 +235,9 @@ const UserRegistration = () => {
 
       {/* Success Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogTitle>User Registration Successful</DialogTitle>
         <DialogContent>
-          <p>Your registration was successful. You will be redirected.</p>
+          <p>New user registration successful!</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">

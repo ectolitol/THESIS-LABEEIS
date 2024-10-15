@@ -29,7 +29,7 @@ const TopBorrowedChart = () => {
   return (
     <div className="top-borrowed-chart-container">
       <h2 className="top-borrowed-chart-title">Top Borrowed Items</h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={310}>
         <BarChart
           data={borrowedData}
           margin={{ top: 20, right: 30, left: 20, bottom: 10 }} // Increased bottom margin for space

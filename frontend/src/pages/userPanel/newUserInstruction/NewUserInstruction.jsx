@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import QRCode from 'react-qr-code'; // Ensure the package is installed
 import './NewUserInstruction.scss'; // Import the updated SCSS file
 
 const NewUserInstruction = () => {
@@ -22,12 +23,17 @@ const NewUserInstruction = () => {
       <img src="/ceaa.png" alt="Background" className="bg-only" />
 
       <h2>New User Instructions</h2>
-      <p>Welcome! Please follow these instructions to register:</p>
+      <strong>Welcome! Please follow these instructions to register:</strong>
       <ol>
-        <li>Click the "Register New User" button below</li>
+        <li>Scan the QR code below to register or click the "Register New User" button to access the form.</li>
         <li>Fill out the required information.</li>
         <li>Submit the form and await confirmation via email.</li>
       </ol>
+
+      {/* QR Code for accessing the form */}
+      <div className="qr-code">
+        <QRCode value={localNetworkLink} size={256} /> {/* Adjust size as needed */}
+      </div>
 
       {/* Button Section */}
       <div className="button-container">

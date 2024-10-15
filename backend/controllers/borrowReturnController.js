@@ -4,7 +4,6 @@ const Item = require('../models/ItemModel');
 const { createNotification } = require('../utils/notificationService');
 const { sendTransactionEmail } = require('../utils/emailService');
 const axios = require('axios'); // Import axios to send HTTP requests
-
 exports.logTransaction = async (req, res) => {
   try {
     const {
@@ -108,7 +107,7 @@ exports.logTransaction = async (req, res) => {
 
       // Sending the SMS request to Server B
       try {
-        const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+        const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with Server B's IP address
         console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
       } catch (error) {
         console.error('Error sending SMS via Server B:', error);
@@ -279,7 +278,7 @@ exports.completeReturn = async (req, res) => {
 
     try {
       // Send the SMS request to Server B
-      const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+      const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with Server B's IP address
       console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
     } catch (err) {
       console.error("Error sending SMS via Server B:", err);
@@ -345,7 +344,7 @@ exports.getItemTransactions = async (req, res) => {
   } catch (error) {
     console.error('Error fetching item transactions:', error);
     res.status(500).json({ message: 'Error fetching item transactions', error: error.message });
-  }
+  } 
 };
 
 
@@ -480,7 +479,7 @@ exports.extendBorrowingDuration = async (req, res) => {
       };
 
       try {
-        const smsResponse = await axios.post('http://10.147.17.153:3000/send-sms', smsRequestData); // Replace <Server_B_IP> with Server B's IP address
+        const smsResponse = await axios.post(`${process.env.GSMClientIP}`, smsRequestData); // Replace <Server_B_IP> with Server B's IP address
         console.log('SMS request sent to Server B. Response:', smsResponse.data.message);
       } catch (error) {
         console.error('Error sending SMS via Server B:', error);
@@ -596,6 +595,30 @@ exports.getTopBorrowedItems = async (req, res) => {
   } catch (error) {
     console.error('Error fetching top borrowed items:', error);
     res.status(500).json({ error: 'Failed to fetch top borrowed items' });
+  }
+};
+
+// Get all borrow/return logs with feedback emojis
+exports.getAllFeedbackLogs = async (req, res) => {
+  try {
+    const feedbackLogs = await BorrowReturnLog.find().select('feedbackEmoji');
+    
+    // Count occurrences of each emoji
+    const emojiCounts = feedbackLogs.reduce((acc, log) => {
+      const emoji = log.feedbackEmoji;
+      acc[emoji] = (acc[emoji] || 0) + 1; // Increment count for the emoji
+      return acc;
+    }, {});
+
+    // Convert emoji counts to an array
+    const response = Object.keys(emojiCounts).map(emoji => ({
+      emoji,
+      count: emojiCounts[emoji],
+    }));
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 

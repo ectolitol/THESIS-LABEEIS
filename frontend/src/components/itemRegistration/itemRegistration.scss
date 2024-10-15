@@ -1,13 +1,12 @@
 .itemRegistration {
-    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-    padding: 20px;
-    margin: 20px;
-    background-color: #fff;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
+  -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  background-color: #59000f;
+  width: auto;
+  border-radius: 10px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   
   .newItemTitle {
     font-weight: bold;
@@ -26,6 +25,7 @@
     /* Center the container horizontally */
     margin-left: auto;
     margin-right: auto;
+    
   }
   
   .imagePreview img {
@@ -37,47 +37,57 @@
 }
   
   .newItemForm {
-    width: 100%;
-    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    width: 350px;
   }
   
   .newItemField {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
   }
   
   .newItemField label {
-    display: block;
-    margin-bottom: 5px;
+    font-weight: normal;
+    margin-bottom: 2px;
+    color: white;
   }
   
   .newItemField input,  
   .newItemField textarea {
-    width: 100%;
+    width: 330px;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
 
   .newItemField select{
-    width: 418px;
+    width: 349px;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
   
   .submitButton {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #F5D029;
+    color: black;
     border: none;
     padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: 15px;
+    margin-top: 10px; 
     cursor: pointer;
     border-radius: 4px;
-    width: 418px;
+    width: 349px;
+    margin-bottom: 10px;
+
+    &:hover {
+      background-color:  #d5b31c;
+    }
   }
   
   .message {

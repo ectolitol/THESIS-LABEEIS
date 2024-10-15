@@ -28,8 +28,12 @@ router.get('/br/top-borrowed-items', borrowReturnController.getTopBorrowedItems)
 // Extend borrowing duration by transaction ID
 router.put('/:id/extend', borrowReturnController.extendBorrowingDuration);
 
+// Define the GET route for feedback logs
+router.get('/feedback/logs', borrowReturnController.getAllFeedbackLogs);
+
 // Update feedback emoji for a transaction by transactionID
 router.put('/feedback/:transactionID', borrowReturnController.updateFeedbackEmoji);
+
 
 // Complete a return process
 router.post('/complete-return', borrowReturnController.completeReturn);

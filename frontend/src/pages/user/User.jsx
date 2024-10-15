@@ -8,7 +8,7 @@ import CustomBreadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 const User = () => {
   return (
     <div className="user">
-      <img src="/blurred-bg.png" alt="Background" className="uuserr-bg" />
+      {/* <img src="/blurred-bg.png" alt="Background" className="uuserr-bg" /> */}
       <Sidebar/>
       <div className="userContainer">
         <Navbar/> 

@@ -134,6 +134,20 @@
       border-radius: 50%;
     }
   
+    .profile-name {
+      font-size: 25px;
+      color: white;
+      margin: 10px 0 5px;
+    }
+  
+    .profile-role {
+      font-size: 14px;
+      font-weight: bold;
+      color: #000000;
+      margin-top: 10px;
+    }
+
+
     /* Profile name and role in modal */
     .profile-name-display {
       font-size: 24px;
@@ -171,7 +185,6 @@
     
         input {
           padding-right: 40px; // Padding to make space for the eye icon
-          margin-left: 165px;
           width: 270px;
         }
     
@@ -183,7 +196,6 @@
           font-size: 1.2rem;
           color: #797878;
           cursor: pointer;
-          margin-right: 160px;
           margin-top: -4px;
         }
       }

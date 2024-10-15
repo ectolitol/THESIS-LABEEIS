@@ -7,6 +7,7 @@
         .Content {
             overflow-y: auto;
             height: calc(100vh - 60px); // Full height minus navbar height
+            
         }
     
 
@@ -15,6 +16,7 @@
         box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
         padding: 20px;
         margin: 20px;
+        
         }
 
         .bottom{
@@ -22,12 +24,15 @@
             box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
             padding: 20px;
             margin: 20px;
+            box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+            border-radius: 10px;
 
-            .itemTitle{
+            .itemTitlee{
                 font-weight: bold;
-                color: gray;
+                color: #59000f;
                 margin-bottom: 15px;
-                font-size: 16px; 
+                font-size: 16px;
+                text-align: start; 
             }
             
         }

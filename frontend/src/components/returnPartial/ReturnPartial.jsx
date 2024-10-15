@@ -54,7 +54,7 @@ const ReturnPartial = ({ remainingItems }) => {
       <p className="return-partial-instruction">Please return the remaining items listed below:</p>
       
       <div className="return-partial-items">
-        <ul className="items-list">
+        <ul className="items-list-return">
           {items && items.length > 0 ? (
             items.map((item, index) => (
               <li key={index} className="item">
@@ -85,7 +85,7 @@ const ReturnPartial = ({ remainingItems }) => {
         onClick={handleSubmitReason}
         disabled={!partialReturnReason} // Disable button if no reason is provided
       >
-        Submit and Return
+        Submit
       </button>
     </div>
   );
