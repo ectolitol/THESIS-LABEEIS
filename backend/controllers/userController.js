@@ -81,7 +81,7 @@ exports.approveUser = async (req, res) => {
       await sendUserConfirmation(user, pdfFilePath);
 
       // Prepare the SMS message
-      const smsMessage = `Hello ${user.fullName}, your registration has been approved! Your QR code will be sent via email.`;
+      const smsMessage = `Hello ${user.fullName}, your registration has been approved! Your QR code ID will be sent via email.`;
 
       // Send SMS request to Server B
       const smsRequestData = {
@@ -124,7 +124,7 @@ exports.declineUser = async (req, res) => {
       await sendUserDeclineEmail(user, notesComments);
 
       // Prepare the SMS message
-      const smsMessage = `Hello ${user.fullName}, your registration was declined. Reason: ${notesComments}`;
+      const smsMessage = `Hi ${user.fullName}, your registration was declined. Reason: ${notesComments}`;
 
       // Send SMS request to Server B
       const smsRequestData = {

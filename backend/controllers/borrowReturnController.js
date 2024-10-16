@@ -98,7 +98,7 @@ exports.logTransaction = async (req, res) => {
       );
 
       // Send SMS notification for borrowing via Server B
-      const smsMessage = `Hello ${user.fullName}, you borrowed ${items.map(item => item.itemName).join(", ")}. Please return by ${borrowReturnLog.dueDate.toLocaleString()}.`;
+      const smsMessage = `Hi ${user.fullName}, please return the borrowed item(s) by ${borrowReturnLog.dueDate.toLocaleString()}. Details have been sent to your email. Thank you!`;
       const smsRequestData = {
         number: user.contactNumber,
         message: smsMessage
@@ -266,10 +266,8 @@ exports.completeReturn = async (req, res) => {
 
     // Send SMS notification via Server B
     const smsMessage = allItemsReturned
-      ? `Hello ${borrowReturnLog.userName}, your return process has been completed successfully. Thank you!`
-      : `Hello ${borrowReturnLog.userName}, your return process is partially completed for the items: ${itemsToProcess
-          .map((item) => item.itemName)
-          .join(", ")}. Please return the remaining items.`;
+      ? `Hi ${borrowReturnLog.userName}, your return process has been completed successfully. Thank you!`
+      : `Hi ${borrowReturnLog.userName}, your return process is partially completed. Please return the remaining item(s) as soon as possible.`;
 
     const smsRequestData = {
       number: borrowReturnLog.contactNumber,

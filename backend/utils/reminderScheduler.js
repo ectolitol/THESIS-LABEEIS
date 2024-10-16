@@ -39,7 +39,7 @@ const sendReminderIfDue = async (log) => {
   // and that the reminder has not been sent yet
   if (now.isBetween(fiveMinutesBeforeDue, dueDate) && !log.reminderSent) {
     const user = log.userID; // Assuming userID contains user information
-    const smsMessage = `Hello ${user.fullName}, reminder to return borrowed items by due date. If you wish to extend, please inform in lab. Thank you!`;
+    const smsMessage = `Hi ${user.fullName}, reminder to return borrowed item(s) by due date. To extend, inform us in the lab. Thank you!`;
 
     try {
       // Log that we are about to send the SMS
