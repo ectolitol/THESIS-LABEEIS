@@ -22,7 +22,7 @@ exports.sendAdminNotification = async (user) => {
             to: process.env.ADMIN_EMAIL,
             subject: 'New User Registration Awaiting Approval',
             text: `A new user has registered: ${user.fullName}. Please review and approve their registration.`
-        };
+        }; 
 
         await transporter.sendMail(mailOptions);
         console.log('Admin notification sent successfully');
@@ -39,7 +39,7 @@ exports.sendUserConfirmation = async (user, pdfFilePath) => {
             from: process.env.EMAIL_USER,
             to: user.email,
             subject: 'Registration Approved',
-            text: `Your registration has been approved. Please download the QR code attached.`,
+            text: `Congratulations! Your registration has been approved.\n\nYou can download the attached QR code, which is now your key to seamless borrowing transactions in the Electrical Engineering Laboratory (EE Lab). Simply present this QR code during your visits to facilitate quick and efficient transactions.`,
             attachments: [
                 {
                     filename: 'user-info.pdf',
@@ -104,7 +104,7 @@ Due Date: ${dueDate.toLocaleString()}
 Please ensure that the items are returned by the due date to avoid any penalties.
 
 Thank you,
-Your Borrowing Team
+PUP EE LAB
 `
         };
 
