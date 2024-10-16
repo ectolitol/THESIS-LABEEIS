@@ -39,7 +39,7 @@ exports.sendUserConfirmation = async (user, pdfFilePath) => {
             from: process.env.EMAIL_USER,
             to: user.email,
             subject: 'Registration Approved',
-            text: `Congratulations! Your registration has been approved.\n\nYou can download the attached QR code, which is now your key to seamless borrowing transactions in the Electrical Engineering Laboratory (EE Lab). Simply present this QR code during your visits to facilitate quick and efficient transactions.`,
+            text: `Congratulations! Your registration has been approved.\n\nYou can download the attached QR code, which is now your key to seamless borrowing transactions in the Electrical Engineering Laboratory (EE Lab).\n\nSimply present this QR code during your visits to facilitate quick and efficient transactions.`,
             attachments: [
                 {
                     filename: 'user-info.pdf',
