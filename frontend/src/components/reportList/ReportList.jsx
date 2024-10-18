@@ -60,7 +60,7 @@ const ReportsList = ({ itemId }) => {
     const handleDeleteReport = async (reportId) => {
       console.log('Attempting to delete report with ID:', reportId);
       try {
-        await axios.delete(`/api/reports/del-reports/${reportId}`);
+        await axios.delete(`/api/reports/reports/${reportId}`);
         const response = await axios.get(`/api/reports/all-report`);
         setReports(response.data);
       } catch (error) {
