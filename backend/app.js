@@ -12,6 +12,16 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const https = require('https');
+const fs = require('fs');
+//
+// Load your SSL certificate files
+const options = {
+  key: fs.readFileSync('./erika-secret/private.key'), // Use your actual private key file
+  cert: fs.readFileSync('./erika-secret/pupeelms_com.crt'),
+  ca: fs.readFileSync('./erika-secret/pupeelms_com.ca-bundle')
+};
+const server = https.createServer(options, app);
 
 // Create a MongoDB store instance
 const store = new MongoDBStore({
@@ -80,4 +90,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-module.exports = app; // Export the app instance
+module.exports = server; // Export the app instance
