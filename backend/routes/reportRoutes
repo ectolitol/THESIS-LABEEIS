@@ -8,6 +8,8 @@ router.get('/all-report', reportController.getAllReports);
 // POST route to create a new report
 router.post('/make-reports', reportController.createReport);
 
+router.delete('/reports/:id', reportController.deleteReportById);
+
 // GET route to fetch all reports for a specific item
 router.get('/reports/:itemId', reportController.getReportsForItem);
 

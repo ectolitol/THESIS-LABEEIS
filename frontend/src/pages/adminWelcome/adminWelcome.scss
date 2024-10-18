@@ -64,4 +64,15 @@
         background-color: #a32a2a;
       }
     }
+
+    .user-welcome-guide-link {
+      font-size: 16px;
+      font-weight: bold;
+      color: #59000f;
+      text-decoration: none;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }

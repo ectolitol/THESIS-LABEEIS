@@ -7,6 +7,7 @@ import axios from 'axios';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControlLabel } from '@mui/material';
 import { imageBaseURL } from '../../config/axiosConfig';
@@ -35,7 +36,7 @@ export const ItemTable = () => {
     { label: 'Serial Number', field: 'serialNumber' },
     { label: 'PUP Property Number', field: 'pupPropertyNumber' },
     { label: 'Specification', field: 'specification' },
-    { label: 'Barcode', field: 'barcodeImage' },
+    { label: 'Barcode Image', field: 'barcodeImage' },
     { label: 'Notes/Comments', field: 'notesComments' }
   ];
 
@@ -117,11 +118,14 @@ export const ItemTable = () => {
     // Apply search term filter
     const matchesSearchTerm = searchTerm
       ? row.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      row.condition.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (row.category && row.category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (row.location && row.location.toLowerCase().includes(searchTerm.toLowerCase()))
       : true;
   
     return matchesLocation && matchesSearchTerm;  // Combine both filters
-  });
+  })
+  .sort((a, b) => a.itemName.localeCompare(b.itemName)); 
   
 
   const handleExport = () => setOpenModal(true);
@@ -134,29 +138,58 @@ export const ItemTable = () => {
   };
 
   // Export to Excel based on selected fields and location
- const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(
-    filteredRows.map((row) => {
-      const data = {};
-      selectedFields.forEach((field) => {
-        if (field === 'category') {
-          data['Category'] = row.category ? row.category.categoryName : 'N/A';  // Ensure categoryName is accessed
-        } else if (field === 'itemBarcode') {
-          data['Barcode'] = row.itemBarcode || 'No Barcode'; // Use itemBarcode instead of barcodeImage
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Items');
+  
+    // Add headers
+    const headers = selectedFields.map((field) => {
+      const matchingField = fields.find(f => f.field === field);
+      return matchingField ? matchingField.label : field;
+    });
+    worksheet.addRow(headers);
+  
+    // Add data rows and barcode images
+    filteredRows.forEach((row, rowIndex) => {
+      const rowData = [];
+      selectedFields.forEach((field, fieldIndex) => {
+        if (field === 'barcodeImage' && row.barcodeImage) {
+          // Placeholder for the image cell
+          rowData.push(''); // Leave the cell blank for the image
+        } else if (field === 'category') {
+          rowData.push(row.category ? row.category.categoryName : 'N/A');
         } else {
-          data[field] = row[field] || 'N/A';
+          rowData.push(row[field] || 'N/A');
         }
       });
-      return data;
-    })
-  );
+      worksheet.addRow(rowData);
+  
+      // Add barcode image if selected
+      if (selectedFields.includes('barcodeImage') && row.barcodeImage) {
+        const imageId = workbook.addImage({
+          base64: `data:image/png;base64,${row.barcodeImage}`,
+          extension: 'png',
+        });
+  
+        const barcodeImageIndex = selectedFields.indexOf('barcodeImage') + 1; // +1 to match Excel 1-based index
+  
+        worksheet.addImage(imageId, {
+          tl: { col: barcodeImageIndex - 1, row: rowIndex + 1 }, // Adjust index (rowIndex + 1 for zero-based row and col index)
+          ext: { width: 100, height: 30 }, // Customize the size of the barcode image
+        });
+      }
+    });
+  
+    // Write to file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'ItemTableExport.xlsx';
+    link.click();
+  };
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Items");
-  XLSX.writeFile(workbook, "ItemTableExport.xlsx");
-};
-
-  // Export to PDF based on selected fields and location
 const exportToPDF = () => {
   const doc = new jsPDF({ orientation: 'landscape' });
   doc.text("Item Table Export", 14, 10);
@@ -177,8 +210,8 @@ const exportToPDF = () => {
     body: data,
     startY: 20,
     didDrawCell: (data) => {
-      // Adjust row height to accommodate barcode
-      if (selectedFields.includes('barcodeImage') && data.column.index === selectedFields.indexOf('barcodeImage')) {
+      // Ensure the barcode is only added to data rows, not header
+      if (data.section === 'body' && selectedFields.includes('barcodeImage') && data.column.index === selectedFields.indexOf('barcodeImage')) {
         const barcode = filteredRows[data.row.index].barcodeImage;
         if (barcode) {
           const barcodeWidth = 20;  // Adjust the width here
@@ -204,6 +237,7 @@ const exportToPDF = () => {
 
   doc.save("ItemTableExport.pdf");
 };
+
 
   const paginationModel = { page: 0, pageSize: 5 };
 

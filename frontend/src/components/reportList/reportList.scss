@@ -7,6 +7,7 @@
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
+    color: #59000f;
   }
 
   .searchExportContainer {
@@ -20,6 +21,7 @@
       
     }
 
+    
     .export-report-button {
       color: black;
       background-color: #d9d9d9;
@@ -62,5 +64,9 @@
 
   .report-pending{
     color: orange;
+  }
+
+  .report-del-button{
+    background-color: white;
   }
 }

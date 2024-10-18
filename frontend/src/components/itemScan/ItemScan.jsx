@@ -238,26 +238,25 @@ const ItemScan = () => {
       </form>
 
       <div className='scanned'>
-      <h3>Scanned Items</h3>
-      <ul className="scanned-items-list">
-        {scannedItems.map((item, index) => (
-          <li key={index} className="scanned-item">
-            <span>{item.itemName}</span>
-            <span>x {item.quantity}</span>
-            <button onClick={() => handleDeleteItem(item.itemBarcode)}>Remove</button>
-          </li>
-        ))}
-      </ul>
+        <h3>Scanned Items</h3>
+        <ul className="scanned-items-list">
+          {scannedItems.map((item, index) => (
+            <li key={index} className="scanned-item">
+              <span>{item.itemName}</span>
+              <span>x {item.quantity}</span>
+              <button onClick={() => handleDeleteItem(item.itemBarcode)}>Remove</button>
+            </li>
+          ))}
+        </ul>
 
-      {scannedItems.length > 0 && (
-        <div className="submit-section">
-          <button onClick={handleSubmit} disabled={isLoading}>Submit Transaction</button>
-        </div>
-      )}
+        {scannedItems.length > 0 && (
+          <div className="submit-section">
+            <button onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? "Loading..." : "Submit Transaction"}
+            </button>
+          </div>
+        )}
       </div>
-
-      {/* Show Loading... message when isLoading is true */}
-      {isLoading && <p>Loading...</p>}
     </div>
   );
 };

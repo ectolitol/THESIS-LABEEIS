@@ -25,6 +25,7 @@ const BorrowReturnTable = () => {
   const [selectedLog, setSelectedLog] = useState(null);
   const [newDuration, setNewDuration] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,6 +52,7 @@ const BorrowReturnTable = () => {
   };
 
   const handleSaveDuration = async () => {
+    setLoading(true); // Start loading
     try {
       const updatedLog = {
         borrowedDuration: newDuration
@@ -64,6 +66,8 @@ const BorrowReturnTable = () => {
       setSelectedLog(null);
     } catch (error) {
       console.error("Error updating duration:", error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -284,11 +288,15 @@ const BorrowReturnTable = () => {
             variant="outlined"
             value={newDuration}
             onChange={(e) => setNewDuration(e.target.value)}
+            disabled={loading} // Disable input when loading
           />
+        {loading && <Typography variant="body2" color="textSecondary">Loading...</Typography>} {/* Show Loading */}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-          <Button onClick={handleSaveDuration}>Save</Button>
+        <Button onClick={() => setIsModalOpen(false)} disabled={loading}>Cancel</Button>
+        <Button onClick={handleSaveDuration} disabled={loading}>
+            {loading ? "Processing..." : "Save"}
+          </Button>
         </DialogActions>
       </Dialog>
     </Paper>

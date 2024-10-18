@@ -56,8 +56,21 @@ const ReportsList = ({ itemId }) => {
     }
   };
 
+    // Function to handle deleting a report
+    const handleDeleteReport = async (reportId) => {
+      console.log('Attempting to delete report with ID:', reportId);
+      try {
+        await axios.delete(`/api/reports/del-reports/${reportId}`);
+        const response = await axios.get(`/api/reports/all-report`);
+        setReports(response.data);
+      } catch (error) {
+        console.error('Error deleting report:', error);
+      }
+    };
+    
   // Define columns for the DataGrid (including dropdown for status)
   const columns = [
+    { field: 'date', headerName: 'Date Reported', width: 200 },
     { field: 'itemName', headerName: 'Item Name', width: 200 },
     { field: 'itemBarcode', headerName: 'Item Barcode', width: 200 },
     { field: 'issue', headerName: 'Issue', width: 300 },
@@ -88,12 +101,27 @@ const ReportsList = ({ itemId }) => {
             );
         },
     },
-    { field: 'date', headerName: 'Date Reported', width: 200 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="error"
+          className='report-del-button'
+          onClick={() => handleDeleteReport(params.row.id)}
+        >
+          Delete
+        </Button>
+      ),
+    }, 
 ];
 
 
   // Transform the reports data to match the DataGrid structure
-  const rows = reports.map((report) => ({
+  const rows = reports
+  .map((report) => ({
     id: report._id,
     itemName: report.itemId.itemName,
     itemBarcode: report.itemId.itemBarcode,
@@ -101,8 +129,12 @@ const ReportsList = ({ itemId }) => {
     reportedBy: report.reportedBy,
     priority: report.priority,
     status: report.status,
-    date: new Date(report.date).toLocaleString(),
-  }));
+    // Keep the date in its original form for sorting, but format it for display
+    rawDate: new Date(report.date), // Raw date used for sorting
+    date: new Date(report.date).toLocaleString(), // Formatted date for display
+  }))
+  .sort((a, b) => b.rawDate - a.rawDate); // Sort by raw date, newest first
+
 
   // Filter the rows based on the search query
   const filteredRows = rows.filter((row) =>
@@ -190,7 +222,7 @@ const ReportsList = ({ itemId }) => {
       sx={{
         '& .MuiDataGrid-columnHeaders': {
           backgroundColor: '#d9d9d9', // Change the background color of the header
-          color: '#dark gray', // Change the text color
+          color: '#59000f', // Change the text color
           fontSize: '16px', // Change the font size
         },
         '& .MuiDataGrid-columnHeaderTitle': {

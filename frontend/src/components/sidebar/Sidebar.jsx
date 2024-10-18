@@ -77,7 +77,7 @@ const Sidebar = () => {
     try {
       await axios.post('/api/admin/logout', {}, { withCredentials: true });
       // Clear any local state or storage if needed
-      navigate('/administrator'); // Redirect to login page
+      navigate('/lab/admin'); // Redirect to login page
     } catch (error) {
       console.error('Error logging out:', error);
     }

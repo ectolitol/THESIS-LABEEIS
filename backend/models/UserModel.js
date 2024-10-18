@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define the schema
 const UserSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
+  fullName: { type: String, required: true, unique: true },
   email: { 
     type: String, 
     required: true, 
@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
     enum: ['Pending', 'Approved', 'Declined'], 
     default: 'Pending' 
   },
-  notesComments: { type: String }
+  notesComments: { type: String } 
 }, {
   timestamps: true,  // Add createdAt and updatedAt fields automatically
 });

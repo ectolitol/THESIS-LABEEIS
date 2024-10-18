@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './userWelcome.scss'; // User-specific SCSS
 
 const UserWelcome = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   const handleUserClick = () => {
     navigate('/user-selection'); // Redirect to user selection page
@@ -29,16 +29,6 @@ const UserWelcome = () => {
           <button className="user-welcome-button" onClick={handleReportClick}>
             Report an Issue
           </button>
-        </div>
-        <div className="user-welcome-guide-container">
-          <a
-            href="https://drive.google.com/drive/folders/1hbp5ooHATv_wyFEDZ74u4qL-FjmpJAds?usp=sharing"
-            className="user-welcome-guide-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            A User's Guide Manual on How to Use EELMS (PDF)
-          </a>
         </div>
       </div>
     </div>

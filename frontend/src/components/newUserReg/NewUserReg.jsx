@@ -135,7 +135,6 @@ const NewUserReg = () => {
             placeholder="20**-*****-MN-*"
             value={formData.studentNo}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -161,7 +160,6 @@ const NewUserReg = () => {
             placeholder="Year & Section"
             value={formData.yearAndSection}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -200,7 +198,6 @@ const NewUserReg = () => {
             placeholder="Link to registration card"
             value={formData.registrationCard}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -213,7 +210,6 @@ const NewUserReg = () => {
             placeholder="Link to class schedule"
             value={formData.updatedClassSchedule}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -241,9 +237,9 @@ const NewUserReg = () => {
 
       {/* Success Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogTitle>Registration Successful!</DialogTitle>
         <DialogContent>
-          <p>Your registration was successful. You will be redirected.</p>
+          <p>Your registration was successful. Please await for admin approval via email. Thank you!</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">

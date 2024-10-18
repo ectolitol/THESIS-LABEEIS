@@ -16,7 +16,7 @@ const StockChart = () => {
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
-    };
+    }; 
 
     fetchCategories();
   }, []);
@@ -37,8 +37,8 @@ const StockChart = () => {
               data={chartData}
               dataKey="value"
               nameKey="name"
-              outerRadius={100}
-              innerRadius={60}
+              outerRadius={75}
+              innerRadius={45}
               fill="#8884d8"
               isAnimationActive={true}
               label={({ percent }) => `${(percent * 100).toFixed(0)}%`} // Show only percentage in the chart

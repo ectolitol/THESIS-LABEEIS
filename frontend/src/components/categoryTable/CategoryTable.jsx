@@ -76,9 +76,11 @@ export const CategoryTable = () => {
     }
   };
 
-  const filteredRows = rows.filter(row => 
+  const filteredRows = rows
+  .filter(row => 
     row.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
+  .sort((a, b) => a.categoryName.localeCompare(b.categoryName)); 
   
 
   const handleDelete = (id) => {

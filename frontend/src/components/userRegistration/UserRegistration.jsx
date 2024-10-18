@@ -136,7 +136,6 @@ const UserRegistration = () => {
             placeholder="20**-*****-MN-*"
             value={formData.studentNo}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -162,7 +161,6 @@ const UserRegistration = () => {
             placeholder="Year & Section"
             value={formData.yearAndSection}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -201,7 +199,6 @@ const UserRegistration = () => {
             placeholder="Link to registration card"
             value={formData.registrationCard}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -214,7 +211,6 @@ const UserRegistration = () => {
             placeholder="Link to class schedule"
             value={formData.updatedClassSchedule}
             onChange={handleChange}
-            required
           />
         </div> 
 

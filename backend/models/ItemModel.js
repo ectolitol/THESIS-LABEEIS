@@ -7,7 +7,7 @@ function generateBarcode() {
   const barcodeNumber = `BC${randomNumber}`;
 
   // Generate barcode image and convert it to base64
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => { 
     bwipjs.toBuffer({
       bcid: 'code128',       // Barcode type
       text: barcodeNumber,   // Text to encode
@@ -35,9 +35,8 @@ const ItemSchema = new mongoose.Schema({
     type: String,
   },
   itemName: { 
-    type: String, 
-    unique: true, 
-    required: true 
+    type: String,  
+    required: true,
   },
   image: {
     type: String, // Store image URL or path

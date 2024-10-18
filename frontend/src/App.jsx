@@ -43,7 +43,7 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<UserWelcome />} />
-            <Route path="/administrator" element={<AdminWelcome />} />
+            <Route path="/lab/admin" element={<AdminWelcome />} />
             <Route path="/report" element={<ReportForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/select-profile" element={<SelectAdmin />} />

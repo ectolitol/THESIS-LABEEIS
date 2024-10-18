@@ -115,12 +115,17 @@ const UserTable = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get('/api/users');
-      setRows(response.data);
-
+      const sortedData = response.data.sort((a, b) => {
+        // Assuming `createdAt` is a date field and new entries have a more recent `createdAt` value
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+  
+      setRows(sortedData);
+  
       // Extract unique statuses for filtering dropdown
-      const uniqueStatuses = [...new Set(response.data.map(user => user.status))];
+      const uniqueStatuses = [...new Set(sortedData.map(user => user.status))];
       setStatuses(uniqueStatuses);
-
+  
       setLoading(false);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -128,6 +133,7 @@ const UserTable = () => {
       setLoading(false);
     }
   };
+  
 
   const handleAction = async () => {
     setActionLoading(true); // Start loading
@@ -188,6 +194,8 @@ const UserTable = () => {
     const matchesSearchTerm = searchTerm
       ? row.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         row.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.yearAndSection.toLowerCase().includes(searchTerm.toLowerCase()) ||
         row.program.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
   
@@ -275,55 +283,78 @@ const UserTable = () => {
         />
       </div>
 
-      {/* Modal for selecting export fields */}
-      <Dialog
-      open={openDialog}
-      onClose={handleCloseDialog}
+     {/* Dialog for Approve/Decline Actions */}
+     {/* Dialog for Approve/Decline Actions */}
+<Dialog open={openDialog} onClose={handleCloseDialog}>
+  <DialogTitle>{actionType === 'approve' ? 'Approve User' : 'Decline User'}</DialogTitle>
+  <DialogContent>
+    {actionType === 'approve' ? (
+      <>
+        <DialogContentText>Are you sure you want to approve this user?</DialogContentText>
+      </>
+    ) : (
+      <>
+        <DialogContentText>Please provide a reason for declining this user:</DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="declineReason"
+          label="Decline Reason"
+          type="text"
+          fullWidth
+          value={declineReason}
+          onChange={handleDeclineReasonChange} // Use handleDeclineReasonChange here
+        />
+      </>
+    )}
+    {error && <p style={{ color: 'red' }}>{error}</p>}
+    {actionLoading && <p>Loading...</p>} {/* Show Loading indicator */}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseDialog} color="default" disabled={actionLoading}>
+      Cancel
+    </Button>
+    <Button
+      onClick={handleAction}
+      color={actionType === 'approve' ? 'primary' : 'secondary'}
+      disabled={actionLoading} // Disable button while loading
     >
-      <DialogTitle className="dialog-title">
-        {actionType === 'approve' ? 'Approve User' : 'Decline User'}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          {actionType === 'approve'
-            ? 'Are you sure you want to approve this user?'
-            : 'Are you sure you want to decline this user?'}
-        </DialogContentText>
-        {actionType === 'decline' && (
-          <TextField
-            autoFocus
-            margin="dense"
-            id="declineReason"
-            label="Reason"
-            type="text"
-            fullWidth 
-            variant="standard"
-            value={declineReason}
-            onChange={handleDeclineReasonChange}
-          />
-        )}
-        {error && <DialogContentText color="error">{error}</DialogContentText>}
+      {actionLoading ? "Processing..." : actionType === 'approve' ? 'Approve' : 'Decline'}
+    </Button>
+  </DialogActions>
+</Dialog>
 
-        {/* Display Loading... text when action is being processed */}
-        {actionLoading && (
-          <DialogContentText style={{ color: 'blue', marginTop: '10px' }}>
-            Loading...
-          </DialogContentText>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary" disabled={actionLoading}>
-          Cancel
-        </Button>
-        <Button
-          onClick={handleAction}
-          color="secondary"
-          disabled={actionLoading} // Disable button if loading
-        >
-          {actionType === 'approve' ? 'Approve' : 'Submit'}
-        </Button>
-      </DialogActions>
-    </Dialog>
+
+
+      {/* Modal for selecting export fields */}
+      <Dialog open={openModal} onClose={handleModalClose}>
+        <DialogTitle>Select Fields to Export</DialogTitle>
+        <DialogContent>
+          {fields.map((field) => (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedFields.includes(field.field)}
+                  onChange={() => handleFieldChange(field.field)}
+                />
+              }
+              label={field.label}
+              key={field.field}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={exportToExcel} color="primary">
+            Export to Excel
+          </Button>
+          <Button onClick={exportToPDF} color="secondary">
+            Export to PDF
+          </Button>
+          <Button onClick={handleModalClose} color="default">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

@@ -216,6 +216,9 @@ const exportToExcel = () => {
           case 'dateTime':
             data['Date Time'] = row.dateTime ? formatDateTime(row.dateTime) : 'N/A'; // Format date
             break;
+          case 'dueDate':
+            data['Due Date'] = row.dueDate ? formatDateTime(row.dueDate) : 'N/A'; // Format due date
+            break;
           case 'returnDate':
             data['Return Date'] = row.returnDate ? formatDateTime(row.returnDate) : 'N/A'; // Format return date
             break;

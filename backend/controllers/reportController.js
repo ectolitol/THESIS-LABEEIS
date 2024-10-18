@@ -130,3 +130,28 @@ exports.updateReportStatus = async (req, res) => {
     res.status(500).json({ message: 'Error updating report status', details: error.message });
   }
 };
+
+// Delete a report by ID
+exports.deleteReportById = async (req, res) => {
+  const { id } = req.params;
+  console.log(`Received DELETE request for report ID: ${id}`);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid report ID' });
+  }
+
+  try {
+    const deletedReport = await Report.findByIdAndDelete(id);
+
+    if (!deletedReport) {
+      console.log(`No report found with ID: ${id}`);
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    console.log(`Successfully deleted report with ID: ${id}`);
+    res.status(200).json({ message: 'Report deleted successfully', report: deletedReport });
+  } catch (error) {
+    console.error('Error deleting report:', error.message);
+    res.status(500).json({ message: 'Error deleting report', details: error.message });
+  }
+};

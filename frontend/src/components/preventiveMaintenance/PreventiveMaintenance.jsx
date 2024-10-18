@@ -62,8 +62,9 @@ const months = {
 const PreventiveMaintenance = () => {
   const [items, setItems] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("All");
-  const [dynamicMonths, setDynamicMonths] = useState(months); // Track months and weeks dynamically
-  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
+  const [dynamicMonths, setDynamicMonths] = useState(months);
+  const [showForm, setShowForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // State to track search input
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -79,12 +80,14 @@ const PreventiveMaintenance = () => {
     fetchItems();
   }, []);
 
-  // Define handleLocationChange function
   const handleLocationChange = (e) => {
     setSelectedLocation(e.target.value);
   };
 
-  // Handler to update month ranges dynamically based on form
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Update the search term based on user input
+  };
+
   const handleMonthRangeChange = (month, startOrEnd, value) => {
     setDynamicMonths((prevMonths) => ({
       ...prevMonths,
@@ -118,9 +121,7 @@ const PreventiveMaintenance = () => {
       console.error("Error updating maintenance status:", err);
     }
   };
-  
 
-  // Add the dynamic form for adjusting months and week ranges
   const renderMonthForm = () => (
     <form className="month-form">
       {Object.keys(dynamicMonths).map((month) => (
@@ -141,10 +142,16 @@ const PreventiveMaintenance = () => {
     </form>
   );
 
-  const filteredItems = selectedLocation === "All"
-    ? items
-    : items.filter((item) => item.location === selectedLocation);
+  const filteredItems = items
+  .filter((item) => selectedLocation === "All" || item.location === selectedLocation)
+  .filter((item) => {
+    const itemNameMatch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryMatch = item.category?.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+    const pmFrequencyMatch = item.pmFrequency.toLowerCase().includes(searchTerm.toLowerCase());
 
+    return itemNameMatch || categoryMatch || pmFrequencyMatch;
+  })
+  .sort((a, b) => a.itemName.localeCompare(b.itemName));
   const locations = [...new Set(items.map((item) => item.location))];
 
   const renderTable = () => (
@@ -210,42 +217,12 @@ const PreventiveMaintenance = () => {
   const exportToExcel = () => {
     const worksheet = XLSX.utils.aoa_to_sheet([
       [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "JAN", "", "", "",
-        "FEB", "", "", "",
-        "MAR", "", "", "", "",
-        "APR", "", "", "",
-        "MAY", "", "", "",
-        "JUN", "", "", "", "",
-        "JUL", "", "", "",
-        "AUG", "", "", "", "",
-        "SEP", "", "", "",
-        "OCT", "", "", "",
-        "NOV", "", "", "",
-        "DEC", "", "", ""
-      ],
-      [
         "Item Name",
         "Category",
         "Specification",
-        "Location", // Added Location column header
+        "Location",
         "PM Frequency",
-        1, 2, 3, 4, 5,
-        6, 7, 8, 9,
-        10, 11, 12, 13,
-        14, 15, 16, 17,
-        18, 19, 20, 21, 22,
-        23, 24, 25, 26,
-        27, 28, 29, 30, 31,
-        32, 33, 34, 35,
-        36, 37, 38, 39,
-        40, 41, 42, 43, 44,
-        45, 46, 47, 48,
-        49, 50, 51, 52
+        ...Array.from({ length: 52 }, (_, i) => i + 1),
       ]
     ]);
   
@@ -254,7 +231,7 @@ const PreventiveMaintenance = () => {
         item.itemName,
         item.category?.categoryName || "N/A",
         item.specification,
-        item.location || "N/A", // Include location in the row
+        item.location || "N/A",
         item.pmFrequency,
         ...Array.from({ length: 52 }, (_, i) => item.maintenanceSchedule[i]?.status || "-")
       ];
@@ -263,32 +240,12 @@ const PreventiveMaintenance = () => {
   
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Preventive Maintenance");
-  
-    const merges = [
-      { s: { r: 0, c: 5 }, e: { r: 0, c: 9 } },  // JAN (1-5)
-      { s: { r: 0, c: 10 }, e: { r: 0, c: 13 } }, // FEB (6-9)
-      { s: { r: 0, c: 14 }, e: { r: 0, c: 17 } }, // MAR (10-13)
-      { s: { r: 0, c: 18 }, e: { r: 0, c: 22 } }, // APR (14-17)
-      { s: { r: 0, c: 23 }, e: { r: 0, c: 27 } }, // MAY (18-22)
-      { s: { r: 0, c: 28 }, e: { r: 0, c: 31 } }, // JUN (23-26)
-      { s: { r: 0, c: 32 }, e: { r: 0, c: 36 } }, // JUL (27-31)
-      { s: { r: 0, c: 37 }, e: { r: 0, c: 40 } }, // AUG (32-35)
-      { s: { r: 0, c: 41 }, e: { r: 0, c: 44 } }, // SEP (36-39)
-      { s: { r: 0, c: 45 }, e: { r: 0, c: 49 } }, // OCT (40-44)
-      { s: { r: 0, c: 50 }, e: { r: 0, c: 53 } }, // NOV (45-48)
-      { s: { r: 0, c: 54 }, e: { r: 0, c: 57 } }  // DEC (49-52)
-    ];
-  
-    worksheet["!merges"] = merges;
-  
     XLSX.writeFile(workbook, "PreventiveMaintenance.xlsx");
   };
 
-  // Function to toggle form visibility
   const toggleForm = () => {
     setShowForm(!showForm);
   };
-  
 
   return (
     <div className="preventiveMaintenance">
@@ -306,22 +263,28 @@ const PreventiveMaintenance = () => {
           </select>
         </div>
 
-    <div className="adjust-button">
-         {/* Button to toggle form visibility */}
-      <button onClick={toggleForm}>
-        {showForm ? "Hide Form" : "Adjust Month/Week Ranges"}
-      </button>
-    </div>
+        <div className="pm-search-bar">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
+
+        <div className="adjust-button">
+          <button onClick={toggleForm}>
+            {showForm ? "Hide Form" : "Adjust Month/Week Ranges"}
+          </button>
+        </div>
 
         <div className="export-button">
           <button onClick={exportToExcel}>EXPORT</button>
         </div>
       </div>
 
-      {/* Conditionally render form based on showForm state */}
       {showForm && renderMonthForm()}
 
-      {/* Render table */}
       <div className="pmtable-container">
         {renderTable()}
       </div>

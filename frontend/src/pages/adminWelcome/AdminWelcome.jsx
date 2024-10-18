@@ -22,6 +22,16 @@ const AdminWelcome = () => {
           <button className="admin-welcome-button" onClick={handleAdminLogin}>
             Admin Login
           </button>
+        <div className="user-welcome-guide-container">
+        <a
+          href="https://drive.google.com/drive/folders/1hbp5ooHATv_wyFEDZ74u4qL-FjmpJAds?usp=sharing"
+          className="user-welcome-guide-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          A User's Guide Manual on How to Use EELMS (PDF)
+        </a>
+      </div>
         </div>
       </div>
     </div>

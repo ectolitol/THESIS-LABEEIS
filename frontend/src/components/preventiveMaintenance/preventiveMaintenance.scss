@@ -5,6 +5,7 @@
     h3 {
       text-align: center;
       margin-bottom: 20px;
+      color: #59000f;
     }
   
     .filter-export-container {
@@ -69,6 +70,11 @@
       background-color: #fff;
       padding: 10px;
       border: 1px solid #ddd;
+    }
+
+    .pm-search-bar input{
+      height: 25px;
+      width: 200px;
     }
   
     .pm-table {

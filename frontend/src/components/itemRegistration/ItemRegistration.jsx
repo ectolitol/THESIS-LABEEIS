@@ -135,11 +135,10 @@ const ItemRegistration = () => {
           <label>Item Name: </label>
           <input
             type="text"
-            name="itemName"
+            name="itemName" 
             placeholder="Item Name"
             value={formData.itemName}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="newItemField">
@@ -261,7 +260,6 @@ const ItemRegistration = () => {
             placeholder="Description"
             value={formData.description}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="newItemField">
